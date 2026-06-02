@@ -1,915 +1,506 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
-<title>八字命理测算大师</title>
-<style>
-:root{--bg:#f5f0e8;--bp:#fffdf7;--bi:#fffdf7;--ft:#5c4a2a;--fs:#8b7355;--fx:#3d3225;--bt:#7a6b52;--bh:#6b5c45;--ac:#2e7d5b;--bd:#d4c9b5;--tb:#ebe5d9;--ta:#c2b59a;--rb:#faf7f0}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",Arial,sans-serif;background:var(--bg);color:var(--fx);font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
-.hd{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--tb);border-bottom:1px solid var(--bd);padding:10px 15px;text-align:center;padding-top:25px}
-.hd h1{font-size:22px;color:var(--ft);font-weight:bold}.hd p{font-size:12px;color:var(--fs);margin-top:2px}
-.tn{position:fixed;top:120px;left:0;right:0;z-index:99;background:var(--bg);border-bottom:1px solid var(--bd);overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;padding:0 5px;scrollbar-width:none}.tn::-webkit-scrollbar{display:none}
-.tb{display:inline-block;padding:8px 14px;font-size:14px;color:var(--fs);background:var(--tb);border:1px solid var(--bd);border-radius:6px 6px 0 0;margin:5px 3px 0;cursor:pointer;-webkit-user-select:none;user-select:none;min-height:36px}.tb.on{background:var(--ta);color:var(--ft);font-weight:bold}
-.ct{margin-top:180px;padding:10px 10px 30px;max-width:800px;margin-left:auto;margin-right:auto}
-.tc{display:none}.tc.on{display:block}
-.pn{background:var(--bp);border:1px solid var(--bd);border-radius:8px;padding:15px;margin-bottom:10px}
-.pt{font-size:16px;font-weight:bold;color:var(--ft);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
-.fr{display:flex;align-items:center;margin-bottom:8px;flex-wrap:wrap}
-.fr label{min-width:70px;font-size:14px;color:var(--fx);flex-shrink:0}
-.fr input,.fr select,.fr textarea{flex:1;min-width:100px;padding:8px 10px;font-size:15px;border:1px solid var(--bd);border-radius:6px;background:var(--bi);color:var(--fx);outline:none;-webkit-appearance:none;appearance:none}
-.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--bt)}
-.fr select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b7355' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
-.fr textarea{min-height:80px;resize:vertical}
-.fh{font-size:12px;color:var(--fs);margin-bottom:8px}
-.btn{display:inline-block;padding:10px 24px;font-size:16px;font-weight:bold;color:#fff;background:var(--bt);border:none;border-radius:8px;cursor:pointer;min-height:44px;-webkit-user-select:none;user-select:none;margin:5px 5px 5px 0}.btn:active{background:var(--bh)}
-.btn2{background:#a89880}.btn2:active{background:#9a8a72}
-.btn3{background:#5a8a6b}.btn3:active{background:#4a7a5b}
-.br{margin-top:10px}
-.rb{background:var(--rb);border:1px solid var(--bd);border-radius:8px;padding:15px;margin-top:10px;white-space:pre-wrap;word-wrap:break-word;font-size:14px;line-height:1.7;max-height:600px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.rg{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
-.rbtn{padding:6px 14px;font-size:14px;border:1px solid var(--bd);border-radius:6px;background:var(--bi);color:var(--fx);cursor:pointer;-webkit-user-select:none;user-select:none}.rbtn.on{background:var(--ta);border-color:var(--bt);font-weight:bold}
-@media(min-width:768px){body{font-size:16px}.hd h1{font-size:28px}.ct{padding:15px 20px 40px}.pn{padding:20px}.btn{padding:12px 30px;font-size:17px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>八字命理大师</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="hd"><h1>八字命理测算大师</h1><p>八字命理 | 八字合婚 | 号码吉凶 | 卦象占卜 | 术语解释</p></div>
-<div class="tn" id="TN">
-<div class="tb on" data-t="bazi" onclick="sw('bazi')">八字命理</div>
-<div class="tb" data-t="match" onclick="sw('match')">八字合婚</div>
-<div class="tb" data-t="num" onclick="sw('num')">号码吉凶</div>
-<div class="tb" data-t="gua" onclick="sw('gua')">卦象占卜</div>
-<div class="tb" data-t="term" onclick="sw('term')">术语解释</div>
-</div>
-<div class="ct">
-<!-- 八字命理 -->
-<div class="tc on" id="t-bazi">
-<div class="pn"><div class="pt">输入出生信息</div>
-<div class="fr"><label>姓名：</label><input type="text" id="bN" placeholder="选填"></div>
-<div class="fr"><label>历法：</label><select id="bLType" onchange="toggleCalendar('bazi')"><option value="solar">阳历（公历）</option><option value="lunar">阴历（农历）</option></select></div>
-<div class="fr"><label>年份：</label><select id="bY"></select></div>
-<div class="fr"><label>月份：</label><select id="bM"></select></div>
-<div class="fr"><label>日期：</label><select id="bD"></select></div>
-<div class="fr"><label>时辰：</label><select id="bH"></select></div>
-<div class="fh" id="bTimeHint">时辰范围：子时(23:00-01:00)、丑时(01:00-03:00)...</div>
-<div class="br"><div class="btn" onclick="doBazi()">开始测算</div><div class="btn btn2" onclick="goToMatch()">查看合婚</div></div></div>
-<div class="rb" id="bR">请输入出生信息，点击"开始测算"查看八字命理分析报告。</div></div>
-<!-- 八字合婚 -->
-<div class="tc" id="t-match">
-<div class="pn"><div class="pt">输入双方出生信息</div>
-<div style="color:var(--ac);font-weight:bold;margin-bottom:8px">甲方（你）</div>
-<div class="fr"><label>姓名：</label><input type="text" id="mAN" placeholder="选填"></div>
-<div class="fr"><label>历法：</label><select id="mALType"><option value="solar">阳历</option><option value="lunar">阴历</option></select></div>
-<div class="fr"><label>年：</label><select id="mAY"></select><label style="min-width:30px;text-align:center">月：</label><select id="mAM"></select><label style="min-width:30px;text-align:center">日：</label><select id="mAD"></select><label style="min-width:30px;text-align:center">时：</label><select id="mAH"></select></div>
-<div style="color:#2c6e91;font-weight:bold;margin:10px 0 8px">乙方（对方）</div>
-<div class="fr"><label>姓名：</label><input type="text" id="mBN" placeholder="选填"></div>
-<div class="fr"><label>历法：</label><select id="mBLType"><option value="solar">阳历</option><option value="lunar">阴历</option></select></div>
-<div class="fr"><label>年：</label><select id="mBY"></select><label style="min-width:30px;text-align:center">月：</label><select id="mBM"></select><label style="min-width:30px;text-align:center">日：</label><select id="mBD"></select><label style="min-width:30px;text-align:center">时：</label><select id="mBH"></select></div>
-<div class="br"><div class="btn" onclick="doMatch()">开始合婚测算</div></div></div>
-<div class="rb" id="mR">请输入双方出生信息，点击"开始合婚测算"。</div></div>
-<!-- 号码吉凶 -->
-<div class="tc" id="t-num">
-<div class="pn"><div class="pt">号码吉凶分析</div>
-<div class="fr"><label>号码：</label><input type="text" id="numI" placeholder="手机号/车牌号/其他号码"></div>
-<div class="fh">输入手机号、车牌号或其他数字号码</div>
-<div class="br"><div class="btn" onclick="doNum()">开始分析</div></div></div>
-<div class="rb" id="numR">请输入号码，点击"开始分析"。</div></div>
-<!-- 卦象占卜 -->
-<div class="tc" id="t-gua">
-<div class="pn"><div class="pt">周易卦象占卜</div>
-<p style="margin-bottom:10px;color:var(--fs)">在心中默念你的问题，然后点击起卦</p>
-<div class="br"><div class="btn" onclick="doGCoin()">简易起卦(三枚硬币法)</div><div class="btn btn2" onclick="doGRnd()">随机起卦</div><div class="btn btn2" onclick="doGAll()">查看六十四卦</div></div></div>
-<div class="rb" id="gR">在心中默念你的问题，然后点击起卦按钮。</div></div>
-<!-- 术语解释 -->
-<div class="tc" id="t-term">
-<div class="pn"><div class="pt">术语解释</div>
-<p style="margin-bottom:8px;color:var(--fs)">粘贴或输入任何不懂的内容，程序将自动识别并解释其中的专业术语</p>
-<div class="fr"><textarea id="tmI" placeholder="在此输入或粘贴包含术语的文本..."></textarea></div>
-<div class="br"><div class="btn" onclick="doTerm()">开始解释</div><div class="btn btn2" onclick="doAllTerm()">常见术语速查</div></div></div>
-<div class="rb" id="tmR">请输入需要解释的内容，点击"开始解释"。</div></div>
-</div>
-<script>
-// ===== 数据常量 =====
-var TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'],DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-var WXG=['木','木','火','火','土','土','金','金','水','水'],WXZ=['水','土','木','木','土','火','火','土','金','金','土','水'];
-var SX=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'],SE=['🐀','🐂','🐅','🐇','🐉','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
-var GYY=['阳','阴','阳','阴','阳','阴','阳','阴','阳','阴'];
-var NY=['海中金','炉中火','大林木','路旁土','剑锋金','山头火','涧下水','城头土','白蜡金','杨柳木','泉中水','屋上土','霹雳火','松柏木','长流水','砂中金','山下火','平地木','壁上土','金箔金','覆灯火','天河水','大驿土','钗钏金','桑柘木','大溪水','沙中土','天上火','石榴木','大海水'];
-var SCN=["子时(23:00-01:00)","丑时(01:00-03:00)","寅时(03:00-05:00)","卯时(05:00-07:00)","辰时(07:00-09:00)","巳时(09:00-11:00)","午时(11:00-13:00)","未时(13:00-15:00)","申时(15:00-17:00)","酉时(17:00-19:00)","戌时(19:00-21:00)","亥时(21:00-23:00)"];
-var SC_TIME=["23:00-01:00","01:00-03:00","03:00-05:00","05:00-07:00","07:00-09:00","09:00-11:00","11:00-13:00","13:00-15:00","15:00-17:00","17:00-19:00","19:00-21:00","21:00-23:00"];
-var DWX={1:'水',2:'火',3:'木',4:'金',5:'土',6:'水',7:'火',8:'木',9:'金',0:'土'};
-var DM={0:'圆满、无限',1:'独立、领导',2:'合作、平衡',3:'创造、活力',4:'稳定、基础',5:'自由、变化',6:'和谐、责任',7:'智慧、内省',8:'财富、成功',9:'完成、奉献'};
-
-// 十神详细解释
-var SS_DETAIL={
-'比肩':{name:'比肩',meaning:'同我者（同五行同阴阳）',represent:'兄弟姐妹、朋友、同事、竞争、自我意识',character:'独立、自主、有主见、不服输、自尊心强',effect:'帮身有力，增强日主力量，但过多则争财夺利',advice:'善用竞争意识，但避免过于固执己见'},
-'劫财':{name:'劫财',meaning:'同我者（同五行异阴阳）',represent:'争夺、冒险、社交、异性兄弟姐妹',character:'冲动、冒险、善于社交、花钱大手大脚',effect:'耗财但助人缘，增强行动力但易冲动',advice:'控制消费欲望，善用社交能力'},
-'食神':{name:'食神',meaning:'我生者（同阴阳）',represent:'才华、享受、福气、口才、子女（女）',character:'温和、有才华、懂得享受、心地善良',effect:'泄秀生财，代表福气和才华的展现',advice:'发挥才华，享受生活，但避免过于安逸'},
-'伤官':{name:'伤官',meaning:'我生者（异阴阳）',represent:'创意、叛逆、表现、技术、口才',character:'聪明、有创意、叛逆、表现欲强、不服管束',effect:'才华横溢但克正官，聪明反被聪明误',advice:'善用创意，但要学会尊重规则和权威'},
-'偏财':{name:'偏财',meaning:'我克者（同阴阳）',represent:'横财、父亲、情人、意外之财、投机',character:'慷慨、人缘好、善于理财、重义轻财',effect:'代表流动财富和人际关系，来去较快',advice:'把握投资机会，但避免过度投机'},
-'正财':{name:'正财',meaning:'我克者（异阴阳）',represent:'妻子（男）、稳定收入、工资、固定资产',character:'务实、节俭、勤劳、重视物质生活',effect:'代表稳定收入和正当财富，细水长流',advice:'稳扎稳打，积累财富，重视长期规划'},
-'七杀':{name:'七杀',meaning:'克我者（同阴阳）',represent:'压力、权威、小人、魄力、挑战',character:'有魄力、敢冒险、威严、压力大',effect:'攻身无情，但制化得宜则成大器',advice:'化压力为动力，寻找贵人化解七杀'},
-'正官':{name:'正官',meaning:'克我者（异阴阳）',represent:'丈夫（女）、地位、规矩、上司、名誉',character:'自律、守规矩、有责任感、重视名誉',effect:'约束日主，代表社会地位和名誉',advice:'遵守规则，获得社会认可，但避免过于拘谨'},
-'偏印':{name:'偏印',meaning:'生我者（同阴阳）',represent:'学识、偏门、继母、孤独、直觉',character:'聪明、有偏才、孤独、敏感、多疑',effect:'生身有力但易孤独，代表特殊才能',advice:'发挥独特才能，但要学会与人合作'},
-'正印':{name:'正印',meaning:'生我者（异阴阳）',represent:'母亲、贵人、学历、文书、保护',character:'仁慈、有学识、受保护、依赖性强',effect:'生身有情，代表贵人扶持和学识',advice:'珍惜贵人，努力学习，但避免过于依赖'}
-};
-
-// 五行性格分析
-var WX_PERSONALITY={
-'金':{strong:'刚毅果断、重义气、有决断力、讲原则',weak:'优柔寡断、缺乏主见、容易受人影响',missing:'缺乏决断力，建议多穿白色/金色，佩戴金属饰品'},
-'木':{strong:'仁慈正直、有主见、积极向上、有爱心',weak:'缺乏主见、随波逐流、意志不坚定',missing:'缺乏上进心，建议多接触绿色植物，增加木质元素'},
-'水':{strong:'聪明机智、善变通、适应力强、有谋略',weak:'缺乏定力、善变、容易情绪化',missing:'思维不够灵活，建议多饮水，佩戴蓝色饰品'},
-'火':{strong:'热情开朗、有活力、有感染力、性急',weak:'缺乏热情、冷漠、行动力不足',missing:'缺乏热情活力，建议多晒太阳，穿暖色调衣物'},
-'土':{strong:'稳重踏实、诚信可靠、有耐心、固执',weak:'缺乏稳定性、轻浮、不够踏实',missing:'缺乏稳定性，建议多接触大自然，穿黄色衣物'}
-};
-
-// 五行相生相克
-var SK={'木':{生:'火',克:'土',被生:'水',被克:'金',同:'木'},'火':{生:'土',克:'金',被生:'木',被克:'水',同:'火'},'土':{生:'金',克:'水',被生:'火',被克:'木',同:'土'},'金':{生:'水',克:'木',被生:'土',被克:'火',同:'金'},'水':{生:'木',克:'火',被生:'金',被克:'土',同:'水'}};
-
-// 十神简表（用于快速查询）
-var SM={'比肩':'自我、独立、竞争','劫财':'争夺、冲动、社交','食神':'才华、享受、温和','伤官':'叛逆、创意、表现','偏财':'意外之财、人缘','正财':'稳定收入、务实','七杀':'魄力、压力、权威','正官':'自律、责任、地位','偏印':'直觉、孤独、偏才','正印':'学业、贵人、仁慈'};
-
-// 六十甲子纳音
-var JIAZI=[];
-for(var i=0;i<60;i++){
-JIAZI.push(TG[i%10]+DZ[i%12]);
-}
-
-// 农历数据（1900-2100）
-var LUNAR_INFO=[
-0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
-0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
-0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
-0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
-0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
-0x06ca0,0x0b550,0x15355,0x04da0,0x0a5d0,0x14573,0x052d0,0x0a9a8,0x0e950,0x06aa0,
-0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
-0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b5a0,0x195a6,
-0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
-0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
-0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
-0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
-0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
-0x05aa0,0x076a3,0x096d0,0x04bd7,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
-0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0
-];
-
-// 卦象数据
-var GUA=[
-{n:'乾为天',u:'乾（天）',l:'乾（天）',j:'元亨利贞。天行健，君子以自强不息。',d:'乾卦象征天，刚健有力。适合积极行动、大展宏图。',a:'积极进取、勇往直前，但切忌亢龙有悔。',la:'大展宏图的好时机。',w:'心气不要太骄傲。'},
-{n:'坤为地',u:'坤（地）',l:'坤（地）',j:'元亨，利牝马之贞。地势坤，君子以厚德载物。',d:'坤卦象征大地，柔顺包容。适合以柔克刚、顺势而为。',a:'保持谦逊和耐心，等待时机成熟。',la:'低调做事积累经验。',w:'不要过于退缩被动。'},
-{n:'水雷屯',u:'坎（水）',l:'震（雷）',j:'元亨利贞，勿用有攸往，利建侯。',d:'屯卦象征事物萌芽，充满生机但也面临困难。',a:'万事开头难，耐心坚持。',la:'坚持就是胜利。',w:'不要急于求成。'},
-{n:'山水蒙',u:'艮（山）',l:'坎（水）',j:'亨。匪我求童蒙，童蒙求我。',d:'蒙卦象征启蒙和教育，适合学习和求教。',a:'保持谦虚好学的心态。',la:'学习新技能的好时机。',w:'不要不懂装懂。'},
-{n:'水天需',u:'坎（水）',l:'乾（天）',j:'有孚，光亨，贞吉，利涉大川。',d:'需卦象征等待，时机尚未成熟，不宜冒进。',a:'耐心等待时机，做好准备。',la:'等待机会，做好准备。',w:'等待不是懒惰。'},
-{n:'地天泰',u:'坤（地）',l:'乾（天）',j:'小往大来，吉亨。',d:'泰卦是最吉利的卦之一，天地交合，万物通泰。',a:'大吉大利！积极进取，居安思危。',la:'万事亨通，最佳时机。',w:'居安思危。'},
-{n:'天地否',u:'乾（天）',l:'坤（地）',j:'否之匪人，不利君子贞，大往小来。',d:'否卦天地不交，万物不通。象征闭塞、不顺。',a:'低调行事，等待否极泰来。',la:'保守现状等待转机。',w:'低谷期不要冲动。'},
-{n:'地山谦',u:'坤（地）',l:'艮（山）',j:'亨，君子有终。',d:'谦卦是唯一六爻皆吉的卦，象征谦虚。',a:'保持谦虚低调，谦虚是美德。',la:'低调做事赢得支持。',w:'谦虚过头变自卑。'},
-{n:'雷地复',u:'震（雷）',l:'坤（地）',j:'亨。出入无疾，朋来无咎。',d:'复卦象征否极泰来、重新开始。',a:'新的开始！抓住转机。',la:'新的开始，好运回归。',w:'不要重蹈覆辙。'},
-{n:'坎为水',u:'坎（水）',l:'坎（水）',j:'有孚，维心亨，行有尚。',d:'坎卦象征险阻和困难，但也是锻炼意志力的机会。',a:'面对困难不退缩，坚持就是胜利。',la:'坚持就是胜利。',w:'用柔和力量克服困难。'},
-{n:'离为火',u:'离（火）',l:'离（火）',j:'利贞，亨。畜牝牛，吉。',d:'离卦象征光明和美丽，充满希望。',a:'发挥光和热，保持积极乐观。',la:'展示才华，发光发热。',w:'火太盛会烧尽。'}
-];
-
-// 术语词典
-var TD={
-'八字':'八字，又称"四柱"或"生辰八字"，是中国传统命理学中最核心的概念。由出生时的年、月、日、时四个时间点组成，每个时间点用一个天干和一个地支表示，共八个字。',
-'五行':'五行是中国古代哲学的核心概念，指金、木、水、火、土五种基本元素。五行之间存在相生（木生火、火生土、土生金、金生水、水生木）和相克（木克土、土克水、水克火、火克金、金克木）的关系。',
-'天干':'天干是中国古代用来纪年的十个符号：甲、乙、丙、丁、戊、己、庚、辛、壬、癸。其中甲丙戊庚壬为阳，乙丁己辛癸为阴。',
-'地支':'地支是中国古代用来纪月的十二个符号：子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥。与十二生肖一一对应。',
-'十神':'十神是八字命理中描述日主与其他天干关系的术语体系，包括：比肩、劫财、食神、伤官、偏财、正财、七杀、正官、偏印、正印。',
-'日主':'日主是八字中日柱的天干，代表命主本人。日主是八字分析的核心，其他七个字都是围绕日主来分析的。',
-'年柱':'年柱代表祖辈、根基、童年运势、家族背景。年柱天干为祖上，地支为根基。',
-'月柱':'月柱代表父母、青年运势、事业基础、月令旺衰。月柱地支称为"月令"，决定五行旺衰。',
-'日柱':'日柱代表自己、配偶、中年运势。日柱天干称为"日主"，是八字分析的核心。',
-'时柱':'时柱代表子女、晚年运势、下属、事业成果。时柱也代表命主的内心世界。',
-'比肩':'比肩是十神之一，代表与日主同五行同阴阳的天干。象征兄弟姐妹、朋友、竞争、自我意识。',
-'劫财':'劫财是十神之一，代表与日主同五行异阴阳的天干。象征争夺、冒险、社交、异性兄弟姐妹。',
-'食神':'食神是十神之一，代表日主所生同阴阳的天干。象征才华、享受、福气、口才。',
-'伤官':'伤官是十神之一，代表日主所生异阴阳的天干。象征创意、叛逆、表现、技术。',
-'偏财':'偏财是十神之一，代表日主所克同阴阳的天干。象征横财、父亲、情人、意外之财。',
-'正财':'正财是十神之一，代表日主所克异阴阳的天干。象征妻子（男）、稳定收入、工资。',
-'七杀':'七杀是十神之一，代表克日主同阴阳的天干。象征压力、权威、小人、魄力。',
-'正官':'正官是十神之一，代表克日主异阴阳的天干。象征丈夫（女）、地位、规矩、上司。',
-'偏印':'偏印是十神之一，代表生日主同阴阳的天干。象征学识、偏门、继母、孤独。',
-'正印':'正印是十神之一，代表生日主异阴阳的天干。象征母亲、贵人、学历、保护。',
-'纳音':'纳音五行是六十甲子每一组干支对应的五行属性，如甲子乙丑为海中金。用于辅助分析命局。',
-'三合':'三合是地支之间的和谐关系，三个地支组成一个合局。申子辰合水局、寅午戌合火局、巳酉丑合金局、亥卯未合木局。',
-'六合':'六合是地支之间的亲密关系，共六对：子丑合、寅亥合、卯戌合、辰酉合、巳申合、午未合。',
-'相冲':'相冲是地支之间的冲突关系，共六对：子午冲、丑未冲、寅申冲、卯酉冲、辰戌冲、巳亥冲。',
-'相害':'相害是地支之间的暗中伤害关系：子未害、丑午害、寅巳害、卯辰害、申亥害、酉戌害。',
-'相刑':'相刑是地支之间的刑罚关系，包括子卯刑、寅巳申三刑、丑戌未三刑等。',
-'大运':'大运代表十年运势，每个人从出生起每十年进入一个大运，影响整体运势走向。',
-'流年':'流年指每一年的运势，流年干支与命局的互动决定当年的吉凶。',
-'命宫':'命宫代表一个人的本命所在，反映内在性格和命运基调。',
-'喜用神':'喜用神是八字中对日主有利的五行元素。找出喜用神是八字分析的关键步骤。',
-'忌神':'忌神是八字中对日主不利的五行元素，会加重八字中的不平衡。',
-'得令':'得令指出生在对日主有利的月份，如木日主生于寅卯月。得令则日主旺。',
-'失令':'失令指出生在对日主不利的月份，如木日主生于申酉月。失令则日主弱。',
-'帮身':'帮身指增强日主力量的因素，如比肩、劫财、印星。',
-'泄身':'泄身指消耗日主力量的因素，如食神、伤官。',
-'克身':'克身指克制日主的力量，如正官、七杀。',
-'耗身':'耗身指日主去克制的消耗，如正财、偏财。',
-'身旺':'身旺指日主力量强，需要克泄耗来平衡。',
-'身弱':'身弱指日主力量弱，需要生扶来帮助。',
-'从格':'从格指日主极弱或极强，只能顺从命局气势的特殊格局。',
-'化气':'化气指天干五合后化成的五行，如甲己合化土。'
-};
-
-// 术语变体
-var TV={
-'八字':['八字','生辰八字','四柱八字'],'五行':['五行','金木水火土'],'天干':['天干','十天干'],'地支':['地支','十二地支'],
-'十神':['十神','比肩劫财','食伤','财官印'],'纳音':['纳音','纳音五行'],'三合':['三合','三合局'],'六合':['六合','地支六合'],
-'相冲':['相冲','地支相冲','六冲'],'相害':['相害','地支相害','六害'],'相刑':['相刑','地支相刑'],
-'大运':['大运','行运'],'流年':['流年','年运'],'命宫':['命宫','命盘'],'喜用神':['喜用神','喜用','用神'],
-'忌神':['忌神'],'日主':['日主','日元','日干'],'比肩':['比肩'],'劫财':['劫财'],'食神':['食神'],'伤官':['伤官'],
-'偏财':['偏财'],'正财':['正财'],'七杀':['七杀','偏官'],'正官':['正官'],'偏印':['偏印','枭神'],'正印':['正印'],
-'年柱':['年柱'],'月柱':['月柱'],'日柱':['日柱'],'时柱':['时柱'],'得令':['得令'],'失令':['失令'],
-'帮身':['帮身'],'泄身':['泄身'],'克身':['克身'],'耗身':['耗身'],'身旺':['身旺'],'身弱':['身弱'],
-'从格':['从格'],'化气':['化气']
-};
-
-// 81数理
-var SK_DATA={
-1:['吉','万物开泰，最大吉数','为太极之数，万物开基。'],2:['凶','动摇不安，一荣一枯','混沌未定，为最大凶恶的数理。'],
-3:['吉','如意吉祥，旭日东升','如日初升，蓬勃向上。'],4:['凶','万事休止，凶祸叠来','凶变劫难，万事休止。'],
-5:['吉','福禄长寿，阴阳和合','福禄寿三数俱全。'],6:['吉','安稳余庆，吉人天相','天德地祥具备。'],
-7:['吉','精力旺盛，刚毅果断','精力旺盛，头脑敏锐。'],8:['吉','坚刚志强，意志坚强','意志如铁石。'],
-9:['凶','穷迫逆境，灾祸频来','穷迫逆境，灾祸频来。'],10:['凶','万事终局，零暗空虚','零暗万事尽头。'],
-11:['吉','旱苗逢雨，枯木逢春','阴阳复新，万事顺利。'],12:['凶','薄弱无力，柔弱困难','意志脆弱，家属缘薄。'],
-13:['吉','智能超群，博学多才','富于学艺才能。'],14:['凶','破兆浮沉，穷困逆境','浮沉不定，多破兆。'],
-15:['吉','福寿圆满，富贵荣誉','福寿圆满，富贵荣誉。'],16:['吉','厚重载德，安富尊荣','贵人得助，天降好运。'],
-17:['吉','突破万难，刚柔相济','权威刚强。'],18:['吉','有志竟成，内外有运','有志竟成，名利双收。'],
-19:['凶','多难风云，病弱废疾','多忧思疑虑，病弱废疾。'],20:['凶','破灭衰亡，灾难叠来','非运空虚，浮沉不定。'],
-21:['吉','明月中天，独立权威','首领之数，享天赋之幸福。'],22:['凶','秋草逢霜，困难疾弱','百事不如意数。'],
-23:['吉','旭日东升，壮丽壮观','旭日东升之象。'],24:['吉','家门余庆，金钱丰盈','策马前行，仍可成功。'],
-25:['吉','英俊刚毅，荣华清秀','资性英敏。'],26:['凶','变怪奇异，波澜起伏','英雄运格，波澜重叠。'],
-27:['凶','足智多谋，自损自伤','刚柔相济，但自损自伤。'],28:['凶','阔水浮萍，豪杰气概','豪气生离，家属缘薄。'],
-29:['吉','智谋优秀，财力归集','享天赋幸福之运。'],30:['凶','浮沉不定，吉凶参半','浮沉不定，成败不定。'],
-31:['吉','春日花开，智勇得志','智仁勇俱备。'],32:['吉','宝马金鞍，侥幸多望','贵人得助，财帛如裕。'],
-33:['吉','旭日升天，家门隆昌','名闻天下。'],34:['凶','破家之身，见识短小','见识短小，辛苦困难。'],
-35:['吉','高楼望月，温和平静','保守平安，有艺术才华。'],36:['凶','波澜壮阔，风浪不息','义气助人。'],
-37:['吉','猛虎出林，权威显达','享天赋幸福。'],38:['凶','磨铁成针，意志薄弱','难成大事。'],
-39:['吉','富贵繁荣，开花结果','享天赋幸福。'],40:['凶','智谋胆力，投机冒险','浮沉不定之象。'],
-41:['吉','纯阳独秀，德望高大','得上司提拔。'],42:['凶','寒蝉在柳，十艺九穷','十艺九穷。'],
-43:['凶','散财破产，诸事不宜','诸事不宜。'],44:['凶','烦闷损寿，破灭之兆','家属缘薄。'],
-45:['吉','顺风扬帆，新生泰和','但缺乏毅力。'],46:['凶','载宝沉舟，难以成功','难以成功。'],
-47:['吉','点石成金，开花结果','万事如意。'],48:['吉','智谋兼备，德智荣昌','可成大业。'],
-49:['凶','吉凶难分，转变运数','成败不定。'],50:['凶','小舟入海，吉凶参半','吉凶参半。']
-};
-
-// 汉字笔画（常用字）
-var HK={'一':1,'丁':2,'七':2,'万':15,'三':3,'上':3,'下':3,'不':4,'世':5,'丘':5,'东':8,'严':20,'中':4,'丰':4,'丽':7,'乃':2,'乐':15,'乔':12,'乙':1,'九':2,'也':3,'习':11,'了':2,'二':2,'于':3,'云':4,'井':4,'亭':9,'亮':9,'人':2,'仁':4,'仇':4,'今':4,'介':4,'仙':5,'代':5,'令':5,'以':5,'仲':6,'任':6,'伊':6,'伍':6,'伟':11,'伯':7,'何':7,'佩':8,'佳':8,'依':8,'侯':9,'俊':9,'俞':9,'信':9,'倪':10,'傅':12,'储':18,'元':4,'充':6,'兆':6,'先':6,'光':6,'入':2,'全':6,'八':2,'公':4,'共':6,'关':19,'其':8,'养':15,'冀':16,'冉':5,'农':13,'冠':9,'冬':5,'冯':12,'冰':6,'冶':7,'冷':7,'凌':10,'凤':14,'出':5,'刀':2,'刁':2,'分':4,'刘':15,'判':7,'利':7,'别':7,'力':2,'功':5,'加':5,'劳':12,'勃':9,'勾':7,'包':5,'化':4,'匡':7,'十':2,'千':3,'半':5,'华':14,'卓':8,'单':12,'南':9,'博':12,'卢':16,'卫':15,'印':6,'友':4,'双':4,'反':4,'古':5,'可':5,'史':5,'右':5,'叶':15,'司':5,'合':6,'吉':6,'同':6,'名':6,'后':9,'向':6,'吕':6,'君':7,'吴':7,'周':8,'和':8,'哲':10,'唐':10,'善':12,'喻':12,'嘉':14,'国':11,'圣':13,'坚':11,'培':11,'基':11,'堂':11,'士':3,'壮':7,'夏':10,'多':6,'大':3,'天':4,'太':4,'夫':4,'奕':9,'女':3,'好':6,'姚':9,'姜':9,'姬':10,'威':9,'娟':10,'婉':11,'子':3,'孔':4,'孙':10,'孟':8,'季':8,'宁':5,'宇':6,'守':6,'安':6,'宋':7,'宏':7,'宗':8,'宫':10,'宰':10,'家':10,'容':10,'寇':11,'富':12,'寸':3,'寿':14,'封':9,'小':3,'少':4,'尚':8,'尤':4,'尹':4,'居':8,'屈':8,'展':10,'山':3,'岑':7,'峰':10,'峻':10,'崔':11,'川':3,'巢':11,'工':3,'左':5,'巧':5,'巨':5,'巩':15,'巫':7,'已':3,'巴':4,'帆':6,'师':10,'希':7,'席':10,'常':11,'干':3,'平':5,'年':6,'幸':8,'幼':5,'广':3,'庄':6,'庆':6,'应':7,'庞':8,'度':9,'康':11,'廉':13,'廖':14,'延':6,'建':8,'开':12,'弓':3,'引':4,'弘':5,'张':7,'强':12,'彦':9,'彩':11,'彭':12,'徐':10,'德':15,'心':4,'必':5,'志':7,'忠':8,'思':9,'恩':10,'悦':10,'惠':12,'意':13,'慎':14,'慕':15,'慧':15,'戈':4,'戚':11,'戴':17,'房':8,'手':4,'才':3,'扶':8,'敏':11,'敖':10,'敬':12,'文':4,'新':13,'方':4,'施':9,'日':4,'时':7,'旺':8,'昆':8,'昌':8,'明':8,'易':8,'星':9,'映':9,'春':9,'昭':9,'昱':9,'晨':11,'景':12,'晴':12,'晶':12,'智':12,'曲':6,'更':7,'曹':11,'曼':11,'曾':12,'月':4,'有':6,'木':4,'本':5,'朱':6,'权':6,'李':7,'杏':7,'杜':7,'束':7,'杨':7,'杭':8,'松':8,'林':8,'柏':9,'柔':9,'查':9,'柯':9,'柳':9,'根':10,'桂':10,'桐':10,'桑':10,'桓':10,'梁':11,'梅':11,'楚':13,'樊':15,'欣':8,'欧':8,'正':5,'步':7,'武':8,'殳':4,'段':9,'殷':10,'毕':6,'毛':4,'民':5,'水':4,'永':5,'求':7,'江':6,'池':6,'汪':7,'沈':7,'沙':7,'洪':9,'洲':9,'洋':9,'津':9,'洪':9,'海':10,'涂':10,'消':10,'涛':10,'涵':11,'深':11,'淳':11,'清':11,'渊':12,'港':12,'湖':12,'湘':12,'湛':12,'温':12,'游':12,'湯':12,'满':13,'源':13,'溪':14,'溢':13,'滨':13,'漂':14,'漆':14,'漫':14,'潇':14,'潘':15,'潮':15,'澄':15,'澎':15,'澳':15,'激':16,'火':4,'灯':6,'灰':6,'灵':7,'炎':8,'炉':8,'炜':8,'炫':9,'炳':9,'炼':9,'烁':9,'烈':10,'烘':10,'烛':10,'烟':10,'烨':10,'热':10,'焊':11,'焕':11,'煌':12,'煎':13,'煤':13,'照':13,'煜':13,'熙':14,'熊':14,'熟':15,'燕':16,'爆':19,'爪':4,'爬':8,'爱':10,'父':4,'爷':6,'爸':8,'爽':11,'片':4,'牙':4,'牛':4,'牝':6,'牡':7,'牢':7,'牧':8,'物':8,'牲':9,'牵':9,'特':10,'牺':10,'犬':4,'犯':5,'状':7,'犹':7,'狂':7,'狐':8,'狗':8,'狡':9,'独':9,'狮':9,'狰':9,'狱':9,'狼':10,'猛':11,'猜':11,'猪':11,'猫':11,'献':13,'猴':12,'玄':5,'率':11,'玉':5,'王':4,'玛':7,'玩':8,'玫':8,'环':8,'现':8,'玲':9,'玻':9,'珊':9,'珍':9,'珠':10,'班':10,'球':11,'理':11,'琉':11,'琅':11,'琴':12,'瑞':13,'瑜':13,'瑶':14,'璇':15,'瓜':5,'瓦':5,'瓶':10,'甘':5,'甚':9,'甜':11,'生':5,'用':5,'田':5,'由':5,'甲':5,'申':5,'电':5,'男':7,'甸':7,'画':8,'畅':8,'界':9,'畏':9,'留':10,'畜':10,'略':11,'番':12,'畴':12,'疆':19,'疏':12,'疑':14,'疗':7,'疫':9,'疮':9,'疯':9,'疲':10,'疼':10,'疾':10,'病':10,'痕':11,'痛':12,'登':12,'白':5,'百':6,'的':8,'皇':9,'皮':5,'盈':9,'益':10,'监':10,'盒':11,'盖':11,'盘':11,'盛':11,'盟':13,'目':5,'直':8,'相':9,'盼':9,'盾':9,'省':9,'眉':9,'看':9,'真':10,'眠':10,'眼':11,'着':11,'睛':13,'睡':13,'瞎':15,'瞧':17,'知':8,'短':12,'石':5,'矶':7,'码':8,'砂':9,'砌':9,'砍':9,'研':9,'砖':9,'破':10,'础':10,'硕':11,'确':12,'磁':14,'磨':16,'示':5,'礼':5,'社':7,'祀':7,'祖':9,'神':9,'祝':9,'票':11,'祭':11,'禁':13,'福':14,'离':10,'禾':5,'秀':7,'私':7,'秋':9,'种':9,'科':9,'秒':9,'秘':10,'租':10,'秤':10,'秦':10,'秧':10,'秩':10,'积':10,'称':10,'移':11,'稀':12,'程':12,'稍':12,'税':12,'稳':14,'稻':15,'稼':15,'稿':15,'穗':17,'穴':5,'究':7,'穷':7,'空':8,'穿':9,'突':9,'窃':9,'窗':12,'窝':12,'立':5,'站':10,'竟':11,'章':11,'童':12,'端':14,'竹':6,'竿':9,'笋':10,'笑':10,'笔':10,'笛':11,'符':11,'第':11,'笼':11,'等':12,'筋':12,'答':12,'策':12,'筛':12,'筒':12,'算':14,'管':14,'箭':15,'箱':15,'篇':15,'篮':16,'篱':16,'米':6,'类':9,'粉':10,'粒':11,'粗':11,'粘':11,'粟':12,'粤':12,'粥':12,'粮':13,'精':14,'糊':15,'糖':16,'糟':17,'系':7,'素':10,'索':10,'紧':10,'紫':12,'累':11,'繁':17,'纠':5,'红':6,'纤':6,'约':6,'级':6,'纪':6,'纯':7,'纲':7,'纳':7,'纵':7,'纷':7,'纸':7,'纹':7,'纺':7,'纽':7,'线':8,'练':8,'组':8,'细':8,'终':8,'绍':8,'经':8,'绑':9,'绒':9,'结':9,'绕':9,'绘':9,'给':9,'络':9,'绝':9,'统':9,'丝':5,'纠':5,'级':6,'纲':7,'纳':7,'纵':7,'纷':7,'纸':7,'纺':7,'纽':7,'线':8,'练':8,'组':8,'细':8,'绍':8,'经':8,'绑':9,'绒':9,'结':9,'绕':9,'绘':9,'给':9,'络':9,'绝':9,'统':9,'丝':5,'绿':11,'编':12,'缘':12,'缩':14,'网':6,'罗':8,'罚':9,'罪':13,'置':13,'羊':6,'美':9,'群':13,'羽':6,'翁':10,'翅':10,'翔':12,'翠':14,'翻':18,'翼':17,'老':6,'考':6,'者':8,'而':6,'耐':9,'耕':10,'耗':10,'耳':6,'耶':8,'耸':10,'职':11,'联':12,'聚':14,'肉':6,'肋':6,'肌':6,'肖':7,'肝':7,'肠':7,'股':8,'肢':8,'肥':8,'肩':8,'肯':8,'育':8,'肺':8,'胃':9,'胆':9,'背':9,'胖':9,'胜':9,'胞':9,'胡':9,'脉':9,'能':10,'脂':10,'胸':10,'脏':10,'脑':10,'脱':11,'脸':11,'腊':12,'腰':13,'腹':13,'腿':13,'膏':14,'膜':14,'膝':15,'膨':16,'臣':6,'自':6,'至':6,'舌':6,'舍':8,'舒':12,'舞':14,'舟':6,'航':10,'般':10,'舰':10,'船':11,'良':7,'色':6,'艺':4,'艾':5,'节':5,'芒':6,'芝':6,'芦':7,'芬':7,'花':7,'芳':7,'苍':7,'苏':7,'苗':8,'若':8,'苦':8,'英':8,'苹':8,'茂':8,'范':8,'茅':8,'茄':8,'茎':8,'茶':9,'草':9,'荐':9,'药':9,'荷':10,'获':10,'菜':11,'菩':11,'菊':11,'萍':11,'菠':11,'营':11,'萨':11,'落':12,'葡':12,'葱':12,'蒋':12,'蒂':12,'蒙':13,'蒸':13,'蓄':13,'蓝':13,'藏':17,'虎':8,'虑':10,'虫':6,'虹':9,'虽':9,'虾':9,'蚁':9,'蚂':9,'蚊':10,'蛋':11,'蛙':12,'蛛':12,'蜂':13,'蜓':12,'蜡':14,'蝴':15,'蝶':15,'融':16,'血':6,'行':6,'街':12,'衣':6,'补':7,'表':8,'袋':11,'袖':10,'被':10,'裁':12,'裂':12,'装':12,'裕':12,'裙':12,'裤':12,'西':6,'要':9,'覆':18,'见':4,'观':6,'规':8,'视':8,'览':9,'角':7,'解':13,'言':7,'证':7,'评':7,'识':7,'诉':7,'词':7,'译':7,'试':8,'诗':8,'诚':8,'话':8,'诞':8,'询':8,'该':8,'详':8,'语':9,'误':9,'说':9,'请':10,'读':10,'课':10,'谁':10,'调':10,'谈':10,'谋':11,'谎':11,'谐':11,'谓':11,'谜':11,'象':11,'豪':14,'貌':14,'贝':4,'负':6,'财':7,'责':8,'贤':8,'败':8,'货':8,'质':8,'贩':8,'贪':8,'购':8,'贯':8,'贱':9,'贴':9,'贵':9,'贷':9,'费':9,'贺':9,'贼':10,'贾':10,'资':10,'贼':10,'赖':13,'赛':14,'赞':16,'赢':17,'赵':9,'起':10,'趁':12,'超':12,'越':12,'趋':12,'足':7,'跃':11,'距':11,'跟':13,'路':13,'跳':13,'踏':15,'身':7,'躲':13,'车':4,'轨':6,'转':8,'轮':8,'软':8,'轰':8,'轻':9,'载':10,'较':10,'辅':11,'辆':11,'辉':12,'辈':12,'辉':12,'输':13,'辨':16,'辛':7,'辞':13,'辨':16,'辰':7,'边':5,'辽':5,'达':6,'迁':6,'过':6,'迈':6,'迎':7,'运':7,'近':7,'返':7,'还':7,'进':7,'远':7,'连':7,'迟':7,'述':8,'迪':8,'迫':8,'述':8,'迷':9,'迹':9,'追':9,'退':9,'送':9,'适':9,'逃':9,'逆':9,'选':9,'透':10,'途':10,'逐':10,'通':10,'造':10,'遇':12,'遍':12,'遗':12,'道':12,'遵':15,'避':16,'那':6,'邦':6,'邪':6,'邮':7,'邱':7,'邻':7,'郎':8,'郑':8,'部':10,'郭':10,'都':10,'鄂':11,'酉':7,'酒':10,'配':10,'酬':13,'醉':15,'采':8,'释':12,'里':7,'重':9,'野':11,'量':12,'金':8,'针':7,'钉':7,'钓':8,'钟':9,'钢':9,'钦':9,'钥':9,'钱':10,'钳':10,'钻':10,'铁':10,'铃':10,'铅':10,'银':11,'铺':12,'链':12,'销':12,'锁':12,'锅':12,'锈':12,'锋':12,'错':13,'锡':13,'锣':13,'锤':13,'锦':16,'键':13,'镇':15,'镜':16,'长':4,'门':3,'闪':5,'闭':6,'问':6,'闯':6,'闲':7,'间':7,'闷':7,'闸':8,'闹':8,'闻':9,'阁':9,'阅':10,'阔':12,'队':4,'防':6,'阳':6,'阴':6,'阵':6,'阶':6,'阻':7,'阿':7,'附':7,'际':7,'陆':7,'陈':7,'雨':8,'雪':11,'零':13,'雷':13,'雾':13,'需':14,'震':15,'露':21,'青':8,'静':14,'非':8,'靠':15,'面':9,'革':9,'音':9,'页':6,'顶':8,'项':9,'顺':9,'须':9,'顽':10,'顾':10,'顿':10,'颂':10,'预':10,'领':11,'颇':11,'颈':11,'频':13,'颗':14,'题':15,'颜':15,'额':15,'风':4,'飘':15,'飞':3,'食':9,'饭':7,'饮':7,'饰':8,'饱':8,'饲':8,'饶':9,'饺':9,'饼':9,'馆':11,'首':9,'香':9,'马':3,'驰':6,'驱':7,'驳':7,'驴':7,'驶':8,'驻':8,'驾':8,'验':10,'骑':11,'骗':12,'骨':9,'高':10,'鬼':9,'魔':20,'鱼':8,'鲜':14,'鸟':5,'鸡':7,'鸣':8,'鸦':9,'鸭':10,'鸿':11,'麦':7,'麻':11,'黄':11,'黑':12,'默':16,'齐':6,'齿':8,'龄':13,'龙':5,'龟':7};
-
-// ===== 农历转换函数 =====
-function lunarToSolar(lYear,lMonth,lDay,isLeap){
-var baseDate=new Date(1900,0,31);
-var offset=0;
-for(var i=1900;i<lYear;i++){
-offset+=lunarYearDays(i);
-}
-for(var i=1;i<lMonth;i++){
-offset+=lunarMonthDays(lYear,i);
-}
-if(isLeap){
-offset+=lunarMonthDays(lYear,lMonth);
-}
-offset+=lDay-1;
-var solarDate=new Date(baseDate.getTime()+offset*86400000);
-return{sYear:solarDate.getFullYear(),sMonth:solarDate.getMonth()+1,sDay:solarDate.getDate()};
-}
-
-function solarToLunar(sYear,sMonth,sDay){
-var baseDate=new Date(1900,0,31);
-var targetDate=new Date(sYear,sMonth-1,sDay);
-var offset=Math.floor((targetDate-baseDate)/86400000);
-var lYear=1900,lMonth=1,lDay=1,leap=false;
-var temp=0;
-for(var i=1900;i<2100&&offset>0;i++){
-temp=lunarYearDays(i);
-if(offset<temp){
-lYear=i;
-break;
-}
-offset-=temp;
-}
-var leapMonth=leapMonthOfYear(lYear);
-for(var i=1;i<=12&&offset>0;i++){
-var leapDays=0;
-if(leapMonth>0&&i==leapMonth+1){
-leapDays=leapDaysOfYear(lYear);
-if(offset<leapDays){
-lMonth=leapMonth;
-lDay=offset+1;
-leap=true;
-return{lYear:lYear,lMonth:lMonth,lDay:lDay,isLeap:true};
-}
-offset-=leapDays;
-}
-var monthDays=lunarMonthDays(lYear,i);
-if(offset<monthDays){
-lMonth=i;
-lDay=offset+1;
-break;
-}
-offset-=monthDays;
-}
-return{lYear:lYear,lMonth:lMonth,lDay:lDay,isLeap:false};
-}
-
-function lunarYearDays(year){
-var sum=348;
-for(var i=0x8000;i>0x8;i>>=1){
-sum+=(LUNAR_INFO[year-1900]&i)?1:0;
-}
-return sum+leapDaysOfYear(year);
-}
-
-function lunarMonthDays(year,month){
-return(LUNAR_INFO[year-1900]&(0x10000>>month))?30:29;
-}
-
-function leapDaysOfYear(year){
-if(leapMonthOfYear(year)){
-return(LUNAR_INFO[year-1900]&0x10000)?30:29;
-}
-return 0;
-}
-
-function leapMonthOfYear(year){
-return LUNAR_INFO[year-1900]&0xf;
-}
-
-// ===== 工具函数 =====
-function S(n){var s='';for(var i=0;i<n;i++)s+='═';return s;}
-function L(n){var s='';for(var i=0;i<n;i++)s+='─';return s;}
-function stars(s){var r='';for(var i=0;i<Math.floor(s/10);i++)r+='★';for(var i=0;i<10-Math.floor(s/10);i++)r+='☆';return r;}
-function bar(w,c){var r='';for(var i=0;i<c;i++)r+='█';for(var i=0;i<8-c;i++)r+='░';return r;}
-function lvl(s){return s>=90?'极佳':s>=80?'良好':s>=70?'一般':'需努力';}
-function cs(c){return HK[c]||((function(){var h=0;for(var i=0;i<c.length;i++)h+=c.charCodeAt(i);return(Math.abs(h)%24)+1})());}
-function n2w(n){var r=n%10;if(r===1||r===2)return'木';if(r===3||r===4)return'火';if(r===5||r===6)return'土';if(r===7||r===8)return'金';return'水';}
-function gm(n){if(n<1)n=1;if(n>81)n=((n-1)%81)+1;return SK_DATA[n]||['凶','运势平平','无特殊含义'];}
-function gsx(y){return SX[(y-4)%12];}
-
-// 计算八字
-function gb(y,m,d,h){
-var yg=(y-4)%10,yz=(y-4)%12;
-var mzb=(m+1)%12,mgb=(yg%5)*2+Math.floor((mzb%12+12)/2),mg=mgb%10,mz=mzb;
-var bd=new Date(1900,0,1),td=new Date(y,m-1,d),dt=Math.floor((td-bd)/86400000),dg=(dt+10)%10,dz=dt%12;
-if(h<0)h=0;
-var sc=Math.floor((h+1)/2);
-if(sc>=12)sc=0;
-var tg=((dg%5)*2+sc)%10,tz=sc;
-return{y:{g:TG[yg],z:DZ[yz]},m:{g:TG[mg],z:DZ[mz]},d:{g:TG[dg],z:DZ[dz]},t:{g:TG[tg],z:DZ[tz]}};
-}
-
-// 计算五行
-function wc(b){
-var c={金:0,木:0,水:0,火:0,土:0};
-var ks=['y','m','d','t'];
-for(var i=0;i<4;i++){
-var p=b[ks[i]];
-c[WXG[TG.indexOf(p.g)]]++;
-c[WXZ[DZ.indexOf(p.z)]]++;
-}
-return c;
-}
-
-// 计算纳音
-function ny(b){
-var r=[],ks=['y','m','d','t'];
-for(var i=0;i<4;i++){
-var p=b[ks[i]],gi=TG.indexOf(p.g),zi=DZ.indexOf(p.z),idx=0;
-for(var j=0;j<60;j++){
-if(j%10===gi&&j%12===zi){idx=j;break;}
-}
-r.push(NY[Math.floor(idx/2)]);
-}
-return r;
-}
-
-// 分析五行
-function aw(w){
-var t=0;
-for(var x in w)t+=w[x];
-if(t===0)return['五行平衡',[]];
-var r=[];
-for(var x in w){
-var p=w[x]/t*100,l=p>=30?'旺':p>=20?'相':p>=10?'平':'弱';
-r.push(x+'：'+l+' ('+w[x]+'个, '+Math.round(p)+'%)');
-}
-var ms=[],mx=0,mn=999;
-for(var x in w){
-if(w[x]===0)ms.push(x);
-if(w[x]>mx)mx=w[x];
-if(w[x]<mn)mn=w[x];
-}
-var dm='',ws=[];
-for(var x in w){
-if(w[x]===mx)dm=x;
-if(w[x]===mn)ws.push(x);
-}
-var s='日主五行属'+dm+'，';
-if(ms.length>0)s+='五行缺'+ms.join('、')+'，';
-s+='喜用神建议补'+ws.join('、')+'。';
-return[s,r];
-}
-
-// 计算十神
-function ss(dg,og){
-var di=TG.indexOf(dg),oi=TG.indexOf(og),df=(oi-di+10)%10,sy=di%2===oi%2;
-var tb={0:['比肩','劫财'],1:['劫财','比肩'],2:['食神','伤官'],3:['伤官','食神'],4:['偏财','正财'],5:['正财','偏财'],6:['七杀','正官'],7:['正官','七杀'],8:['偏印','正印'],9:['正印','偏印']};
-return tb[df][sy?0:1];
-}
-
-// 切换Tab
-function sw(tn){
-var cs=document.querySelectorAll('.tc');
-for(var i=0;i<cs.length;i++)cs[i].classList.remove('on');
-document.getElementById('t-'+tn).classList.add('on');
-var bs=document.querySelectorAll('.tb');
-for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
-var ab=document.querySelector('[data-t="'+tn+'"]');
-if(ab){
-ab.classList.add('on');
-ab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-}
-}
-
-// 初始化下拉框
-function initSel(){
-var ids=[['bY',1900,2100],['bM',1,12],['bD',1,31],['bH',0,11],['mAY',1900,2100],['mAM',1,12],['mAD',1,31],['mAH',0,11],['mBY',1900,2100],['mBM',1,12],['mBD',1,31],['mBH',0,11]];
-for(var i=0;i<ids.length;i++){
-var el=document.getElementById(ids[i][0]);
-if(!el)continue;
-el.innerHTML='';
-for(var v=ids[i][1];v<=ids[i][2];v++){
-var o=document.createElement('option');
-o.value=v;
-if(ids[i][0].indexOf('H')>=0){
-o.textContent=SCN[v];
-}else{
-o.textContent=v;
-}
-el.appendChild(o);
-}
-}
-document.getElementById('bY').value='1990';
-document.getElementById('mAY').value='1990';
-document.getElementById('mBY').value='1992';
-}
-
-// 切换历法显示
-function toggleCalendar(type){
-var ltype=document.getElementById(type==='bazi'?'bLType':'mALType').value;
-}
-
-// 获取真实出生日期（处理农历）
-function getRealBirthDate(year,month,day,hour,lunarType){
-if(lunarType==='lunar'){
-var solar=lunarToSolar(year,month,day,false);
-return{sYear:solar.sYear,sMonth:solar.sMonth,sDay:solar.sDay,sHour:hour*2-1};
-}
-return{sYear:year,sMonth:month,sDay:day,sHour:hour*2-1};
-}
-
-// ===== 八字命理 =====
-function doBazi(){
-try{
-var y=+document.getElementById('bY').value,m=+document.getElementById('bM').value,d=+document.getElementById('bD').value,h=+document.getElementById('bH').value;
-var ltype=document.getElementById('bLType').value;
-if(y<1900||y>2100||m<1||m>12||d<1||d>31||h<0||h>11){alert('请检查输入范围');return;}
-
-// 农历转阳历
-var realDate=getRealBirthDate(y,m,d,h,ltype);
-var b=gb(realDate.sYear,realDate.sMonth,realDate.sDay,realDate.sHour);
-var w=wc(b),na=ny(b),ar=aw(w),sm=ar[0],dt=ar[1],dm=b.d.g;
-var sx=gsx(realDate.sYear),sci=h;
-
-// 计算十神
-var allGan=[b.y.g,b.m.g,b.d.g,b.t.g];
-var allZhi=[b.y.z,b.m.z,b.d.z,b.t.z];
-var ssList=[];
-for(var i=0;i<allGan.length;i++){
-if(allGan[i]!==dm){
-ssList.push({position:['年干','月干','日干','时干'][i],gan:allGan[i],shen:ss(dm,allGan[i])});
-}
-}
-
-// 五行分析
-var wb='',wns=['金','木','水','火','土'];
-for(var i=0;i<5;i++){
-wb+='  '+wns[i]+' '+bar(wns[i],w[wns[i]])+' '+w[wns[i]]+'个\n';
-}
-
-// 判断五行旺衰
-var maxWX='',minWX='',maxCount=0,minCount=999;
-for(var x in w){
-if(w[x]>maxCount){maxCount=w[x];maxWX=x;}
-if(w[x]<minCount){minCount=w[x];minWX=x;}
-}
-
-var dw=WXG[TG.indexOf(dm)],dy=GYY[TG.indexOf(dm)];
-
-// 四柱详细解释
-var zhuExplain={
-year:{name:'年柱',position:'年柱',gan:b.y.g,zhi:b.y.z,explain:'代表祖辈、根基、童年运势、家族背景。年柱天干为祖上，地支为根基，影响1-16岁运势。'},
-month:{name:'月柱',position:'月柱',gan:b.m.g,zhi:b.m.z,explain:'代表父母、青年运势、事业基础、月令旺衰。月柱地支称为"月令"，决定五行旺衰，影响17-32岁运势。'},
-day:{name:'日柱',position:'日柱',gan:b.d.g,zhi:b.d.z,explain:'代表自己、配偶、中年运势。日柱天干称为"日主"，是八字分析的核心，影响33-48岁运势。'},
-time:{name:'时柱',position:'时柱',gan:b.t.g,zhi:b.t.z,explain:'代表子女、晚年运势、下属、事业成果。时柱也代表命主的内心世界，影响49岁以后运势。'}
-};
-
-// 日主性格
-var dp={
-'甲':'你像一棵参天大树，性格正直刚毅，有着强烈的正义感和上进心。为人仁慈，有领导才能。',
-'乙':'你像一棵柔韧的藤蔓，性格温和灵活，善于适应各种环境。为人细腻，有艺术天赋。',
-'丙':'你像太阳一样热情奔放，性格开朗大方，走到哪里都能带来温暖。为人热心，有感染力。',
-'丁':'你像烛光一样温暖而内敛，性格细腻敏感，善于洞察人心。为人谨慎，有奉献精神。',
-'戊':'你像大地一样厚重可靠，性格沉稳踏实，有着极强的包容力。为人诚信，值得信赖。',
-'己':'你像花园里的泥土一样滋养万物，性格温和善良，乐于助人。为人细致，善于协调。',
-'庚':'你像一把锋利的宝剑，性格刚毅果断，做事雷厉风行。为人正义，有决断力。',
-'辛':'你像一颗精美的珠宝，性格精致优雅，追求完美。为人敏感，有品位。',
-'壬':'你像大海一样广阔深邃，性格聪明智慧，有着极强的学习能力。为人灵活，善谋略。',
-'癸':'你像雨露一样润物无声，性格温柔细腻，有着极强的直觉力。为人聪慧，善观察。'
-};
-
-// 五行缺失分析
-var missingWX=[];
-for(var x in w){if(w[x]===0)missingWX.push(x);}
-
-// 事业分析
-var careerAnalysis='';
-if(dw==='木'){
-careerAnalysis='适合从事教育、文化、出版、林业、环保等行业。事业发展宜稳扎稳打，长期积累。';
-}else if(dw==='火'){
-careerAnalysis='适合从事演艺、传媒、餐饮、能源、电子等行业。事业发展需要展现个人魅力，把握机遇。';
-}else if(dw==='土'){
-careerAnalysis='适合从事房地产、建筑、农业、金融、管理等行业。事业发展需要脚踏实地，稳步前进。';
-}else if(dw==='金'){
-careerAnalysis='适合从事金融、法律、机械、汽车、军警等行业。事业发展需要果断决策，把握时机。';
-}else if(dw==='水'){
-careerAnalysis='适合从事贸易、物流、旅游、咨询、IT等行业。事业发展需要灵活变通，顺应时势。';
-}
-
-// 感情分析
-var loveAnalysis='';
-var dayZhiWX=WXZ[DZ.indexOf(b.d.z)];
-if(dayZhiWX==='金'){
-loveAnalysis='配偶可能性格刚毅果断，重视原则。感情中需要互相尊重，避免过于强势。';
-}else if(dayZhiWX==='木'){
-loveAnalysis='配偶可能性格温和善良，有爱心。感情中需要互相扶持，共同成长。';
-}else if(dayZhiWX==='水'){
-loveAnalysis='配偶可能性格聪明灵活，善变。感情中需要多沟通，保持新鲜感。';
-}else if(dayZhiWX==='火'){
-loveAnalysis='配偶可能性格热情开朗，有活力。感情中需要互相包容，避免冲动。';
-}else if(dayZhiWX==='土'){
-loveAnalysis='配偶可能性格稳重踏实，可靠。感情中需要互相理解，保持稳定。';
-}
-
-// 财运分析
-var wealthType=(ssList.some(function(s){return s.shen==='偏财';}))?'偏财运旺，适合投资理财、副业增收':'正财运稳，适合稳定工作、长期积累';
-var wealthAdvice='';
-if(maxWX==='金'){
-wealthAdvice='财运较旺，适合金融投资，但要注意风险控制。';
-}else if(maxWX==='水'){
-wealthAdvice='财运流动，适合贸易流通，要注意资金周转。';
-}else if(maxWX==='木'){
-wealthAdvice='财运稳健增长，适合长期投资，避免急功近利。';
-}else if(maxWX==='火'){
-wealthAdvice='财运起伏较大，把握机遇时要冷静分析。';
-}else if(maxWX==='土'){
-wealthAdvice='财运扎实，适合稳健理财，积少成多。';
-}
-
-var ns=document.getElementById('bN').value.trim();
-var calendarLabel=ltype==='lunar'?'农历':'阳历';
-
-var t=S(50)+'\n  八字命理分析报告\n'+S(50)+'\n\n  基本信息\n  姓名：'+(ns||'未填写')+'\n  出生: '+calendarLabel+y+'年'+m+'月'+d+'日 '+SCN[sci]+'\n  阳历: '+realDate.sYear+'年'+realDate.sMonth+'月'+realDate.sDay+'日 '+SC_TIME[sci]+'\n  生肖: '+SE[(realDate.sYear-4)%12]+' '+sx+'\n\n'+L(50)+'\n  四柱八字详解\n';
-
-// 四柱详细解析
-for(var key in zhuExplain){
-var z=zhuExplain[key];
-t+='\n  【'+z.name+'】'+z.gan+z.zhi+'\n  '+z.explain+'\n';
-}
-
-t+='\n'+L(50)+'\n  日主分析\n  你的日主是：'+dm+'（'+dy+dw+'）\n  '+(dp[dm]||'')+'\n\n'+L(50)+'\n  纳音五行\n  年柱纳音：'+na[0]+' | 月柱纳音：'+na[1]+'\n  日柱纳音：'+na[2]+' | 时柱纳音：'+na[3]+'\n\n'+L(50)+'\n  五行分析\n'+wb+'\n  '+sm+'\n';
-
-// 五行性格分析
-t+='\n'+L(50)+'\n  五行性格分析\n  最旺五行【'+maxWX+'】：'+(WX_PERSONALITY[maxWX]?WX_PERSONALITY[maxWX].strong:'')+'\n';
-if(missingWX.length>0){
-t+='  五行缺失【'+missingWX.join('、')+'】：';
-for(var i=0;i<missingWX.length;i++){
-t+=(WX_PERSONALITY[missingWX[i]]?WX_PERSONALITY[missingWX[i]].missing:'')+'；';
-}
-t+='\n';
-}
-
-// 十神详细解析
-t+='\n'+L(50)+'\n  十神关系详解（以日主"'+dm+'"为基准）\n';
-for(var i=0;i<ssList.length;i++){
-var s=ssList[i];
-var detail=SS_DETAIL[s.shen];
-t+='\n  【'+s.position+'】'+s.gan+' → '+s.shen+'\n  含义：'+detail.meaning+'\n  代表：'+detail.represent+'\n  性格：'+detail.character+'\n  作用：'+detail.effect+'\n  建议：'+detail.advice+'\n';
-}
-
-// 事业、感情、财运分析
-t+='\n'+L(50)+'\n  事业分析\n  '+careerAnalysis+'\n\n'+L(50)+'\n  感情分析\n  '+loveAnalysis+'\n\n'+L(50)+'\n  财运分析\n  '+wealthType+'\n  '+wealthAdvice+'\n';
-
-// 五行补救建议
-if(missingWX.length>0){
-t+='\n'+L(50)+'\n  五行补救建议\n';
-var tips={'金':'多穿白色/金色衣物，佩戴金属饰品，从事金融相关行业','木':'多接触绿色植物，居住增加木质元素，从事教育文化行业','水':'多饮水，居住靠近水源，佩戴蓝色饰品，从事贸易物流行业','火':'多晒太阳，穿暖色调衣物，从事演艺传媒行业','土':'多接触大自然，穿黄色衣物，保持规律作息，从事房地产建筑行业'};
-for(var i=0;i<missingWX.length;i++){
-t+='  · '+missingWX[i]+'缺：'+tips[missingWX[i]]+'\n';
-}
-}
-
-// 保存当前八字数据用于合婚
-window.currentBazi={y:realDate.sYear,m:realDate.sMonth,d:realDate.sDay,h:realDate.sHour,name:ns||'我'};
-
-document.getElementById('bR').textContent=t;
-}catch(e){alert('请检查输入: '+e.message);}
-}
-
-// 跳转到合婚并带入当前八字
-function goToMatch(){
-if(!window.currentBazi){
-alert('请先进行八字测算');
-return;
-}
-var cb=window.currentBazi;
-document.getElementById('mAY').value=cb.y;
-document.getElementById('mAM').value=cb.m;
-document.getElementById('mAD').value=cb.d;
-document.getElementById('mAH').value=Math.floor((cb.h+1)/2);
-document.getElementById('mALType').value='solar';
-document.getElementById('mAN').value=cb.name;
-sw('match');
-}
-
-// ===== 八字合婚 =====
-function doMatch(){
-try{
-var ay=+document.getElementById('mAY').value,am=+document.getElementById('mAM').value,ad=+document.getElementById('mAD').value,ah=+document.getElementById('mAH').value;
-var by=+document.getElementById('mBY').value,bm=+document.getElementById('mBM').value,bd=+document.getElementById('mBD').value,bh=+document.getElementById('mBH').value;
-var altype=document.getElementById('mALType').value,bltype=document.getElementById('mBLType').value;
-
-if(ay<1900||ay>2100||am<1||am>12||ad<1||ad>31||ah<0||ah>11||by<1900||by>2100||bm<1||bm>12||bd<1||bd>31||bh<0||bh>11){alert('请检查输入范围');return;}
-
-// 农历转阳历
-var realDateA=getRealBirthDate(ay,am,ad,ah,altype);
-var realDateB=getRealBirthDate(by,bm,bd,bh,bltype);
-
-var ba=gb(realDateA.sYear,realDateA.sMonth,realDateA.sDay,realDateA.sHour);
-var bb=gb(realDateB.sYear,realDateB.sMonth,realDateB.sDay,realDateB.sHour);
-var wa=wc(ba),wb=wc(bb);
-var sa=gsx(realDateA.sYear),sb=gsx(realDateB.sYear);
-var da=ba.d.g,db=bb.d.g;
-var daw=WXG[TG.indexOf(da)],dbw=WXG[TG.indexOf(db)];
-
-// 计算合婚评分
-var ts=50;
-
-// 生肖配对
-var sia={'鼠':{bm:['龙','猴','牛'],am:['马','兔','羊']},'牛':{bm:['鼠','蛇','鸡'],am:['马','羊','狗']},'虎':{bm:['马','狗','猪'],am:['蛇','猴']},'兔':{bm:['羊','狗','猪'],am:['鼠','龙','鸡']},'龙':{bm:['鼠','猴','鸡'],am:['狗','兔','龙']},'蛇':{bm:['牛','鸡'],am:['虎','猪']},'马':{bm:['虎','羊','狗'],am:['鼠','牛','兔']},'羊':{bm:['兔','马','猪'],am:['牛','鼠','狗']},'猴':{bm:['鼠','龙','蛇'],am:['虎','猪']},'鸡':{bm:['牛','龙','蛇'],am:['兔','狗','鸡']},'狗':{bm:['虎','兔','马'],am:['龙','牛','羊']},'猪':{bm:['羊','兔','虎'],am:['蛇','猴','猪']}};
-var sInfo=sia[sa]||{bm:[],am:[]};
-var ssScore=0;
-if(sInfo.bm.indexOf(sb)>=0)ssScore=20;
-else if(sInfo.am.indexOf(sb)>=0)ssScore=-15;
-else ssScore=5;
-ts+=ssScore;
-
-// 五行互补
-var wxc=0,wns=['金','木','水','火','土'];
-for(var i=0;i<5;i++){
-var w=wns[i];
-if(wa[w]===0&&wb[w]>0)wxc+=3;
-else if(wa[w]>0&&wb[w]===0)wxc+=3;
-if(wa[w]>0&&wb[w]>0)wxc+=1;
-}
-wxc=Math.min(15,wxc);
-ts+=wxc;
-
-// 日主关系
-var ds=0;
-if(SK[daw].生===dbw)ds=15;
-else if(SK[daw].克===dbw)ds=-10;
-else if(SK[dbw].生===daw)ds=10;
-else if(SK[dbw].克===daw)ds=-5;
-else if(daw===dbw)ds=8;
-ts+=ds;
-
-// 地支合冲
-var zal=[ba.y.z,ba.m.z,ba.d.z,ba.t.z],zbl=[bb.y.z,bb.m.z,bb.d.z,bb.t.z];
-var lh={'子丑':1,'丑子':1,'寅亥':1,'亥寅':1,'卯戌':1,'戌卯':1,'辰酉':1,'酉辰':1,'巳申':1,'申巳':1,'午未':1,'未午':1};
-var xc={'子午':1,'丑未':1,'寅申':1,'卯酉':1,'辰戌':1,'巳亥':1};
-var zs=0;
-for(var i=0;i<4;i++){
-for(var j=0;j<4;j++){
-var k=zal[i]+zbl[j];
-if(lh[k])zs+=3;
-if(xc[k])zs-=3;
-}
-}
-zs=Math.max(-10,Math.min(10,zs));
-ts+=zs;
-
-ts=Math.max(10,Math.min(100,ts));
-
-var lv,ld;
-if(ts>=90){lv='天作之合';ld='八字非常合拍，堪称天作之合！两人缘分深厚，性格互补，是极佳的婚配组合。';}
-else if(ts>=80){lv='佳偶天成';ld='八字相当合拍，有良好感情基础。两人相处融洽，能够互相扶持。';}
-else if(ts>=70){lv='良缘美眷';ld='八字比较合拍，有不错缘分。只要用心经营，感情会越来越好。';}
-else if(ts>=60){lv='尚可相处';ld='八字一般合拍，需要磨合。双方需要多包容理解，共同成长。';}
-else if(ts>=45){lv='需要磨合';ld='八字有些冲突，需要包容妥协。但只要真心相爱，可以克服一切困难。';}
-else{lv='相克较多';ld='八字冲突较多，但真心可克服一切。需要更多耐心和智慧来经营感情。';}
-
-var an=document.getElementById('mAN').value.trim(),bn=document.getElementById('mBN').value.trim();
-
-// 五行对比
-var wxCompare='';
-for(var i=0;i<5;i++){
-var w=wns[i];
-wxCompare+='  '+w+'：甲方'+wa[w]+'个 '+bar(w,wa[w])+' | 乙方'+wb[w]+'个 '+bar(w,wb[w])+'\n';
-}
-
-// 日主关系说明
-var dayRelation='';
-if(SK[daw].生===dbw)dayRelation='甲方日主生乙方日主，甲方会主动付出，照顾乙方。';
-else if(SK[daw].克===dbw)dayRelation='甲方日主克乙方日主，甲方在关系中较强势，需要多体谅乙方。';
-else if(SK[dbw].生===daw)dayRelation='乙方日主生甲方日主，乙方会主动付出，照顾甲方。';
-else if(SK[dbw].克===daw)dayRelation='乙方日主克甲方日主，乙方在关系中较强势，需要多体谅甲方。';
-else if(daw===dbw)dayRelation='双方日主相同，性格相似，容易互相理解。';
-else dayRelation='双方日主五行相克，需要互相包容理解。';
-
-var t=S(50)+'\n  八字合婚测算报告\n'+S(50)+'\n\n  甲方'+(an?'：'+an:'')+' | 乙方'+(bn?'：'+bn:'')+'\n\n'+L(50)+'\n  双方八字对比\n\n  甲方八字：'+ba.y.g+ba.y.z+' '+ba.m.g+ba.m.z+' '+ba.d.g+ba.d.z+' '+ba.t.g+ba.t.z+'\n  乙方八字：'+bb.y.g+bb.y.z+' '+bb.m.g+bb.m.z+' '+bb.d.g+bb.d.z+' '+bb.t.g+bb.t.z+'\n\n  甲方日主：'+da+'（'+daw+'）| 乙方日主：'+db+'（'+dbw+'）\n\n'+L(50)+'\n  五行互补分析\n'+wxCompare+'\n'+L(50)+'\n  生肖配对\n  甲方生肖：'+sa+' | 乙方生肖：'+sb+'\n  配对评分：'+(ssScore>0?'大吉（+'+ssScore+'分）':ssScore<0?'相冲（'+ssScore+'分）':'一般（+'+ssScore+'分）')+'\n\n'+L(50)+'\n  日主关系\n  '+dayRelation+'\n\n'+L(50)+'\n  综合评分：'+ts+'分 — '+lv+'\n  '+ld+'\n\n  记住：八字合婚只是参考，真正的幸福靠双方用心经营！\n';
-
-document.getElementById('mR').textContent=t;
-}catch(e){alert('请检查输入: '+e.message);}
-}
-
-// ===== 号码吉凶 =====
-function doNum(){
-var ns=document.getElementById('numI').value.trim();
-if(!ns){alert('请输入号码');return;}
-var ds=[];
-for(var i=0;i<ns.length;i++){
-if(ns[i]>='0'&&ns[i]<='9')ds.push(+ns[i]);
-}
-if(!ds.length){alert('号码中未找到有效数字');return;}
-
-var wc={金:0,木:0,水:0,火:0,土:0};
-for(var i=0;i<ds.length;i++)wc[DWX[ds[i]]]++;
-
-var dsum=0;
-for(var i=0;i<ds.length;i++)dsum+=ds[i];
-var nfm=((dsum-1)%81)+1,ni=gm(nfm);
-
-var cb=0,cd=[],pb=0,pd=[];
-for(var i=0;i<ds.length-2;i++){
-if(ds[i]===ds[i+1]&&ds[i+1]===ds[i+2]){cb+=5;cd.push(ds[i]+'连号');}
-if(ds[i]+1===ds[i+1]&&ds[i+1]+1===ds[i+2]){pb+=3;pd.push('顺子'+ds[i]+ds[i+1]+ds[i+2]);}
-else if(ds[i]-1===ds[i+1]&&ds[i+1]-1===ds[i+2]){pb+=3;pd.push('倒顺'+ds[i]+ds[i+1]+ds[i+2]);}
-}
-
-var bs=50,wb=10-Math.max.apply(null,[wc.金,wc.木,wc.水,wc.火,wc.土])+Math.min.apply(null,[wc.金,wc.木,wc.水,wc.火,wc.土]),js=ni[0]==='吉'?20:5,ts=bs+wb+js+cb+pb;
-ts=Math.max(0,Math.min(100,ts));
-
-var lv,ld;
-if(ts>=85){lv='大吉';ld='号码极佳，五行和谐，数理吉利！';}
-else if(ts>=70){lv='吉';ld='号码较好，五行较为平衡。';}
-else if(ts>=55){lv='中吉';ld='号码尚可，有一定优势。';}
-else if(ts>=40){lv='平';ld='号码一般，建议综合考虑。';}
-else{lv='凶';ld='号码不太理想，建议考虑更换。';}
-
-var t=S(50)+'\n  号码吉凶分析报告\n'+S(50)+'\n\n  分析号码：'+ns+'\n  号码位数：'+ds.length+'位\n  数字之和：'+dsum+'\n\n'+L(50)+'\n  综合评分：'+ts+'分 — '+lv+'\n  '+ld+'\n\n'+L(50)+'\n  五行分析\n';
-var wns=['金','木','水','火','土'];
-for(var i=0;i<5;i++)t+='  '+wns[i]+' '+bar(wns[i],wc[wns[i]])+' '+wc[wns[i]]+'个\n';
-t+='\n'+L(50)+'\n  数理吉凶：'+ni[0]+'（'+ni[1]+'）\n  解读：'+ni[2]+'\n';
-if(cd.length>0)t+='\n  连号加分（+'+cb+'分）：'+cd.join('、');
-if(pd.length>0)t+='\n  顺子加分（+'+pb+'分）：'+pd.join('、');
-t+='\n\n'+L(50)+'\n  各数字含义\n';
-for(var i=0;i<ns.length;i++){
-if(ns[i]>='0'&&ns[i]<='9')t+='  '+ns[i]+'：'+DM[+ns[i]]+'（五行'+DWX[+ns[i]]+'）\n';
-}
-t+='\n'+L(50)+'\n  建议\n  号码分析仅供参考，好的心态和努力才是成功的关键。\n';
-document.getElementById('numR').textContent=t;
-}
-
-// ===== 卦象占卜 =====
-function doGCoin(){
-var ld=[];
-for(var i=0;i<6;i++){
-var c=[Math.random()<.5?2:3,Math.random()<.5?2:3,Math.random()<.5?2:3],t=c[0]+c[1]+c[2];
-if(t===6)ld.push({v:0,c:1});
-else if(t===7)ld.push({v:1,c:0});
-else if(t===8)ld.push({v:0,c:0});
-else ld.push({v:1,c:1});
-}
-var lo=ld[0].v*4+ld[1].v*2+ld[2].v,up=ld[3].v*4+ld[4].v*2+ld[5].v,gi=up*8+lo;
-showG(gi,ld);
-}
-
-function doGRnd(){
-var gi=Math.floor(Math.random()*GUA.length),ld=[];
-for(var i=0;i<6;i++)ld.push({v:(gi>>(5-i))&1,c:0});
-showG(gi,ld);
-}
-
-function showG(gi,ld){
-var gd=GUA[gi%GUA.length],ys=['━━━ ━━━','━━━   ━━━'],yn=['九','六'],pn=['初','二','三','四','五','上'],yt='';
-for(var i=0;i<6;i++){
-var cm=ld[i].c?' (变爻)':'';
-yt+='  '+ys[ld[i].v]+'  '+pn[i]+yn[ld[i].v]+cm+'\n';
-}
-var bg=null,hc=false;
-for(var i=0;i<6;i++){if(ld[i].c){hc=true;break;}}
-if(hc){
-var bl=[];
-for(var i=0;i<6;i++)bl.push(ld[i].c?1-ld[i].v:ld[i].v);
-var blo=bl[0]*4+bl[1]*2+bl[2],bup=bl[3]*4+bl[4]*2+bl[5],bi=bup*8+blo;
-bg=GUA[bi%GUA.length];
-}
-var t=S(50)+'\n  卦象占卜结果\n'+S(50)+'\n\n  卦名：'+gd.n+'\n  上卦：'+gd.u+' | 下卦：'+gd.l+'\n  卦辞：'+gd.j+'\n\n'+L(50)+'\n  六爻详情\n'+yt+'\n'+L(50)+'\n  详细解读\n  '+gd.d+'\n\n  建议：'+gd.a+'\n  生活指引：'+(gd.la||'')+'\n  注意：'+(gd.w||'')+'\n';
-if(bg){t+='\n'+L(50)+'\n  变卦：'+gd.n+' → '+bg.n+'\n  变卦解读：'+bg.j+'\n';}
-t+='\n  占卜结果仅供参考，不要过度依赖。\n';
-document.getElementById('gR').textContent=t;
-}
-
-function doGAll(){
-var t=S(50)+'\n  六十四卦概览\n'+S(50)+'\n\n  八卦基础：\n  乾（天）— 刚健、父亲、西北\n  坤（地）— 柔顺、母亲、西南\n  震（雷）— 动、长男、东方\n  巽（风）— 入、长女、东南\n  坎（水）— 险、中男、北方\n  离（火）— 丽、中女、南方\n  艮（山）— 止、少男、东北\n  兑（泽）— 悦、少女、西方\n\n  占卜时心要诚，问题要明确，不要反复占卜。\n  卦象是参考，不是命运的判决。\n';
-document.getElementById('gR').textContent=t;
-}
-
-// ===== 术语解释 =====
-function doTerm(){
-var txt=document.getElementById('tmI').value.trim();
-if(!txt){alert('请输入需要解释的内容');return;}
-
-// 整句解释
-var sentenceExplain='';
-if(txt.indexOf('日主')>=0||txt.indexOf('八字')>=0||txt.indexOf('五行')>=0){
-sentenceExplain=generateSentenceExplain(txt);
-}
-
-// 检测术语
-var found=[],detected={};
-for(var term in TV){
-var vs=TV[term];
-for(var i=0;i<vs.length;i++){
-if(txt.indexOf(vs[i])>=0){detected[term]=1;break;}
-}
-}
-var terms=[];
-for(var term in detected)terms.push(term);
-terms.sort();
-for(var i=0;i<terms.length;i++){
-if(TD[terms[i]])found.push([terms[i],TD[terms[i]]]);
-}
-
-var t;
-if(found.length===0){
-t=S(50)+'\n  术语解释结果\n'+S(50)+'\n\n  未在输入内容中检测到已知术语。\n\n  提示：\n  · 请确保术语写法正确（如"八字"而非"8字"）\n  · 可以尝试输入单个术语，如"五行"、"天干"等\n  · 点击"常见术语速查"查看所有可解释的术语列表\n';
-}else{
-t=S(50)+'\n  术语详细解释（共找到'+found.length+'个术语）\n'+S(50);
-if(sentenceExplain){
-t+='\n\n【整句解释】\n'+sentenceExplain+'\n';
-}
-t+='\n【关键词解释】\n';
-for(var i=0;i<found.length;i++){
-t+='\n• '+found[i][0]+'：'+found[i][1]+'\n';
-}
-}
-document.getElementById('tmR').textContent=t;
-}
-
-// 生成整句解释
-function generateSentenceExplain(txt){
-var explain='';
-// 简单规则匹配示例
-if(txt.indexOf('日主为甲')>=0&&txt.indexOf('寅月')>=0){
-explain='你的命格核心（日主）是甲木，出生在寅月（农历正月），这个月份对木属性有利，所以你的木气很旺。';
-}else if(txt.indexOf('得令')>=0){
-explain='你的八字出生在对日主有利的月份，日主得到月令的生助，整体命局较强。';
-}else if(txt.indexOf('比肩帮身')>=0){
-explain='你的命局中有与日主同五行的天干（比肩）帮助你，增强了日主的力量。';
-}else{
-explain='这段话描述的是八字命理中的专业分析。简单来说，就是通过出生时间推算出的命格特征和运势走向。建议查看下方的关键词解释，了解其中各个术语的具体含义。';
-}
-return explain;
-}
-
-function doAllTerm(){
-var terms=[];
-for(var t in TD)terms.push(t);
-terms.sort();
-var t=S(50)+'\n  常见术语速查（共'+terms.length+'个术语）\n'+S(50)+'\n\n';
-for(var i=0;i<terms.length;i++)t+='  '+terms[i]+'\n';
-t+='\n'+L(50)+'\n  共'+terms.length+'个术语可解释。\n  在上方输入框中输入包含这些术语的文本，点击"开始解释"即可查看详细说明。\n';
-document.getElementById('tmR').textContent=t;
-}
-
-// ===== 初始化 =====
-initSel();
-</script>
+    <div class="app">
+        <header class="header">
+            <div class="header-decoration">
+                <span class="deco-line"></span>
+                <span class="deco-symbol">☯</span>
+                <span class="deco-line"></span>
+            </div>
+            <h1>八 字 命 理 大 师</h1>
+            <p class="subtitle">传承千年智慧 · 解读人生密码</p>
+        </header>
+        
+        <main class="content" id="mainContent">
+            <!-- 各模块内容会动态切换 -->
+        </main>
+        
+        <nav class="bottomNav">
+            <div class="nav-item active" data-tab="bazi">
+                <span class="nav-icon">命</span>
+                <span class="nav-text">八字命理</span>
+            </div>
+            <div class="nav-item" data-tab="hehun">
+                <span class="nav-icon">缘</span>
+                <span class="nav-text">八字合婚</span>
+            </div>
+            <div class="nav-item" data-tab="guaxiang">
+                <span class="nav-icon">卦</span>
+                <span class="nav-text">卦象占卜</span>
+            </div>
+            <div class="nav-item" data-tab="haoma">
+                <span class="nav-icon">数</span>
+                <span class="nav-text">号码吉凶</span>
+            </div>
+            <div class="nav-item" data-tab="meng">
+                <span class="nav-icon">梦</span>
+                <span class="nav-text">周公解梦</span>
+            </div>
+            <div class="nav-item" data-tab="shuyu">
+                <span class="nav-icon">典</span>
+                <span class="nav-text">术语解释</span>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- 模板：八字命理 -->
+    <template id="tpl-bazi">
+        <div class="module bazi-module">
+            <section class="input-section">
+                <h2 class="section-title"><span class="title-icon">☰</span>基本信息</h2>
+                <div class="form-group">
+                    <label class="form-label">姓名</label>
+                    <input type="text" class="form-input" id="bazi-name" placeholder="请输入您的姓名" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">性别</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="bazi-gender" value="male" checked>
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">男</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="bazi-gender" value="female">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">女</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生日期</label>
+                    <div class="datetime-inputs">
+                        <select class="form-select" id="bazi-year"></select>
+                        <span class="date-separator">年</span>
+                        <select class="form-select" id="bazi-month"></select>
+                        <span class="date-separator">月</span>
+                        <select class="form-select" id="bazi-day"></select>
+                        <span class="date-separator">日</span>
+                    </div>
+                    <div class="time-inputs">
+                        <select class="form-select" id="bazi-hour"></select>
+                        <span class="date-separator">时</span>
+                        <select class="form-select" id="bazi-minute"></select>
+                        <span class="date-separator">分</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生时辰</label>
+                    <select class="form-select full-width" id="bazi-shichen">
+                        <option value="">请选择出生时辰</option>
+                        <option value="子时">子时 (23:00-01:00)</option>
+                        <option value="丑时">丑时 (01:00-03:00)</option>
+                        <option value="寅时">寅时 (03:00-05:00)</option>
+                        <option value="卯时">卯时 (05:00-07:00)</option>
+                        <option value="辰时">辰时 (07:00-09:00)</option>
+                        <option value="巳时">巳时 (09:00-11:00)</option>
+                        <option value="午时">午时 (11:00-13:00)</option>
+                        <option value="未时">未时 (13:00-15:00)</option>
+                        <option value="申时">申时 (15:00-17:00)</option>
+                        <option value="酉时">酉时 (17:00-19:00)</option>
+                        <option value="戌时">戌时 (19:00-21:00)</option>
+                        <option value="亥时">亥时 (21:00-23:00)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="bazi-calculate">
+                    <span class="btn-icon">☯</span>
+                    开始测算
+                </button>
+            </section>
+            
+            <section class="result-section" id="bazi-result" style="display: none;">
+                <div class="result-header">
+                    <h3 class="result-title">命盘分析结果</h3>
+                    <p class="result-subtitle" id="bazi-result-name"></p>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☰</span>四柱八字</h4>
+                    <div class="bazi-pillars" id="bazi-pillars"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☆</span>五行分布</h4>
+                    <div class="wuxing-chart" id="wuxing-chart"></div>
+                    <div class="wuxing-list" id="wuxing-list"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">⚖</span>八字强弱分析</h4>
+                    <div class="analysis-content" id="bazi-strength"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">详</span>详细分析</h4>
+                    <div class="detail-analysis" id="detail-analysis"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">运</span>流年分析</h4>
+                    <div class="liunian-analysis" id="liunian-analysis"></div>
+                </div>
+                
+                <div class="result-card advice-card">
+                    <h4 class="card-title"><span class="card-icon">✦</span>开运转运建议</h4>
+                    <div class="advice-content" id="advice-content"></div>
+                </div>
+                
+                <button class="btn btn-secondary btn-restart" onclick="app.restart('bazi')">
+                    重新测算
+                </button>
+            </section>
+        </div>
+    </template>
+    
+    <!-- 模板：八字合婚 -->
+    <template id="tpl-hehun">
+        <div class="module hehun-module">
+            <section class="input-section">
+                <div class="hehun-info">
+                    <p class="info-text">输入双方信息，解读婚姻缘分密码</p>
+                </div>
+                
+                <div class="hehun-inputs">
+                    <div class="person-input">
+                        <div class="person-header male">
+                            <span class="person-icon">乾</span>
+                            <span class="person-label">男方信息</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input" id="hehun-male-name" placeholder="男方姓名" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-select" id="hehun-male-year"></select>
+                            <span class="date-separator">年</span>
+                            <select class="form-select" id="hehun-male-month"></select>
+                            <span class="date-separator">月</span>
+                            <select class="form-select" id="hehun-male-day"></select>
+                            <span class="date-separator">日</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hehun-divider">
+                        <span class="divider-symbol">☯</span>
+                        <span class="divider-text">合</span>
+                    </div>
+                    
+                    <div class="person-input">
+                        <div class="person-header female">
+                            <span class="person-icon">坤</span>
+                            <span class="person-label">女方信息</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input" id="hehun-female-name" placeholder="女方姓名" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-select" id="hehun-female-year"></select>
+                            <span class="date-separator">年</span>
+                            <select class="form-select" id="hehun-female-month"></select>
+                            <span class="date-separator">月</span>
+                            <select class="form-select" id="hehun-female-day"></select>
+                            <span class="date-separator">日</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="hehun-calculate">
+                    <span class="btn-icon">☯</span>
+                    合婚测算
+                </button>
+            </section>
+            
+            <section class="result-section" id="hehun-result" style="display: none;">
+                <div class="result-header">
+                    <h3 class="result-title">合婚分析结果</h3>
+                    <p class="result-subtitle" id="hehun-result-title"></p>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☰</span>双方八字展示</h4>
+                    <div class="hehun-bazi-display" id="hehun-bazi"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">生</span>生肖配对分析</h4>
+                    <div class="analysis-content" id="hehun-shengxiao"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☆</span>五行互补分析</h4>
+                    <div class="analysis-content" id="hehun-wuxing"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☯</span>日主关系分析</h4>
+                    <div class="analysis-content" id="hehun-rizhu"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">±</span>矛盾与优势分析</h4>
+                    <div class="conflict-analysis" id="hehun-conflict"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">年</span>流年分析</h4>
+                    <div class="liunian-analysis" id="hehun-liunian"></div>
+                </div>
+                
+                <div class="result-card advice-card">
+                    <h4 class="card-title"><span class="card-icon">✦</span>合婚建议</h4>
+                    <div class="advice-content" id="hehun-advice"></div>
+                </div>
+                
+                <button class="btn btn-secondary btn-restart" onclick="app.restart('hehun')">
+                    重新测算
+                </button>
+            </section>
+        </div>
+    </template>
+    
+    <!-- 模板：卦象占卜 -->
+    <template id="tpl-guaxiang">
+        <div class="module guaxiang-module">
+            <section class="input-section">
+                <h2 class="section-title"><span class="title-icon">☰</span>起卦设置</h2>
+                <div class="form-group">
+                    <label class="form-label">起卦方式</label>
+                    <div class="option-buttons">
+                        <label class="option-btn active">
+                            <input type="radio" name="guaxiang-method" value="random" checked>
+                            <span>随机起卦</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="guaxiang-method" value="coins">
+                            <span>三枚硬币</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">动画风格</label>
+                    <div class="option-buttons animation-options">
+                        <label class="option-btn active">
+                            <input type="radio" name="guaxiang-animation" value="rotate" checked>
+                            <span>旋转</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="guaxiang-animation" value="flip">
+                            <span>铜钱翻转</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="guaxiang-animation" value="sparkle">
+                            <span>星空闪烁</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="guaxiang-animation" value="fade">
+                            <span>简约渐显</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">所问之事</label>
+                    <textarea class="form-textarea" id="guaxiang-question" placeholder="请输入您想问的事情，如：事业发展、感情姻缘、财运投资等..." maxlength="200"></textarea>
+                </div>
+                <button class="btn btn-primary" id="guaxiang-start">
+                    <span class="btn-icon">☯</span>
+                    起卦
+                </button>
+            </section>
+            
+            <section class="animation-section" id="guaxiang-animation" style="display: none;">
+                <div class="animation-container">
+                    <div class="gua-display" id="gua-symbol">
+                        <div class="gua-inner"></div>
+                    </div>
+                    <p class="animation-text" id="animation-text">心诚则灵...</p>
+                    <button class="btn btn-stop" id="guaxiang-stop">停止</button>
+                </div>
+            </section>
+            
+            <section class="result-section" id="guaxiang-result" style="display: none;">
+                <div class="result-header">
+                    <h3 class="result-title">卦象解读</h3>
+                    <p class="result-subtitle" id="guaxiang-result-question"></p>
+                </div>
+                
+                <div class="result-card gua-card">
+                    <div class="gua-visual" id="gua-visual"></div>
+                    <div class="gua-info">
+                        <h4 class="gua-name" id="gua-name"></h4>
+                        <p class="gua-original" id="gua-original"></p>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">卦</span>卦辞</h4>
+                    <div class="analysis-content" id="guaxiang-guaci"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">爻</span>六爻详解</h4>
+                    <div class="yao-list" id="guaxiang-yao"></div>
+                </div>
+                
+                <div class="result-card advice-card">
+                    <h4 class="card-title"><span class="card-icon">解</span>针对您的问题</h4>
+                    <div class="advice-content" id="guaxiang-answer"></div>
+                </div>
+                
+                <button class="btn btn-secondary btn-restart" onclick="app.restart('guaxiang')">
+                    重新占卜
+                </button>
+            </section>
+        </div>
+    </template>
+    
+    <!-- 模板：号码吉凶 -->
+    <template id="tpl-haoma">
+        <div class="module haoma-module">
+            <section class="input-section">
+                <h2 class="section-title"><span class="title-icon">☰</span>手机号码分析</h2>
+                <div class="haoma-intro">
+                    <p>手机号码蕴含着数字能量，影响着您的运势走向</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">手机号码</label>
+                    <input type="tel" class="form-input haoma-input" id="haoma-number" placeholder="请输入11位手机号码" maxlength="11">
+                    <p class="form-hint">仅支持中国大陆手机号码</p>
+                </div>
+                <button class="btn btn-primary" id="haoma-calculate">
+                    <span class="btn-icon">☯</span>
+                    深度分析
+                </button>
+            </section>
+            
+            <section class="result-section" id="haoma-result" style="display: none;">
+                <div class="result-header">
+                    <h3 class="result-title">号码分析结果</h3>
+                    <p class="result-subtitle" id="haoma-result-number"></p>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">数</span>81数理分析</h4>
+                    <div class="number-display" id="number-display"></div>
+                    <div class="analysis-content" id="haoma-math"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">能</span>数字能量</h4>
+                    <div class="energy-chart" id="energy-chart"></div>
+                    <div class="analysis-content" id="haoma-energy"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">☆</span>五行分布</h4>
+                    <div class="wuxing-chart" id="haoma-wuxing"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">评</span>综合评分</h4>
+                    <div class="score-display" id="score-display"></div>
+                    <div class="score-details" id="score-details"></div>
+                </div>
+                
+                <div class="result-card advice-card">
+                    <h4 class="card-title"><span class="card-icon">✦</span>改运建议</h4>
+                    <div class="advice-content" id="haoma-advice"></div>
+                </div>
+                
+                <button class="btn btn-secondary btn-restart" onclick="app.restart('haoma')">
+                    重新分析
+                </button>
+            </section>
+        </div>
+    </template>
+    
+    <!-- 模板：周公解梦 -->
+    <template id="tpl-meng">
+        <div class="module meng-module">
+            <section class="input-section">
+                <h2 class="section-title"><span class="title-icon">☰</span>梦境解析</h2>
+                <div class="meng-intro">
+                    <p>日有所思，夜有所梦。解析您的梦境，窥探潜意识密码</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">梦境描述</label>
+                    <textarea class="form-textarea" id="meng-description" placeholder="请详细描述您的梦境内容，如梦到的场景、人物、发生的事情等..." maxlength="500"></textarea>
+                    <p class="form-hint">描述越详细，解梦越准确</p>
+                </div>
+                <button class="btn btn-primary" id="meng-calculate">
+                    <span class="btn-icon">☯</span>
+                    开始解梦
+                </button>
+            </section>
+            
+            <section class="result-section" id="meng-result" style="display: none;">
+                <div class="result-header">
+                    <h3 class="result-title">梦境解读</h3>
+                    <p class="result-subtitle" id="meng-result-title">根据您描述的梦境</p>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">解</span>梦境解释</h4>
+                    <div class="analysis-content" id="meng-explanation"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">吉</span>吉凶判断</h4>
+                    <div class="luck-indicator" id="luck-indicator"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4 class="card-title"><span class="card-icon">综</span>综合分析</h4>
+                    <div class="analysis-content" id="meng-analysis"></div>
+                </div>
+                
+                <div class="result-card advice-card">
+                    <h4 class="card-title"><span class="card-icon">✦</span>近期运势提示</h4>
+                    <div class="advice-content" id="meng-advice"></div>
+                </div>
+                
+                <button class="btn btn-secondary btn-restart" onclick="app.restart('meng')">
+                    重新解梦
+                </button>
+            </section>
+        </div>
+    </template>
+    
+    <!-- 模板：术语解释 -->
+    <template id="tpl-shuyu">
+        <div class="module shuyu-module">
+            <section class="input-section">
+                <h2 class="section-title"><span class="title-icon">☰</span>命理术语</h2>
+                <div class="form-group">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" id="shuyu-search" placeholder="搜索术语...">
+                    </div>
+                </div>
+            </section>
+            
+            <section class="terms-section">
+                <div class="terms-list" id="terms-list"></div>
+            </section>
+            
+            <section class="term-detail" id="term-detail" style="display: none;">
+                <div class="detail-header">
+                    <button class="btn-back" onclick="app.closeTermDetail()">返回</button>
+                    <h3 class="detail-title" id="term-detail-title"></h3>
+                </div>
+                <div class="detail-content" id="term-detail-content"></div>
+            </section>
+        </div>
+    </template>
+    
+    <script src="app.js"></script>
 </body>
 </html>
