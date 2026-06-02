@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>八字命理大师</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f0e8;
+            color: #5c4a2a;
+            line-height: 1.6;
+            padding-bottom: 70px;
+        }
+        .header {
+            background: linear-gradient(135deg, #7a6b52 0%, #5c4a32 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { font-size: 24px; font-weight: 600; letter-spacing: 4px; }
+        .header p { font-size: 12px; opacity: 0.9; margin-top: 5px; }
+        
+        .container { padding: 15px; max-width: 480px; margin: 0 auto; }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #7a6b52;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0e6d3;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #7a6b52;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0d5c5;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #faf8f5;
+            color: #5c4a2a;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #7a6b52;
+            background: white;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .radio-label input { margin-right: 6px; }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #7a6b52;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:active { transform: scale(0.98); background: #6b5c45; }
+        
+        .result-section {
+            background: #faf8f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #7a6b52;
+            margin-bottom: 10px;
+        }
+        .result-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #5c4a2a;
+        }
+        .result-content p { margin-bottom: 10px; }
+        
+        .bazi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .bazi-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: #f5f0e8;
+            border-radius: 8px;
+        }
+        .bazi-label {
+            font-size: 11px;
+            color: #7a6b52;
+            margin-bottom: 4px;
+        }
+        .bazi-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5c4a2a;
+        }
+        .bazi-shishen {
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
+        
+        .wuxing-bar {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .wuxing-name {
+            width: 40px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .wuxing-progress {
+            flex: 1;
+            height: 20px;
+            background: #f0e6d3;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        .wuxing-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+        .wuxing-count {
+            width: 30px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            z-index: 100;
+        }
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-item.active .nav-icon { color: #7a6b52; }
+        .nav-item.active .nav-text { color: #7a6b52; font-weight: 600; }
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .nav-text {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .list-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0e6d3;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .list-item:hover { background: #faf8f5; }
+        .list-item-title { font-weight: 500; color: #5c4a2a; }
+        .list-item-desc { font-size: 12px; color: #999; margin-top: 4px; }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #f0e6d3;
+            color: #7a6b52;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 3px;
+        }
+        .tag.active {
+            background: #7a6b52;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7a6b52;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #7a6b52;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .highlight { color: #c62828; font-weight: 600; }
+        .good { color: #2e7d32; }
+        .bad { color: #c62828; }
+        
+        .advice-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .month-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .month-title {
+            font-weight: 600;
+            color: #7a6b52;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e0d5c5;
+        }
+        .do-list, .dont-list {
+            margin: 8px 0;
+        }
+        .do-list::before {
+            content: '✓ 建议做：';
+            color: #4caf50;
+            font-weight: 500;
+        }
+        .dont-list::before {
+            content: '✗ 不建议：';
+            color: #f44336;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>八 字 命 理 大 师</h1>
+        <p>传承千年智慧 · 解读人生密码</p>
+    </div>
+    
+    <div class="container">
+        <!-- 八字命理页面 -->
+        <div class="page active" id="page-bazi">
+            <div class="card">
+                <div class="card-title">📋 输入出生信息</div>
+                <div class="form-group">
+                    <label class="form-label">姓名</label>
+                    <input type="text" class="form-input" id="bazi-name" placeholder="请输入您的姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">性别</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="男" checked> 男
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="女"> 女
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生日期</label>
+                    <input type="date" class="form-input" id="bazi-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生时辰</label>
+                    <select class="form-select" id="bazi-hour">
+                        <option value="0">子时 (23:00-01:00)</option>
+                        <option value="1">丑时 (01:00-03:00)</option>
+                        <option value="2">寅时 (03:00-05:00)</option>
+                        <option value="3">卯时 (05:00-07:00)</option>
+                        <option value="4">辰时 (07:00-09:00)</option>
+                        <option value="5">巳时 (09:00-11:00)</option>
+                        <option value="6">午时 (11:00-13:00)</option>
+                        <option value="7">未时 (13:00-15:00)</option>
+                        <option value="8">申时 (15:00-17:00)</option>
+                        <option value="9">酉时 (17:00-19:00)</option>
+                        <option value="10">戌时 (19:00-21:00)</option>
+                        <option value="11">亥时 (21:00-23:00)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="calculateBazi()">开始测算</button>
+            </div>
+            <div id="bazi-result"></div>
+        </div>
+        
+        <!-- 八字合婚页面 -->
+        <div class="page" id="page-hehun">
+            <div class="card">
+                <div class="card-title">👨 男方信息</div>
+                <div class="form-group">
+                    <label class="form-label">姓名</label>
+                    <input type="text" class="form-input" id="male-name" placeholder="男方姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生日期</label>
+                    <input type="date" class="form-input" id="male-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生时辰</label>
+                    <select class="form-select" id="male-hour">
+                        <option value="0">子时</option><option value="1">丑时</option><option value="2">寅时</option>
+                        <option value="3">卯时</option><option value="4">辰时</option><option value="5">巳时</option>
+                        <option value="6">午时</option><option value="7">未时</option><option value="8">申时</option>
+                        <option value="9">酉时</option><option value="10">戌时</option><option value="11">亥时</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">👩 女方信息</div>
+                <div class="form-group">
+                    <label class="form-label">姓名</label>
+                    <input type="text" class="form-input" id="female-name" placeholder="女方姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生日期</label>
+                    <input type="date" class="form-input" id="female-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生时辰</label>
+                    <select class="form-select" id="female-hour">
+                        <option value="0">子时</option><option value="1">丑时</option><option value="2">寅时</option>
+                        <option value="3">卯时</option><option value="4">辰时</option><option value="5">巳时</option>
+                        <option value="6">午时</option><option value="7">未时</option><option value="8">申时</option>
+                        <option value="9">酉时</option><option value="10">戌时</option><option value="11">亥时</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="calculateHehun()">合婚测算</button>
+            </div>
+            <div id="hehun-result"></div>
+        </div>
+        
+        <!-- 卦象占卜页面 -->
+        <div class="page" id="page-gua">
+            <div class="card">
+                <div class="card-title">🔮 起卦占卜</div>
+                <div class="form-group">
+                    <label class="form-label">所问之事（可选）</label>
+                    <input type="text" class="form-input" id="gua-question" placeholder="如：事业发展、感情婚姻等">
+                </div>
+                <button class="btn" onclick="castGua()">开始起卦</button>
+            </div>
+            <div id="gua-result"></div>
+        </div>
+        
+        <!-- 号码吉凶页面 -->
+        <div class="page" id="page-number">
+            <div class="card">
+                <div class="card-title">📱 号码分析</div>
+                <div class="form-group">
+                    <label class="form-label">手机号码</label>
+                    <input type="tel" class="form-input" id="phone-number" placeholder="请输入11位手机号" maxlength="11">
+                </div>
+                <button class="btn" onclick="analyzeNumber()">分析号码</button>
+            </div>
+            <div id="number-result"></div>
+        </div>
+        
+        <!-- 周公解梦页面 -->
+        <div class="page" id="page-dream">
+            <div class="card">
+                <div class="card-title">💭 梦境解析</div>
+                <div class="form-group">
+                    <label class="form-label">搜索梦境</label>
+                    <input type="text" class="form-input" id="dream-search" placeholder="如：梦见水、梦见蛇..." oninput="searchDreams()">
+                </div>
+            </div>
+            <div id="dream-list"></div>
+            <div id="dream-detail"></div>
+        </div>
+        
+        <!-- 术语解释页面 -->
+        <div class="page" id="page-terms">
+            <div class="card">
+                <div class="card-title">📚 命理术语</div>
+                <div class="form-group">
+                    <label class="form-label">搜索术语</label>
+                    <input type="text" class="form-input" id="term-search" placeholder="如：十神、五行..." oninput="searchTerms()">
+                </div>
+            </div>
+            <div id="terms-list"></div>
+        </div>
+    </div>
+    
+    <!-- 底部导航 -->
+    <nav class="nav-bottom">
+        <div class="nav-item active" data-page="bazi" onclick="switchPage('bazi')">
+            <span class="nav-icon">命</span>
+            <span class="nav-text">八字命理</span>
+        </div>
+        <div class="nav-item" data-page="hehun" onclick="switchPage('hehun')">
+            <span class="nav-icon">缘</span>
+            <span class="nav-text">八字合婚</span>
+        </div>
+        <div class="nav-item" data-page="gua" onclick="switchPage('gua')">
+            <span class="nav-icon">卦</span>
+            <span class="nav-text">卦象占卜</span>
+        </div>
+        <div class="nav-item" data-page="number" onclick="switchPage('number')">
+            <span class="nav-icon">数</span>
+            <span class="nav-text">号码吉凶</span>
+        </div>
+        <div class="nav-item" data-page="dream" onclick="switchPage('dream')">
+            <span class="nav-icon">梦</span>
+            <span class="nav-text">周公解梦</span>
+        </div>
+        <div class="nav-item" data-page="terms" onclick="switchPage('terms')">
+            <span class="nav-icon">典</span>
+            <span class="nav-text">术语解释</span>
+        </div>
+    </nav>
+
+    <script>
+        // ==================== 数据定义 ====================
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const SHENGXIAO = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+        const WUXING = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水', '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水' };
+        
+        const SHISHEN = {
+            '比肩': '代表兄弟姐妹、朋友同事，性格独立自主',
+            '劫财': '代表竞争、破耗，需注意理财',
+            '食神': '代表才华、口福，性格温和善良',
+            '伤官': '代表聪明、创意，但易叛逆',
+            '正财': '代表正当收入、妻子，性格务实',
+            '偏财': '代表意外之财、父亲，善于交际',
+            '正官': '代表事业、上司，性格正直守规矩',
+            '七杀': '代表压力、挑战，性格果断有魄力',
+            '正印': '代表学业、母亲，性格仁慈有涵养',
+            '偏印': '代表偏门技艺、继母，思维独特'
+        };
+        
+        // 64卦数据
+        const GUA_DATA = {
+            '乾': { name: '乾为天', ci: '元亨利贞。', yao: ['潜龙勿用。', '见龙在田，利见大人。', '君子终日乾乾，夕惕若，厉无咎。', '或跃在渊，无咎。', '飞龙在天，利见大人。', '亢龙有悔。'], desc: '象征天，刚健有力。事业大吉，但需防盛极而衰。' },
+            '坤': { name: '坤为地', ci: '元亨，利牝马之贞。', yao: ['履霜，坚冰至。', '直方大，不习无不利。', '含章可贞。', '括囊，无咎无誉。', '黄裳，元吉。', '龙战于野，其血玄黄。'], desc: '象征地，柔顺包容。适合守成，不宜冒进。' },
+            '屯': { name: '水雷屯', ci: '元亨，利贞，勿用有攸往。', yao: ['磐桓，利居贞。', '屯如邅如，乘马班如。', '即鹿无虞，惟入于林中。', '乘马班如，求婚媾。', '屯其膏，小贞吉，大贞凶。', '乘马班如，泣血涟如。'], desc: '象征初生，万事开头难。宜守不宜攻，耐心等待时机。' },
+            '蒙': { name: '山水蒙', ci: '亨。匪我求童蒙，童蒙求我。', yao: ['发蒙，利用刑人。', '包蒙，吉。', '勿用取女，见金夫，不有躬。', '困蒙，吝。', '童蒙，吉。', '击蒙，不利为寇，利御寇。'], desc: '象征蒙昧，需要启蒙教育。虚心学习，尊师重道。' },
+            '需': { name: '水天需', ci: '有孚，光亨，贞吉，利涉大川。', yao: ['需于郊，利用恒，无咎。', '需于沙，小有言，终吉。', '需于泥，致寇至。', '需于血，出自穴。', '需于酒食，贞吉。', '入于穴，有不速之客三人来。'], desc: '象征等待，时机未到需耐心。准备充分后再行动。' },
+            '讼': { name: '天水讼', ci: '有孚，窒惕，中吉，终凶。', yao: ['不永所事，小有言，终吉。', '不克讼，归而逋。', '食旧德，贞厉，终吉。', '不克讼，复即命渝。', '讼，元吉。', '或锡之鞶带，终朝三褫之。'], desc: '象征争讼，口舌是非。宜和解，不宜争斗。' },
+            '师': { name: '地水师', ci: '贞，丈人吉，无咎。', yao: ['师出以律，否臧凶。', '在师中，吉，无咎。', '师或舆尸，凶。', '师左次，无咎。', '田有禽，利执言，无咎。', '大君有命，开国承家，小人勿用。'], desc: '象征军队，众人行事。需有纪律，听从指挥。' },
+            '比': { name: '水地比', ci: '吉。原筮，元永贞，无咎。', yao: ['有孚比之，无咎。', '比之自内，贞吉。', '比之匪人。', '外比之，贞吉。', '显比，王用三驱，失前禽。', '比之无首，凶。'], desc: '象征亲近，团结合作。择善而交，以诚相待。' },
+            '小畜': { name: '风天小畜', ci: '亨。密云不雨，自我西郊。', yao: ['复自道，何其咎，吉。', '牵复，吉。', '舆说辐，夫妻反目。', '有孚，血去惕出，无咎。', '有孚挛如，富以其邻。', '既雨既处，尚德载。'], desc: '象征小有蓄积，力量不足。宜积蓄力量，等待时机。' },
+            '履': { name: '天泽履', ci: '履虎尾，不咥人，亨。', yao: ['素履，往无咎。', '履道坦坦，幽人贞吉。', '眇能视，跛能履。', '履虎尾，愬愬，终吉。', '夬履，贞厉。', '视履考祥，其旋元吉。'], desc: '象征谨慎行事，如履薄冰。小心谨慎，可获平安。' },
+            '泰': { name: '地天泰', ci: '小往大来，吉亨。', yao: ['拔茅茹，以其汇，征吉。', '包荒，用冯河，不遐遗。', '无平不陂，无往不复。', '翩翩，不富以其邻。', '帝乙归妹，以祉元吉。', '城复于隍，勿用师。'], desc: '象征通泰，阴阳调和。万事亨通，事业大吉。' },
+            '否': { name: '天地否', ci: '否之匪人，不利君子贞，大往小来。', yao: ['拔茅茹，以其汇，贞吉亨。', '包承，小人吉，大人否。', '包羞。', '有命无咎，畴离祉。', '休否，大人吉。', '倾否，先否后喜。'], desc: '象征闭塞，阴阳不交。诸事不顺，宜守不宜攻。' },
+            '同人': { name: '天火同人', ci: '同人于野，亨。利涉大川，利君子贞。', yao: ['同人于门，无咎。', '同人于宗，吝。', '伏戎于莽，升其高陵。', '乘其墉，弗克攻，吉。', '同人，先号咷而后笑。', '同人于郊，无悔。'], desc: '象征团结，志同道合。与人合作，共创大业。' },
+            '大有': { name: '火天大有', ci: '元亨。', yao: ['无交害，匪咎，艰则无咎。', '大车以载，有攸往，无咎。', '公用亨于天子，小人弗克。', '匪其彭，无咎。', '厥孚交如，威如，吉。', '自天佑之，吉无不利。'], desc: '象征大有收获，丰收富足。财运亨通，事业顺利。' },
+            '谦': { name: '地山谦', ci: '亨，君子有终。', yao: ['谦谦君子，用涉大川，吉。', '鸣谦，贞吉。', '劳谦，君子有终，吉。', '无不利，撝谦。', '不富以其邻，利用侵伐，无不利。', '鸣谦，利用行师，征邑国。'], desc: '象征谦虚，虚怀若谷。谦虚受益，骄傲招损。' },
+            '豫': { name: '雷地豫', ci: '利建侯行师。', yao: ['鸣豫，凶。', '介于石，不终日，贞吉。', '盱豫，悔。', '由豫，大有得。', '贞疾，恒不死。', '冥豫，成有渝，无咎。'], desc: '象征愉悦，安乐。但需防乐极生悲，居安思危。' },
+            '随': { name: '泽雷随', ci: '元亨利贞，无咎。', yao: ['官有渝，贞吉。', '系小子，失丈夫。', '系丈夫，失小子。', '随有获，贞凶。', '孚于嘉，吉。', '拘系之，乃从维之。'], desc: '象征随从，顺势而为。择善而从，不可盲从。' },
+            '蛊': { name: '山风蛊', ci: '元亨，利涉大川。先甲三日，后甲三日。', yao: ['干父之蛊，有子，考无咎。', '干母之蛊，不可贞。', '干父之蛊，小有悔，无大咎。', '裕父之蛊，往见吝。', '干父之蛊，用誉。', '不事王侯，高尚其事。'], desc: '象征腐败，需要革新。除旧布新，改革创新。' },
+            '临': { name: '地泽临', ci: '元，亨，利，贞。至于八月有凶。', yao: ['咸临，贞吉。', '咸临，吉，无不利。', '甘临，无攸利。', '至临，无咎。', '知临，大君之宜，吉。', '敦临，吉，无咎。'], desc: '象征督导，居高临下。以身作则，教化他人。' },
+            '观': { name: '风地观', ci: '盥而不荐，有孚顒若。', yao: ['童观，小人无咎，君子吝。', '窥观，利女贞。', '观我生，进退。', '观国之光，利用宾于王。', '观我生，君子无咎。', '观其生，君子无咎。'], desc: '象征观察，审时度势。观察学习，借鉴经验。' },
+            '噬嗑': { name: '火雷噬嗑', ci: '亨，利用狱。', yao: ['屦校灭趾，无咎。', '噬肤灭鼻，无咎。', '噬腊肉，遇毒，小吝，无咎。', '噬干胏，得金矢，利艰贞，吉。', '噬干肉，得黄金，贞厉，无咎。', '何校灭耳，凶。'], desc: '象征咬合，去除障碍。果断决策，解决问题。' },
+            '贲': { name: '山火贲', ci: '亨，小利有攸往。', yao: ['贲其趾，舍车而徒。', '贲其须。', '贲如濡如，永贞吉。', '贲如皤如，白马翰如。', '贲于丘园，束帛戋戋。', '白贲，无咎。'], desc: '象征装饰，文饰美化。注重外表，但需内涵。' },
+            '剥': { name: '山地剥', ci: '不利有攸往。', yao: ['剥床以足，蔑贞凶。', '剥床以辨，蔑贞凶。', '剥之，无咎。', '剥床以肤，凶。', '贯鱼，以宫人宠，无不利。', '硕果不食，君子得舆，小人剥庐。'], desc: '象征剥落，衰败。小人得势，君子需隐忍。' },
+            '复': { name: '地雷复', ci: '亨。出入无疾，朋来无咎。', yao: ['不远复，无祗悔，元吉。', '休复，吉。', '频复，厉无咎。', '中行独复。', '敦复，无悔。', '迷复，凶，有灾眚。'], desc: '象征回复，重新开始。迷途知返，东山再起。' },
+            '无妄': { name: '天雷无妄', ci: '元亨利贞。其匪正有眚，不利有攸往。', yao: ['无妄，往吉。', '不耕获，不菑畲，则利有攸往。', '无妄之灾，或系之牛。', '可贞，无咎。', '无妄之疾，勿药有喜。', '无妄，行有眚，无攸利。'], desc: '象征无妄，真实无伪。脚踏实地，不可妄想。' },
+            '大畜': { name: '山天大畜', ci: '利贞，不家食吉，利涉大川。', yao: ['有厉利已。', '舆说輹。', '良马逐，利艰贞。', '童牛之牿，元吉。', '豶豕之牙，吉。', '何天之衢，亨。'], desc: '象征大蓄积，厚积薄发。积蓄力量，等待时机。' },
+            '颐': { name: '山雷颐', ci: '贞吉，观颐，自求口实。', yao: ['舍尔灵龟，观我朵颐，凶。', '颠颐，拂经，于丘颐，征凶。', '拂颐，贞凶，十年勿用，无攸利。', '颠颐，吉，虎视眈眈，其欲逐逐，无咎。', '拂经，居贞吉，不可涉大川。', '由颐，厉吉，利涉大川。'], desc: '象征颐养，养生。自食其力，注意饮食起居。' },
+            '大过': { name: '泽风大过', ci: '栋桡，利有攸往，亨。', yao: ['藉用白茅，无咎。', '枯杨生稊，老夫得其女妻，无不利。', '栋桡，凶。', '栋隆，吉，有它吝。', '枯杨生华，老妇得士夫，无咎无誉。', '过涉灭顶，凶，无咎。'], desc: '象征大过，过度。非常时期，需非常手段。' },
+            '坎': { name: '坎为水', ci: '习坎，有孚，维心亨，行有尚。', yao: ['习坎，入于坎窞，凶。', '坎有险，求小得。', '来之坎坎，险且枕，入于坎窞，勿用。', '樽酒簋贰，用缶，纳约自牖，终无咎。', '坎不盈，祗既平，无咎。', '系用徽纆，寘于丛棘，三岁不得，凶。'], desc: '象征险陷，困难重重。谨慎行事，不可冒进。' },
+            '离': { name: '离为火', ci: '利贞，亨。畜牝牛，吉。', yao: ['履错然，敬之，无咎。', '黄离，元吉。', '日昃之离，不鼓缶而歌，则大耋之嗟，凶。', '突如其来如，焚如，死如，弃如。', '出涕沱若，戚嗟若，吉。', '王用出征，有嘉折首，获匪其丑，无咎。'], desc: '象征火，光明美丽。依附正道，光明磊落。' },
+            '咸': { name: '泽山咸', ci: '亨，利贞，取女吉。', yao: ['咸其拇。', '咸其腓，凶，居吉。', '咸其股，执其随，往吝。', '贞吉悔亡，憧憧往来，朋从尔思。', '咸其脢，无悔。', '咸其辅，颊，舌。'], desc: '象征感应，相互感应。真诚相待，心灵相通。' },
+            '恒': { name: '雷风恒', ci: '亨，无咎，利贞，利有攸往。', yao: ['浚恒，贞凶，无攸利。', '悔亡。', '不恒其德，或承之羞，贞吝。', '田无禽。', '恒其德，贞，妇人吉，夫子凶。', '振恒，凶。'], desc: '象征恒久，持之以恒。坚持不懈，方得始终。' },
+            '遁': { name: '天山遁', ci: '亨，小利贞。', yao: ['遁尾，厉，勿用有攸往。', '执之用黄牛之革，莫之胜说。', '系遁，有疾厉，畜臣妾吉。', '好遁，君子吉，小人否。', '嘉遁，贞吉。', '肥遁，无不利。'], desc: '象征退避，隐退。知进退，明哲保身。' },
+            '大壮': { name: '雷天大壮', ci: '利贞。', yao: ['壮于趾，征凶，有孚。', '贞吉。', '小人用壮，君子用罔，贞厉。', '贞吉悔亡，藩决不羸，壮于大舆之輹。', '丧羊于易，无悔。', '羝羊触藩，不能退，不能遂，无攸利，艰则吉。'], desc: '象征大壮，强盛。力量强大，但需守正。' },
+            '晋': { name: '火地晋', ci: '康侯用锡马蕃庶，昼日三接。', yao: ['晋如摧如，贞吉，罔孚，裕无咎。', '晋如，愁如，贞吉。', '众允，悔亡。', '晋如鼫鼠，贞厉。', '悔亡，失得勿恤，往吉，无不利。', '晋其角，维用伐邑，厉吉无咎，贞吝。'], desc: '象征晋升，前进。事业上升，前途光明。' },
+            '明夷': { name: '地火明夷', ci: '利艰贞。', yao: ['明夷于飞，垂其翼。', '明夷，夷于左股，用拯马壮，吉。', '明夷于南狩，得其大首，不可疾贞。', '入于左腹，获明夷之心，出于门庭。', '箕子之明夷，利贞。', '不明晦，初登于天，后入于地。'], desc: '象征光明受损，黑暗。韬光养晦，等待时机。' },
+            '家人': { name: '风火家人', ci: '利女贞。', yao: ['闲有家，悔亡。', '无攸遂，在中馈。', '家人嗃嗃，悔厉吉，妇子嘻嘻，终吝。', '富家，大吉。', '王假有家，勿恤，吉。', '有孚威如，终吉。'], desc: '象征家庭，家教。修身齐家，家庭和睦。' },
+            '睽': { name: '火泽睽', ci: '小事吉。', yao: ['悔亡，丧马勿逐，自复。', '遇主于巷，无咎。', '见舆曳，其牛掣，其人天且劓，无初有终。', '睽孤，遇元夫，交孚，厉无咎。', '悔亡，厥宗噬肤，往何咎。', '睽孤，见豕负涂，载鬼一车。'], desc: '象征乖离，分歧。求同存异，化解矛盾。' },
+            '蹇': { name: '水山蹇', ci: '利西南，不利东北，利见大人，贞吉。', yao: ['往蹇，来誉。', '王臣蹇蹇，匪躬之故。', '往蹇，来反。', '往蹇，来连。', '大蹇，朋来。', '往蹇，来硕，吉，利见大人。'], desc: '象征蹇难，困难。进退两难，需寻求帮助。' },
+            '解': { name: '雷水解', ci: '利西南，无所往，其来复吉，有攸往，夙吉。', yao: ['无咎。', '田获三狐，得黄矢，贞吉。', '负且乘，致寇至，贞吝。', '解而拇，朋至斯孚。', '君子维有解，吉，有孚于小人。', '公用射隼，于高墉之上，获之，无不利。'], desc: '象征解脱，解决。困难解除，化险为夷。' },
+            '损': { name: '山泽损', ci: '有孚，元吉，无咎，可贞，利有攸往。', yao: ['已事遄往，无咎，酌损之。', '利贞，征凶，弗损益之。', '三人行，则损一人，一人行，则得其友。', '损其疾，使遄有喜，无咎。', '或益之，十朋之龟，弗克违，元吉。', '弗损益之，无咎，贞吉，利有攸往，得臣无家。'], desc: '象征减损，牺牲。损己利人，但需适度。' },
+            '益': { name: '风雷益', ci: '利有攸往，利涉大川。', yao: ['利用为大作，元吉，无咎。', '或益之，十朋之龟，弗克违，永贞吉。', '益之用凶事，无咎。', '中行，告公从，利用为依迁国。', '有孚惠心，勿问元吉，有孚惠我德。', '莫益之，或击之，立心勿恒，凶。'], desc: '象征增益，受益。积善行德，获益无穷。' },
+            '夬': { name: '泽天夬', ci: '扬于王庭，孚号，有厉，告自邑，不利即戎，利有攸往。', yao: ['壮于前趾，往不胜为咎。', '惕号，莫夜有戎，勿恤。', '壮于頄，有凶，君子夬夬，独行遇雨。', '臀无肤，其行次且，牵羊悔亡，闻言不信。', '苋陆夬夬，中行无咎。', '无号，终有凶。'], desc: '象征决断，果断。果断决策，清除小人。' },
+            '姤': { name: '天风姤', ci: '女壮，勿用取女。', yao: ['系于金柅，贞吉，有攸往，见凶，羸豕孚蹢躅。', '包有鱼，无咎，不利宾。', '臀无肤，其行次且，厉，无大咎。', '包无鱼，起凶。', '以杞包瓜，含章，有陨自天。', '姤其角，吝，无咎。'], desc: '象征相遇，邂逅。不期而遇，但需谨慎。' },
+            '萃': { name: '泽地萃', ci: '亨，王假有庙，利见大人，亨，利贞，用大牲吉，利有攸往。', yao: ['有孚不终，乃乱乃萃，若号，一握为笑，勿恤，往无咎。', '引吉，无咎，孚乃利用禴。', '萃如，嗟如，无攸利，往无咎，小吝。', '大吉，无咎。', '萃有位，无咎，匪孚，元永贞，悔亡。', '赍咨涕洟，无咎。'], desc: '象征聚集，汇聚。团结众人，共创事业。' },
+            '升': { name: '地风升', ci: '元亨，用见大人，勿恤，南征吉。', yao: ['允升，大吉。', '孚乃利用禴，无咎。', '升虚邑。', '王用亨于岐山，吉，无咎。', '贞吉，升阶。', '冥升，利于不息之贞。'], desc: '象征上升，晋升。步步高升，前途无量。' },
+            '困': { name: '泽水困', ci: '亨，贞，大人吉，无咎，有言不信。', yao: ['臀困于株木，入于幽谷，三岁不觌。', '困于酒食，朱绂方来，利用享祀，征凶，无咎。', '困于石，据于蒺藜，入于其宫，不见其妻，凶。', '来徐徐，困于金车，吝，有终。', '劓刖，困于赤绂，乃徐有说，利用祭祀。', '困于葛藟，于臲卼，曰动悔，有悔，征吉。'], desc: '象征困穷，困境。穷困之中，坚守正道。' },
+            '井': { name: '水风井', ci: '改邑不改井，无丧无得，往来井井。', yao: ['井泥不食，旧井无禽。', '井谷射鲋，瓮敝漏。', '井渫不食，为我心恻，可用汲，王明，并受其福。', '井甃，无咎。', '井冽，寒泉食。', '井收勿幕，有孚元吉。'], desc: '象征水井，源泉。修身养德，泽被他人。' },
+            '革': { name: '泽火革', ci: '己日乃孚，元亨利贞，悔亡。', yao: ['巩用黄牛之革。', '己日乃革之，征吉，无咎。', '征凶，贞厉，革言三就，有孚。', '悔亡，有孚改命，吉。', '大人虎变，未占有孚。', '君子豹变，小人革面，征凶，居贞吉。'], desc: '象征变革，改革。破旧立新，顺应时势。' },
+            '鼎': { name: '火风鼎', ci: '元吉，亨。', yao: ['鼎颠趾，利出否，得妾以其子，无咎。', '鼎有实，我仇有疾，不我能即，吉。', '鼎耳革，其行塞，雉膏不食，方雨亏悔，终吉。', '鼎折足，覆公餗，其形渥，凶。', '鼎黄耳，金铉，利贞。', '鼎玉铉，大吉，无不利。'], desc: '象征鼎器，稳重。革故鼎新，稳重前行。' },
+            '震': { name: '震为雷', ci: '亨，震来虩虩，笑言哑哑，震惊百里，不丧匕鬯。', yao: ['震来虩虩，后笑言哑哑，吉。', '震来厉，亿丧贝，跻于九陵，勿逐，七日得。', '震苏苏，震行无眚。', '震遂泥。', '震往来厉，亿无丧，有事。', '震索索，视矍矍，征凶，震不于其躬，于其邻，无咎，婚媾有言。'], desc: '象征震动，震惊。面对变故，镇定自若。' },
+            '艮': { name: '艮为山', ci: '艮其背，不获其身，行其庭，不见其人，无咎。', yao: ['艮其趾，无咎，利永贞。', '艮其腓，不拯其随，其心不快。', '艮其限，列其夤，厉薰心。', '艮其身，无咎。', '艮其辅，言有序，悔亡。', '敦艮，吉。'], desc: '象征停止，静止。适可而止，知足常乐。' },
+            '渐': { name: '风山渐', ci: '女归吉，利贞。', yao: ['鸿渐于干，小子厉，有言，无咎。', '鸿渐于磐，饮食衎衎，吉。', '鸿渐于陆，夫征不复，妇孕不育，凶，利御寇。', '鸿渐于木，或得其桷，无咎。', '鸿渐于陵，妇三岁不孕，终莫之胜，吉。', '鸿渐于陆，其羽可用为仪，吉。'], desc: '象征渐进，逐步。循序渐进，稳扎稳打。' },
+            '归妹': { name: '雷泽归妹', ci: '征凶，无攸利。', yao: ['归妹以娣，跛能履，征吉。', '眇能视，利幽人之贞。', '归妹以须，反归以娣。', '归妹愆期，迟归有时。', '帝乙归妹，其君之袂，不如其娣之袂良，月几望，吉。', '女承筐无实，士刲羊无血，无攸利。'], desc: '象征嫁娶，婚姻。婚姻大事，需谨慎对待。' },
+            '丰': { name: '雷火丰', ci: '亨，王假之，勿忧，宜日中。', yao: ['遇其配主，虽旬无咎，往有尚。', '丰其蔀，日中见斗，往得疑疾，有孚发若，吉。', '丰其沛，日中见昧，折其右肱，无咎。', '丰其蔀，日中见斗，遇其夷主，吉。', '来章，有庆誉，吉。', '丰其屋，蔀其家，窥其户，阒其无人，三岁不觌，凶。'], desc: '象征丰盛，盛大。盛大之时，需防衰落。' },
+            '旅': { name: '火山旅', ci: '小亨，旅贞吉。', yao: ['旅琐琐，斯其所取灾。', '旅即次，怀其资，得童仆贞。', '旅焚其次，丧其童仆，贞厉。', '旅于处，得其资斧，我心不快。', '射雉一矢亡，终以誉命。', '鸟焚其巢，旅人先笑后号咷，丧牛于易，凶。'], desc: '象征旅行，漂泊。出门在外，谨慎行事。' },
+            '巽': { name: '巽为风', ci: '小亨，利有攸往，利见大人。', yao: ['进退，利武人之贞。', '巽在床下，用史巫纷若，吉，无咎。', '频巽，吝。', '悔亡，田获三品。', '贞吉悔亡，无不利，无初有终，先庚三日，后庚三日，吉。', '巽在床下，丧其资斧，贞凶。'], desc: '象征顺从，谦逊。谦逊顺从，但需有主见。' },
+            '兑': { name: '兑为泽', ci: '亨，利贞。', yao: ['和兑，吉。', '孚兑，吉，悔亡。', '来兑，凶。', '商兑，未宁，介疾有喜。', '孚于剥，有厉。', '引兑。'], desc: '象征喜悦，愉悦。和悦待人，但需防小人。' },
+            '涣': { name: '风水涣', ci: '亨，王假有庙，利涉大川，利贞。', yao: ['用拯马壮，吉。', '涣奔其机，悔亡。', '涣其躬，无悔。', '涣其群，元吉，涣有丘，匪夷所思。', '涣汗其大号，涣王居，无咎。', '涣其血，去逖出，无咎。'], desc: '象征涣散，分散。散难释险，凝聚人心。' },
+            '节': { name: '水泽节', ci: '亨，苦节不可贞。', yao: ['不出户庭，无咎。', '不出门庭，凶。', '不节若，则嗟若，无咎。', '安节，亨。', '甘节，吉，往有尚。', '苦节，贞凶，悔亡。'], desc: '象征节制，节约。适度节制，不可过度。' },
+            '中孚': { name: '风泽中孚', ci: '豚鱼吉，利涉大川，利贞。', yao: ['虞吉，有它不燕。', '鸣鹤在阴，其子和之，我有好爵，吾与尔靡之。', '得敌，或鼓或罢，或泣或歌。', '月几望，马匹亡，无咎。', '有孚挛如，无咎。', '翰音登于天，贞凶。'], desc: '象征诚信，诚实。诚信为本，言行一致。' },
+            '小过': { name: '雷山小过', ci: '亨，利贞，可小事，不可大事。', yao: ['飞鸟遗之音，不宜上，宜下，大吉。', '过其祖，遇其妣，不及其君，遇其臣，无咎。', '弗过防之，从或戕之，凶。', '无咎，弗过遇之，往厉必戒，勿用永贞。', '密云不雨，自我西郊，公弋取彼在穴。', '弗遇过之，飞鸟离之，凶，是谓灾眚。'], desc: '象征小过，小的过度。小事可过，大事需谨慎。' },
+            '既济': { name: '水火既济', ci: '亨，小利贞，初吉终乱。', yao: ['曳其轮，濡其尾，无咎。', '妇丧其茀，勿逐，七日得。', '高宗伐鬼方，三年克之，小人勿用。', '繻有衣袽，终日戒。', '东邻杀牛，不如西邻之禴祭，实受其福。', '濡其首，厉。'], desc: '象征既成，完成。事业有成，但需防微杜渐。' },
+            '未济': { name: '火水未济', ci: '亨，小狐汔济，濡其尾，无攸利。', yao: ['濡其尾，吝。', '曳其轮，贞吉。', '未济，征凶，利涉大川。', '贞吉，悔亡，震用伐鬼方，三年有赏于大国。', '贞吉，无悔，君子之光，有孚，吉。', '有孚于饮酒，无咎，濡其首，有孚失是。'], desc: '象征未成，未完成。事业未竟，需继续努力。' }
+        };
+        
+        // 梦境数据
+        const DREAM_DATA = [
+            { name: '梦见水', category: '自然', meaning: '水主财，梦见水通常与财运相关。清水为吉，浊水为凶。', detail: '梦见清澈的水，预示财运亨通，事业顺利；梦见浑浊的水，可能遇到财务纠纷或健康问题。' },
+            { name: '梦见火', category: '自然', meaning: '火主礼，象征热情、事业、名声。', detail: '梦见大火熊熊，预示事业蒸蒸日上；梦见小火苗，表示有新的机会；梦见被火烧，需防口舌是非。' },
+            { name: '梦见山', category: '自然', meaning: '山主稳，象征靠山、贵人、稳定。', detail: '梦见高山，表示有贵人相助；梦见爬山，预示事业需要努力攀登；梦见下山，表示事情趋于平稳。' },
+            { name: '梦见蛇', category: '动物', meaning: '蛇为小龙，主财运、智慧、变化。', detail: '梦见蛇通常预示财运，特别是偏财；也代表智慧和直觉；若被蛇咬，需防小人暗算。' },
+            { name: '梦见龙', category: '动物', meaning: '龙为至尊，主大吉、权力、飞黄腾达。', detail: '梦见龙是大吉之兆，预示事业飞黄腾达，地位提升；梦见龙飞天，表示志向即将实现。' },
+            { name: '梦见虎', category: '动物', meaning: '虎主威，象征权力、勇气、挑战。', detail: '梦见老虎，表示面临挑战，需要勇气；梦见骑虎，预示能够掌控困难局面；梦见被虎追，需防强敌。' },
+            { name: '梦见鱼', category: '动物', meaning: '鱼主余，象征富足、盈余、顺利。', detail: '梦见鱼是吉兆，预示年年有余；梦见大鱼，表示大财运；梦见捞鱼，表示能够把握机会。' },
+            { name: '梦见鸟', category: '动物', meaning: '鸟主信，象征消息、自由、理想。', detail: '梦见飞鸟，表示消息将至；梦见鸟笼，表示受束缚；梦见凤凰，预示大吉大利。' },
+            { name: '梦见死人', category: '人物', meaning: '梦见已故之人，通常表示思念或得到庇佑。', detail: '梦见已故亲人，可能是思念之情，也可能是祖先庇佑；若死者说话，需留意其言语含义。' },
+            { name: '梦见考试', category: '场景', meaning: '考试主压力，象征面临考验或评估。', detail: '梦见考试通常代表现实生活中的压力；梦见考得好，预示能够克服困难；梦见考砸，表示担心失败。' },
+            { name: '梦见飞翔', category: '场景', meaning: '飞翔主高升，象征事业上升、理想实现。', detail: '梦见自己在飞，预示事业或地位将提升；梦见飞不高，表示有阻碍；梦见飞得很高，表示志向远大。' },
+            { name: '梦见坠落', category: '场景', meaning: '坠落主失落，象征担心失去地位或控制。', detail: '梦见从高处坠落，表示担心失败或失去控制；也可能预示健康需要注意。' },
+            { name: '梦见钱', category: '物品', meaning: '钱主财，直接与财运相关。', detail: '梦见捡到钱，预示有意外之财；梦见丢钱，需防破财；梦见数钱，表示对财富的渴望。' },
+            { name: '梦见房子', category: '物品', meaning: '房子主家，象征家庭、事业基础。', detail: '梦见大房子，预示家业兴旺；梦见房子倒塌，需防家庭变故；梦见搬家，表示生活将有变化。' },
+            { name: '梦见车', category: '物品', meaning: '车主行，象征事业发展、人生方向。', detail: '梦见开车，表示掌控人生方向；梦见坐车，表示随波逐流；梦见车祸，需防事业挫折。' },
+            { name: '梦见结婚', category: '情感', meaning: '结婚主合，象征结合、合作、新开始。', detail: '梦见自己结婚，预示新的开始；梦见别人结婚，表示有喜事将近；梦见婚礼出错，需防合作失败。' },
+            { name: '梦见吵架', category: '情感', meaning: '吵架主争，象征内心矛盾或人际关系紧张。', detail: '梦见与人争吵，表示内心有矛盾；梦见和家人吵架，需防家庭不和；梦见和陌生人吵架，表示对外界不满。' },
+            { name: '梦见牙齿掉落', category: '身体', meaning: '牙落主变，象征改变、失去、衰老。', detail: '梦见牙齿掉落，传统认为家中有丧事；现代心理学认为是担心衰老或失去能力；也可能预示将有重大改变。' },
+            { name: '梦见流血', category: '身体', meaning: '血主财，流血象征破财或健康。', detail: '梦见自己流血，可能预示破财；梦见别人流血，表示他人有灾；梦见大量流血，需特别注意健康。' },
+            { name: '梦见怀孕', category: '身体', meaning: '怀孕主生，象征新的开始、创意、计划。', detail: '梦见怀孕，表示有新的计划或创意；梦见生孩子，预示事情将有结果；梦见别人怀孕，表示有新机会。' }
+        ];
+        
+        // 术语数据
+        const TERMS_DATA = [
+            { name: '八字', meaning: '一个人出生时的年、月、日、时四柱干支，共八个字，故称八字。', detail: '八字是命理学的基础，通过分析八字可以了解一个人的性格、命运、事业、婚姻等。八字由年柱、月柱、日柱、时柱组成，每柱两个字，天干地支各一。' },
+            { name: '五行', meaning: '金、木、水、火、土五种基本元素，代表不同的性质和能量。', detail: '五行相生：木生火，火生土，土生金，金生水，水生木。五行相克：木克土，土克水，水克火，火克金，金克木。八字中五行的平衡与否，直接影响命运吉凶。' },
+            { name: '天干', meaning: '甲、乙、丙、丁、戊、己、庚、辛、壬、癸十个符号。', detail: '天干分阴阳：甲丙戊庚壬为阳干，乙丁己辛癸为阴干。天干与五行对应：甲乙属木，丙丁属火，戊己属土，庚辛属金，壬癸属水。' },
+            { name: '地支', meaning: '子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥十二个符号。', detail: '地支与十二生肖对应，也分阴阳。地支与五行对应：寅卯属木，巳午属火，申酉属金，亥子属水，辰戌丑未属土。地支还代表方位、季节、时辰等。' },
+            { name: '十神', meaning: '比肩、劫财、食神、伤官、正财、偏财、正官、七杀、正印、偏印。', detail: '十神是根据日干与其他干支的关系确定的，代表不同的人事物。如正财代表妻子、正当收入；正官代表事业、上司等。' },
+            { name: '日主', meaning: '八字中日柱的天干，代表命主本人。', detail: '日主是八字分析的核心，其他七个字都是与日主的关系。日主的强弱、喜忌决定了整个八字的格局和命运走向。' },
+            { name: '年柱', meaning: '八字的第一柱，代表祖上、父母、童年。', detail: '年柱反映一个人的出身、祖业、父母情况。年柱好，表示出身好，能得到祖上庇佑；年柱差，表示需要白手起家。' },
+            { name: '月柱', meaning: '八字的第二柱，代表父母、兄弟、青年时期。', detail: '月柱又称"提纲"，在八字中非常重要。月柱的地支决定季节，影响整个八字的旺衰。月柱也代表事业宫。' },
+            { name: '日柱', meaning: '八字的第三柱，代表自己、配偶、中年时期。', detail: '日柱的天干就是日主，代表命主本人。日柱的地支是婚姻宫，代表配偶和婚姻状况。' },
+            { name: '时柱', meaning: '八字的第四柱，代表子女、晚年。', detail: '时柱反映一个人的晚年运势、子女情况。时柱好，表示晚年幸福，子女有出息；时柱差，表示晚年辛苦。' },
+            { name: '大运', meaning: '人生中每十年的运势变化。', detail: '大运是根据出生时间推算的，每十年一变。大运与八字配合，可以预测人生不同阶段的吉凶祸福。' },
+            { name: '流年', meaning: '每一年的运势。', detail: '流年是流动的年份，与八字和大运配合，可以预测具体某年的吉凶。流年与大运、八字形成的关系决定当年的运势。' },
+            { name: '用神', meaning: '八字中对日主最有利的五行。', detail: '用神是八字分析的关键，找到用神后，可以通过各种方式补益用神，改善运势。如用神为水，可以多穿黑色衣服，去北方发展等。' },
+            { name: '忌神', meaning: '八字中对日主不利的五行。', detail: '忌神是八字中需要避免和克制的五行。如忌神为火，则应避免红色，避免南方，避免火旺的行业等。' },
+            { name: '桃花', meaning: '代表异性缘、感情、人缘。', detail: '命带桃花的人通常长相好，异性缘佳，人缘好。但桃花过多则变成"桃花劫"，容易有感情纠纷。' },
+            { name: '空亡', meaning: '八字中某些地支力量减弱或消失的状态。', detail: '空亡的地支力量减弱，所代表的人事物也会受到影响。如财星空亡，表示财运不稳定；官星空亡，表示事业多变动。' }
+        ];
+        
+        // ==================== 核心计算函数 ====================
+        
+        function getGanZhiYear(year) {
+            const ganIndex = (year - 4) % 10;
+            const zhiIndex = (year - 4) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+        
+        function getGanZhiMonth(year, month, day) {
+            // 立春修正
+            let baziYear = year;
+            if (month < 2 || (month === 2 && day < 4)) {
+                baziYear = year - 1;
+            }
+            const yearGanIndex = (baziYear - 4) % 10;
+            const monthZhiIndex = (month + 1) % 12;
+            const startGanMap = {0: 2, 5: 2, 1: 4, 6: 4, 2: 6, 7: 6, 3: 8, 8: 8, 4: 0, 9: 0};
+            const startGan = startGanMap[yearGanIndex];
+            const monthGanIndex = (startGan + month - 1) % 10;
+            return TIANGAN[monthGanIndex] + DIZHI[monthZhiIndex];
+        }
+        
+        function getGanZhiDay(year, month, day) {
+            const baseDate = new Date(1900, 0, 31);
+            const targetDate = new Date(year, month - 1, day);
+            const daysDiff = Math.floor((targetDate - baseDate) / (1000 * 60 * 60 * 24));
+            const ganIndex = ((daysDiff % 10) + 10) % 10;
+            const zhiIndex = ((daysDiff % 12) + 12) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+        
+        function getGanZhiHour(dayGan, hour) {
+            const hourZhiIndex = Math.floor((parseInt(hour) + 1) / 2) % 12;
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+            const startGanMap = {0: 0, 5: 0, 1: 2, 6: 2, 2: 4, 7: 4, 3: 6, 8: 6, 4: 8, 9: 8};
+            const startGan = startGanMap[dayGanIndex];
+            const hourGanIndex = (startGan + hourZhiIndex) % 10;
+            return TIANGAN[hourGanIndex] + DIZHI[hourZhiIndex];
+        }
+        
+        function calculateBazi(year, month, day, hour) {
+            // 立春修正
+            let baziYear = year;
+            if (month < 2 || (month === 2 && day < 4)) {
+                baziYear = year - 1;
+            }
+            
+            const yearGZ = getGanZhiYear(baziYear);
+            const monthGZ = getGanZhiMonth(year, month, day);
+            const dayGZ = getGanZhiDay(year, month, day);
+            const hourGZ = getGanZhiHour(dayGZ[0], hour);
+            
+            return {
+                year: yearGZ,
+                month: monthGZ,
+                day: dayGZ,
+                hour: hourGZ,
+                shengxiao: SHENGXIAO[(baziYear - 4) % 12]
+            };
+        }
+        
+        function getShiShen(dayGan, targetGan) {
+            const dayIndex = TIANGAN.indexOf(dayGan);
+            const targetIndex = TIANGAN.indexOf(targetGan);
+            const diff = (targetIndex - dayIndex + 10) % 10;
+            const shishenMap = ['比肩', '劫财', '食神', '伤官', '偏财', '正财', '七杀', '正官', '偏印', '正印'];
+            return shishenMap[diff];
+        }
+        
+        function calculateWuxing(bazi) {
+            const wuxingCount = { '金': 0, '木': 0, '水': 0, '火': 0, '土': 0 };
+            const allGanZhi = bazi.year + bazi.month + bazi.day + bazi.hour;
+            for (let char of allGanZhi) {
+                if (WUXING[char]) {
+                    wuxingCount[WUXING[char]]++;
+                }
+            }
+            return wuxingCount;
+        }
+        
+        // ==================== 八字分析报告生成 ====================
+        
+        function generateBaziReport() {
+            const name = document.getElementById('bazi-name').value || '命主';
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const dateStr = document.getElementById('bazi-date').value;
+            const hour = document.getElementById('bazi-hour').value;
+            
+            if (!dateStr) {
+                alert('请选择出生日期');
+                return;
+            }
+            
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            const bazi = calculateBazi(year, month, day, hour * 2);
+            const wuxing = calculateWuxing(bazi);
+            const dayGan = bazi.day[0];
+            
+            // 找出最旺和最弱的五行
+            let maxWuxing = '', minWuxing = '', maxCount = 0, minCount = 10;
+            for (let [wx, count] of Object.entries(wuxing)) {
+                if (count > maxCount) { maxCount = count; maxWuxing = wx; }
+                if (count < minCount) { minCount = count; minWuxing = wx; }
+            }
+            
+            // 计算十神
+            const shishen = {
+                year: getShiShen(dayGan, bazi.year[0]),
+                month: getShiShen(dayGan, bazi.month[0]),
+                hour: getShiShen(dayGan, bazi.hour[0])
+            };
+            
+            // 生成报告HTML
+            let html = `
+                <div class="card">
+                    <div class="card-title">📊 四柱八字详解</div>
+                    <div class="result-content">
+                        <p><strong>什么是四柱八字？</strong></p>
+                        <p>四柱八字是中国传统命理学的核心，由出生时的年、月、日、时四个时间点的天干地支组成，共八个字。它就像一个人的"命运密码"，蕴含着性格、事业、婚姻、健康等各方面的信息。</p>
+                    </div>
+                    <div class="bazi-grid">
+                        <div class="bazi-item">
+                            <div class="bazi-label">年柱<br>祖上父母</div>
+                            <div class="bazi-value">${bazi.year}</div>
+                            <div class="bazi-shishen">${shishen.year}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">月柱<br>父母兄弟</div>
+                            <div class="bazi-value">${bazi.month}</div>
+                            <div class="bazi-shishen">${shishen.month}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">日柱<br>自己配偶</div>
+                            <div class="bazi-value">${bazi.day}</div>
+                            <div class="bazi-shishen">日主</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">时柱<br>子女晚年</div>
+                            <div class="bazi-value">${bazi.hour}</div>
+                            <div class="bazi-shishen">${shishen.hour}</div>
+                        </div>
+                    </div>
+                    <div class="result-content">
+                        <p><strong>年柱（${bazi.year}）：</strong>代表祖上、父母、童年。年柱为${shishen.year}，说明你${SHISHEN[shishen.year] || '与长辈关系特殊'}。</p>
+                        <p><strong>月柱（${bazi.month}）：</strong>代表父母、兄弟、青年时期。月柱为${shishen.month}，说明你${SHISHEN[shishen.month] || '在青年时期有特殊经历'}。</p>
+                        <p><strong>日柱（${bazi.day}）：</strong>日柱天干"${dayGan}"代表你自己，五行属${WUXING[dayGan]}。日柱地支是婚姻宫，反映配偶和婚姻状况。</p>
+                        <p><strong>时柱（${bazi.hour}）：</strong>代表子女、晚年。时柱为${shishen.hour}，说明你${SHISHEN[shishen.hour] || '晚年运势特殊'}。</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🌿 五行分析</div>
+                    <div class="result-content">
+                        <p><strong>什么是五行？</strong></p>
+                        <p>五行（金木水火土）是中国古代哲学的基础，代表五种基本能量。八字中五行的平衡与否，直接影响一个人的命运。五行相生相克，就像自然界中的生态平衡。</p>
+                    </div>
+            `;
+            
+            // 五行进度条
+            const wuxingColors = { '金': '#FFD700', '木': '#4CAF50', '水': '#2196F3', '火': '#F44336', '土': '#795548' };
+            for (let [wx, count] of Object.entries(wuxing)) {
+                const percent = (count / 8) * 100;
+                html += `
+                    <div class="wuxing-bar">
+                        <span class="wuxing-name">${wx}</span>
+                        <div class="wuxing-progress">
+                            <div class="wuxing-fill" style="width: ${percent}%; background: ${wuxingColors[wx]}"></div>
+                        </div>
+                        <span class="wuxing-count">${count}</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    <div class="result-content" style="margin-top: 15px;">
+                        <p><strong>五行分析：</strong></p>
+                        <p>你的八字中<span class="highlight">${maxWuxing}最旺</span>，有${maxCount}个；<span class="highlight">${minWuxing}最弱</span>，只有${minCount}个。</p>
+                        <p>${getWuxingAnalysis(maxWuxing, minWuxing, dayGan)}</p>
+                    </div>
+                    <div class="advice-box">
+                        <strong>💡 五行调和建议：</strong><br>
+                        ${getWuxingAdvice(minWuxing)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">⭐ 十神分析</div>
+                    <div class="result-content">
+                        <p><strong>什么是十神？</strong></p>
+                        <p>十神是根据日干与其他干支的关系确定的，代表不同的人事物。比如正财代表妻子和正当收入，正官代表事业和上司。通过十神可以了解一个人的性格特点和人生际遇。</p>
+                        <p style="margin-top: 10px;"><strong>你的十神配置：</strong></p>
+                        <p>• 年柱${shishen.year}：${SHISHEN[shishen.year] || '代表与祖上的关系'}</p>
+                        <p>• 月柱${shishen.month}：${SHISHEN[shishen.month] || '代表与父母的缘分'}</p>
+                        <p>• 时柱${shishen.hour}：${SHISHEN[shishen.hour] || '代表与子女的关系'}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💼 事业分析</div>
+                    <div class="result-content">
+                        ${getCareerAnalysis(dayGan, wuxing, shishen)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💕 感情婚姻分析</div>
+                    <div class="result-content">
+                        ${getLoveAnalysis(dayGan, bazi.day[1], wuxing)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💰 财运分析</div>
+                    <div class="result-content">
+                        ${getWealthAnalysis(dayGan, shishen)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🏥 健康分析</div>
+                    <div class="result-content">
+                        ${getHealthAnalysis(wuxing)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🎁 开运转运建议</div>
+                    <div class="result-content">
+                        ${getFortuneAdvice(minWuxing, dayGan)}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📅 近期行动建议</div>
+                    <div class="result-content">
+                        ${getMonthlyAdvice(dayGan)}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('bazi-result').innerHTML = html;
+        }
+        
+        // 五行分析
+        function getWuxingAnalysis(maxWuxing, minWuxing, dayGan) {
+            const rizhuWuxing = WUXING[dayGan];
+            const analyses = {
+                '金': '金旺的人性格刚毅果断，有领导才能，但容易固执。金主义，重情重义，讲信用。',
+                '木': '木旺的人性格仁慈正直，有上进心，但容易优柔寡断。木主仁，心地善良，乐于助人。',
+                '水': '水旺的人聪明机智，善于变通，但容易情绪化。水主智，思维敏捷，适应力强。',
+                '火': '火旺的人热情开朗，有感染力，但容易急躁冲动。火主礼，待人热情，注重礼仪。',
+                '土': '土旺的人稳重踏实，有包容心，但容易保守固执。土主信，诚实守信，值得信赖。'
+            };
+            
+            let text = analyses[maxWuxing] || '';
+            
+            if (maxWuxing === rizhuWuxing) {
+                text += '你的日主也是' + rizhuWuxing + '，说明你的性格特点非常突出，优点和缺点都比较明显。';
+            }
+            
+            if (minWuxing === '水') {
+                text += '水弱说明你在灵活应变方面可能需要加强，建议多学习、多思考。';
+            } else if (minWuxing === '火') {
+                text += '火弱说明你在热情表达方面可能需要加强，建议多与人交流，展现自己。';
+            } else if (minWuxing === '木') {
+                text += '木弱说明你在决策力方面可能需要加强，建议培养果断的性格。';
+            } else if (minWuxing === '金') {
+                text += '金弱说明你在坚持原则方面可能需要加强，建议培养坚定的意志。';
+            } else if (minWuxing === '土') {
+                text += '土弱说明你在稳定性方面可能需要加强，建议培养踏实稳重的性格。';
+            }
+            
+            return text;
+        }
+        
+        // 五行建议
+        function getWuxingAdvice(minWuxing) {
+            const advice = {
+                '金': '多穿白色、金色衣服；佩戴金属饰品；去西方发展；多吃辛辣食物如洋葱、大蒜。',
+                '木': '多穿绿色衣服；佩戴木质饰品；去东方发展；多吃绿色蔬菜。',
+                '水': '多穿黑色、蓝色衣服；佩戴水晶饰品；去北方发展；多喝水，多吃黑色食物如黑豆、黑芝麻。',
+                '火': '多穿红色、紫色衣服；佩戴红宝石饰品；去南方发展；多吃红色食物如红枣、红豆。',
+                '土': '多穿黄色、棕色衣服；佩戴玉石饰品；去中部发展；多吃黄色食物如玉米、南瓜。'
+            };
+            return `你的八字${minWuxing}较弱，建议：${advice[minWuxing]}`;
+        }
+        
+        // 事业分析
+        function getCareerAnalysis(dayGan, wuxing, shishen) {
+            const rizhuWuxing = WUXING[dayGan];
+            const industries = {
+                '金': '金融、银行、机械、汽车、五金、珠宝、武术',
+                '木': '教育、文化、出版、林业、家具、服装、中医',
+                '水': '贸易、物流、旅游、水利、渔业、饮料、演艺',
+                '火': '电子、电力、能源、餐饮、美容、传媒、照明',
+                '土': '房地产、建筑、农业、矿产、陶瓷、仓储、殡葬'
+            };
+            
+            let html = `<p><strong>适合行业：</strong></p>`;
+            html += `<p>根据你的日主五行${rizhuWuxing}，你适合从事与${rizhuWuxing}相关的行业：${industries[rizhuWuxing]}。</p>`;
+            html += `<p><strong>事业优势：</strong></p>`;
+            html += `<p>• 你的八字${shishen.month || '格局'}显示，你在事业上有${shishen.month === '正官' ? '管理才能，适合担任领导职务' : '独特的才能，适合专业领域发展'}。</p>`;
+            html += `<p>• ${rizhuWuxing}日主的人通常${rizhuWuxing === '金' ? '做事果断，有决断力' : rizhuWuxing === '木' ? '有创造力，善于规划' : rizhuWuxing === '水' ? '善于沟通，人际关系好' : rizhuWuxing === '火' ? '热情积极，有感染力' : '稳重踏实，值得信赖'}，这些都是事业成功的重要因素。</p>`;
+            html += `<p><strong>事业建议：</strong></p>`;
+            html += `<p>• 年轻时多学习积累，打好基础</p>`;
+            html += `<p>• 中年是事业发展的黄金期，要把握机会</p>`;
+            html += `<p>• 贵人方位：${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中部'}</p>`;
+            
+            return html;
+        }
+        
+        // 感情分析
+        function getLoveAnalysis(dayGan, dayZhi, wuxing) {
+            const rizhuWuxing = WUXING[dayGan];
+            const spouseWuxing = WUXING[dayZhi];
+            
+            let html = `<p><strong>配偶特征：</strong></p>`;
+            html += `<p>你的日柱地支是${dayZhi}，五行属${spouseWuxing}。这表示你的另一半可能性格${spouseWuxing === '金' ? '刚毅果断' : spouseWuxing === '木' ? '仁慈温和' : spouseWuxing === '水' ? '聪明灵活' : spouseWuxing === '火' ? '热情开朗' : '稳重踏实'}，外貌上可能${spouseWuxing === '金' ? '皮肤白皙，五官立体' : spouseWuxing === '木' ? '身材修长，气质清雅' : spouseWuxing === '水' ? '眼睛明亮，皮肤细腻' : spouseWuxing === '火' ? '面色红润，精神饱满' : '体态丰满，气质沉稳'}。</p>`;
+            
+            html += `<p><strong>适合的异性类型：</strong></p>`;
+            const goodMatch = {
+                '金': '水型或土型的人，水能生金，土能生金',
+                '木': '水型或火型的人，水能生木，木生火',
+                '水': '金型或木型的人，金能生水，水生木',
+                '火': '木型或土型的人，木能生火，火生土',
+                '土': '火型或金型的人，火能生土，土生金'
+            };
+            html += `<p>你是${rizhuWuxing}命，适合找${goodMatch[rizhuWuxing]}的伴侣。这样的组合能够相互扶持，感情和谐。</p>`;
+            
+            html += `<p><strong>应该远离的类型：</strong></p>`;
+            const badMatch = {
+                '金': '火型的人，火克金，容易产生冲突',
+                '木': '金型的人，金克木，容易受制',
+                '水': '土型的人，土克水，容易压抑',
+                '火': '水型的人，水克火，容易熄灭热情',
+                '土': '木型的人，木克土，容易消耗'
+            };
+            html += `<p>建议远离${badMatch[rizhuWuxing]}，这样的组合容易产生矛盾和摩擦。</p>`;
+            
+            html += `<p><strong>感情建议：</strong></p>`;
+            html += `<p>• 你的桃花方位在${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中部'}</p>`;
+            html += `<p>• 适合在${rizhuWuxing === '金' ? '秋季' : rizhuWuxing === '木' ? '春季' : rizhuWuxing === '水' ? '冬季' : rizhuWuxing === '火' ? '夏季' : '四季末'}寻找姻缘</p>`;
+            html += `<p>• 感情中要学会${rizhuWuxing === '金' ? '柔和一些，不要过于刚强' : rizhuWuxing === '木' ? '果断一些，不要过于犹豫' : rizhuWuxing === '水' ? '稳定一些，不要过于多变' : rizhuWuxing === '火' ? '冷静一些，不要过于冲动' : '主动一些，不要过于被动'}</p>`;
+            
+            return html;
+        }
+        
+        // 财运分析
+        function getWealthAnalysis(dayGan, shishen) {
+            const rizhuWuxing = WUXING[dayGan];
+            let html = `<p><strong>财运类型：</strong></p>`;
+            html += `<p>你是${rizhuWuxing}命，${shishen.month === '正财' || shishen.month === '偏财' ? '财星透出，财运较好' : '财星不显，需要通过努力获得财富'}。</p>`;
+            
+            html += `<p><strong>正财与偏财：</strong></p>`;
+            html += `<p>• <strong>正财</strong>：指正当收入，如工资、薪水。你的正财运${shishen.month === '正财' ? '较旺，适合稳定工作' : '一般，需要努力提升'}。</p>`;
+            html += `<p>• <strong>偏财</strong>：指意外之财，如投资、奖金。你的偏财运${shishen.month === '偏财' ? '较旺，可以适当投资' : '较弱，投资需谨慎'}。</p>`;
+            
+            html += `<p><strong>理财建议：</strong></p>`;
+            html += `<p>• 适合在${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中部'}发展财运</p>`;
+            html += `<p>• 适合从事${rizhuWuxing === '金' ? '金融、机械' : rizhuWuxing === '木' ? '教育、文化' : rizhuWuxing === '水' ? '贸易、物流' : rizhuWuxing === '火' ? '电子、能源' : '房地产、建筑'}行业</p>`;
+            html += `<p>• 财运旺的季节：${rizhuWuxing === '金' ? '秋季' : rizhuWuxing === '木' ? '春季' : rizhuWuxing === '水' ? '冬季' : rizhuWuxing === '火' ? '夏季' : '四季末'}</p>`;
+            
+            return html;
+        }
+        
+        // 健康分析
+        function getHealthAnalysis(wuxing) {
+            const organs = {
+                '金': '肺、大肠、呼吸系统',
+                '木': '肝、胆、眼睛',
+                '水': '肾、膀胱、耳朵',
+                '火': '心、小肠、血液循环',
+                '土': '脾、胃、消化系统'
+            };
+            
+            let weakOrgan = '';
+            let minCount = 10;
+            for (let [wx, count] of Object.entries(wuxing)) {
+                if (count < minCount) {
+                    minCount = count;
+                    weakOrgan = wx;
+                }
+            }
+            
+            let html = `<p><strong>五行与脏腑对应：</strong></p>`;
+            html += `<p>金对应肺、木对应肝、水对应肾、火对应心、土对应脾。五行失衡会影响相应脏腑。</p>`;
+            
+            html += `<p><strong>健康薄弱环节：</strong></p>`;
+            html += `<p>你的八字${weakOrgan}较弱，需要注意${organs[weakOrgan]}的保养。</p>`;
+            
+            html += `<p><strong>养生建议：</strong></p>`;
+            if (weakOrgan === '金') {
+                html += `<p>• 多吃白色食物：白萝卜、百合、银耳</p>`;
+                html += `<p>• 避免吸烟，保护呼吸系统</p>`;
+                html += `<p>• 多做深呼吸运动</p>`;
+            } else if (weakOrgan === '木') {
+                html += `<p>• 多吃绿色食物：菠菜、芹菜、西兰花</p>`;
+                html += `<p>• 避免熬夜，保护肝脏</p>`;
+                html += `<p>• 保持心情舒畅，少生气</p>`;
+            } else if (weakOrgan === '水') {
+                html += `<p>• 多吃黑色食物：黑豆、黑芝麻、黑木耳</p>`;
+                html += `<p>• 避免过度劳累，保护肾脏</p>`;
+                html += `<p>• 多喝水，保持水分充足</p>`;
+            } else if (weakOrgan === '火') {
+                html += `<p>• 多吃红色食物：红枣、红豆、西红柿</p>`;
+                html += `<p>• 避免情绪激动，保护心脏</p>`;
+                html += `<p>• 适量运动，促进血液循环</p>`;
+            } else {
+                html += `<p>• 多吃黄色食物：玉米、南瓜、小米</p>`;
+                html += `<p>• 饮食规律，保护脾胃</p>`;
+                html += `<p>• 避免暴饮暴食</p>`;
+            }
+            
+            return html;
+        }
+        
+        // 开运建议
+        function getFortuneAdvice(minWuxing, dayGan) {
+            const rizhuWuxing = WUXING[dayGan];
+            const colors = { '金': '白色、金色', '木': '绿色', '水': '黑色、蓝色', '火': '红色、紫色', '土': '黄色、棕色' };
+            const directions = { '金': '西方', '木': '东方', '水': '北方', '火': '南方', '土': '中部' };
+            const numbers = { '金': '4、9', '木': '3、8', '水': '1、6', '火': '2、7', '土': '5、0' };
+            
+            let html = `<p><strong>五行开运：</strong></p>`;
+            html += `<p>你的八字${minWuxing}较弱，需要补益${minWuxing}五行。</p>`;
+            
+            html += `<p><strong>穿衣颜色：</strong></p>`;
+            html += `<p>多穿${colors[minWuxing]}的衣服，可以增强运势。</p>`;
+            
+            html += `<p><strong>幸运数字：</strong></p>`;
+            html += `<p>你的幸运数字是${numbers[minWuxing]}，可以在选择号码时优先考虑。</p>`;
+            
+            html += `<p><strong>吉利方位：</strong></p>`;
+            html += `<p>适合向${directions[minWuxing]}发展，居住或办公可以选择${directions[minWuxing]}的房间。</p>`;
+            
+            html += `<p><strong>风水调整：</strong></p>`;
+            html += `<p>• 在家中${directions[minWuxing]}摆放${minWuxing === '金' ? '金属饰品' : minWuxing === '木' ? '绿色植物' : minWuxing === '水' ? '鱼缸或水景' : minWuxing === '火' ? '红色装饰品' : '陶瓷或石头'}</p>`;
+            html += `<p>• 佩戴${minWuxing === '金' ? '金饰或银饰' : minWuxing === '木' ? '木质手串' : minWuxing === '水' ? '水晶或黑曜石' : minWuxing === '火' ? '红宝石或玛瑙' : '玉石或黄水晶'}</p>`;
+            
+            html += `<p><strong>心态调整：</strong></p>`;
+            html += `<p>${minWuxing === '金' ? '培养果断坚定的性格，增强自信' : minWuxing === '木' ? '培养仁慈宽容的心胸，乐于助人' : minWuxing === '水' ? '培养灵活变通的思维，善于学习' : minWuxing === '火' ? '培养热情开朗的态度，积极面对生活' : '培养稳重踏实的作风，诚实守信'}</p>`;
+            
+            return html;
+        }
+        
+        // 每月建议
+        function getMonthlyAdvice(dayGan) {
+            const months = ['本月', '下月', '第三个月', '第四个月', '第五个月', '第六个月'];
+            const rizhuWuxing = WUXING[dayGan];
+            
+            let html = '';
+            for (let i = 0; i < 6; i++) {
+                html += `
+                    <div class="month-item">
+                        <div class="month-title">${months[i]}</div>
+                        <div class="do-list">${getDoList(rizhuWuxing, i)}</div>
+                        <div class="dont-list">${getDontList(rizhuWuxing, i)}</div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
+        function getDoList(wuxing, month) {
+            const lists = {
+                '金': ['学习新技能，提升专业能力', '与贵人多交流，拓展人脉', '整理财务，做好理财规划', '关注健康，定期体检', '参加社交活动，展示自己'],
+                '木': ['制定长期计划，明确目标', '多读书学习，充实自己', '帮助他人，积累福报', '外出旅行，开阔眼界', '培养新爱好，丰富生活'],
+                '水': ['加强沟通，维护人际关系', '学习理财知识，提高财商', '关注行业动态，把握机会', '调整心态，保持乐观', '尝试新事物，突破自我'],
+                '火': ['积极主动，争取机会', '表达想法，展现才华', '参加聚会，扩大社交圈', '投资理财，增加收入', '锻炼身体，保持健康'],
+                '土': ['踏实工作，积累经验', '整理家居，改善环境', '陪伴家人，增进感情', '储蓄理财，稳健投资', '学习传统文化，提升修养']
+            };
+            return lists[wuxing][month % 5];
+        }
+        
+        function getDontList(wuxing, month) {
+            const lists = {
+                '金': ['冲动投资，冒险投机', '与人争执，口舌是非', '过度劳累，忽视健康', '轻信他人，泄露隐私', '固执己见，不听劝告'],
+                '木': ['优柔寡断，错失良机', '过度劳累，透支身体', '与人攀比，心生嫉妒', '沉迷娱乐，荒废时间', '忽视细节，粗心大意'],
+                '水': ['情绪化决策，冲动行事', '过于圆滑，失去原则', '贪多求全，分散精力', '轻信谣言，传播是非', '逃避问题，拖延不决'],
+                '火': ['急躁冲动，鲁莽行事', '过度消费，挥霍无度', '与人冲突，树敌太多', '骄傲自满，停止进步', '忽视安全，冒险行动'],
+                '土': ['固步自封，拒绝改变', '过于保守，错失机会', '贪吃懒做，放纵自己', '墨守成规，缺乏创新', '过分依赖，失去独立']
+            };
+            return lists[wuxing][month % 5];
+        }
+        
+        // ==================== 八字合婚 ====================
+        
+        function calculateHehun() {
+            const maleName = document.getElementById('male-name').value || '男方';
+            const femaleName = document.getElementById('female-name').value || '女方';
+            const maleDate = document.getElementById('male-date').value;
+            const femaleDate = document.getElementById('female-date').value;
+            
+            if (!maleDate || !femaleDate) {
+                alert('请填写双方的出生日期');
+                return;
+            }
+            
+            const mDate = new Date(maleDate);
+            const fDate = new Date(femaleDate);
+            
+            const maleBazi = calculateBazi(mDate.getFullYear(), mDate.getMonth() + 1, mDate.getDate(), 12);
+            const femaleBazi = calculateBazi(fDate.getFullYear(), fDate.getMonth() + 1, fDate.getDate(), 12);
+            
+            const maleSX = maleBazi.shengxiao;
+            const femaleSX = femaleBazi.shengxiao;
+            
+            // 生肖配对分析
+            const shengxiaoPairs = {
+                '六合': [['鼠', '牛'], ['虎', '猪'], ['兔', '狗'], ['龙', '鸡'], ['蛇', '猴'], ['马', '羊']],
+                '三合': [['鼠', '龙', '猴'], ['牛', '蛇', '鸡'], ['虎', '马', '狗'], ['兔', '羊', '猪']],
+                '六冲': [['鼠', '马'], ['牛', '羊'], ['虎', '猴'], ['兔', '鸡'], ['龙', '狗'], ['蛇', '猪']]
+            };
+            
+            let relation = '一般';
+            let relationDesc = '你们生肖没有特殊的合冲关系，属于普通配对。婚姻需要双方共同经营，相互理解和包容。';
+            
+            for (let pair of shengxiaoPairs['六合']) {
+                if ((pair[0] === maleSX && pair[1] === femaleSX) || (pair[1] === maleSX && pair[0] === femaleSX)) {
+                    relation = '六合';
+                    relationDesc = '恭喜！你们生肖六合，是上上等婚配。六合代表天作之合，两人性格互补，感情和谐，婚姻幸福美满。';
+                    break;
+                }
+            }
+            
+            if (relation === '一般') {
+                for (let pair of shengxiaoPairs['三合']) {
+                    if (pair.includes(maleSX) && pair.includes(femaleSX)) {
+                        relation = '三合';
+                        relationDesc = '很好！你们生肖三合，是上等婚配。三合代表情投意合，两人志趣相投，能够相互扶持，共同进步。';
+                        break;
+                    }
+                }
+            }
+            
+            if (relation === '一般') {
+                for (let pair of shengxiaoPairs['六冲']) {
+                    if ((pair[0] === maleSX && pair[1] === femaleSX) || (pair[1] === maleSX && pair[0] === femaleSX)) {
+                        relation = '六冲';
+                        relationDesc = '注意！你们生肖相冲，需要多加包容。相冲代表性格差异大，容易产生矛盾。建议多沟通，相互理解，可以化解冲突。';
+                        break;
+                    }
+                }
+            }
+            
+            // 五行分析
+            const maleWuxing = calculateWuxing(maleBazi);
+            const femaleWuxing = calculateWuxing(femaleBazi);
+            
+            let wuxingComp = '';
+            let maleMax = '', femaleMax = '', maxM = 0, maxF = 0;
+            for (let wx of ['金', '木', '水', '火', '土']) {
+                if (maleWuxing[wx] > maxM) { maxM = maleWuxing[wx]; maleMax = wx; }
+                if (femaleWuxing[wx] > maxF) { maxF = femaleWuxing[wx]; femaleMax = wx; }
+            }
+            
+            const shengke = {
+                '金': { sheng: '水', ke: '木', beiSheng: '土', beiKe: '火' },
+                '木': { sheng: '火', ke: '土', beiSheng: '水', beiKe: '金' },
+                '水': { sheng: '木', ke: '火', beiSheng: '金', beiKe: '土' },
+                '火': { sheng: '土', ke: '金', beiSheng: '木', beiKe: '水' },
+                '土': { sheng: '金', ke: '水', beiSheng: '火', beiKe: '木' }
+            };
+            
+            if (shengke[maleMax].sheng === femaleMax) {
+                wuxingComp = `男方${maleMax}生女方${femaleMax}，男方能够滋养女方，对女方有利。`;
+            } else if (shengke[femaleMax].sheng === maleMax) {
+                wuxingComp = `女方${femaleMax}生男方${maleMax}，女方能够滋养男方，对男方有利。`;
+            } else if (shengke[maleMax].ke === femaleMax) {
+                wuxingComp = `男方${maleMax}克女方${femaleMax}，男方对女方有制约，需要男方多包容。`;
+            } else if (shengke[femaleMax].ke === maleMax) {
+                wuxingComp = `女方${femaleMax}克男方${maleMax}，女方对男方有制约，需要女方多包容。`;
+            } else {
+                wuxingComp = `两人五行关系平和，没有明显的生克。`;
+            }
+            
+            let html = `
+                <div class="card">
+                    <div class="card-title">👫 双方八字</div>
+                    <div class="bazi-grid">
+                        <div class="bazi-item">
+                            <div class="bazi-label">男方年柱</div>
+                            <div class="bazi-value">${maleBazi.year}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">男方月柱</div>
+                            <div class="bazi-value">${maleBazi.month}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">男方日柱</div>
+                            <div class="bazi-value">${maleBazi.day}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">男方时柱</div>
+                            <div class="bazi-value">${maleBazi.hour}</div>
+                        </div>
+                    </div>
+                    <div class="bazi-grid" style="margin-top: 10px;">
+                        <div class="bazi-item">
+                            <div class="bazi-label">女方年柱</div>
+                            <div class="bazi-value">${femaleBazi.year}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">女方月柱</div>
+                            <div class="bazi-value">${femaleBazi.month}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">女方日柱</div>
+                            <div class="bazi-value">${femaleBazi.day}</div>
+                        </div>
+                        <div class="bazi-item">
+                            <div class="bazi-label">女方时柱</div>
+                            <div class="bazi-value">${femaleBazi.hour}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🐲 生肖配对分析</div>
+                    <div class="result-content">
+                        <p><strong>男方生肖：${maleSX} | 女方生肖：${femaleSX}</strong></p>
+                        <p><strong>配对关系：${relation}</strong></p>
+                        <p>${relationDesc}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🌿 五行互补分析</div>
+                    <div class="result-content">
+                        <p><strong>男方五行：</strong>${maleMax}最旺</p>
+                        <p><strong>女方五行：</strong>${femaleMax}最旺</p>
+                        <p><strong>五行关系：</strong>${wuxingComp}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💑 合婚建议</div>
+                    <div class="result-content">
+                        <p><strong>优势：</strong></p>
+                        <p>• 你们${relation === '六合' || relation === '三合' ? '生肖相合，缘分深厚' : '可以通过努力创造美好的未来'}</p>
+                        <p>• ${wuxingComp.includes('生') ? '五行相生，能够相互扶持' : '五行平和，相处融洽'}</p>
+                        <p><strong>建议：</strong></p>
+                        <p>• 多沟通，增进了解</p>
+                        <p>• 相互包容，体谅对方</p>
+                        <p>• 共同成长，一起进步</p>
+                        <p>• ${relation === '六冲' ? '特别注意：你们生肖相冲，遇事要冷静，避免冲动' : '珍惜缘分，用心经营'}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('hehun-result').innerHTML = html;
+        }
+        
+        // ==================== 卦象占卜 ====================
+        
+        function castGua() {
+            const question = document.getElementById('gua-question').value || '所问之事';
+            const guaNames = Object.keys(GUA_DATA);
+            const randomGua = guaNames[Math.floor(Math.random() * guaNames.length)];
+            const gua = GUA_DATA[randomGua];
+            const changingYao = Math.floor(Math.random() * 6);
+            
+            let html = `
+                <div class="card">
+                    <div class="card-title">🔮 卦象结果</div>
+                    <div class="result-content">
+                        <p><strong>所问之事：</strong>${question}</p>
+                        <p><strong>卦名：</strong>${gua.name}</p>
+                        <p><strong>卦辞：</strong>${gua.ci}</p>
+                        <p><strong>卦象解读：</strong>${gua.desc}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📜 六爻详解</div>
+                    <div class="result-content">
+            `;
+            
+            for (let i = 0; i < 6; i++) {
+                const isChanging = i === changingYao;
+                html += `<p style="${isChanging ? 'color: #c62828; font-weight: 600;' : ''}">${isChanging ? '【变爻】' : ''}第${i + 1}爻：${gua.yao[i]}</p>`;
+            }
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💡 针对所问之事的解读</div>
+                    <div class="result-content">
+                        <p>关于"${question}"，${gua.name}这个卦象提示你：</p>
+                        <p>${gua.desc}</p>
+                        <p>变爻在第${changingYao + 1}爻，说明事情会有变化，需要灵活应对。</p>
+                        <div class="advice-box">
+                            <strong>建议：</strong><br>
+                            ${question.includes('事业') || question.includes('工作') ? '事业上要' + (gua.desc.includes('吉') ? '把握机会，积极进取' : '谨慎行事，稳扎稳打') : ''}
+                            ${question.includes('感情') || question.includes('婚姻') ? '感情上要' + (gua.desc.includes('吉') ? '真诚相待，珍惜缘分' : '多加沟通，相互理解') : ''}
+                            ${question.includes('财') || question.includes('钱') ? '财运上' + (gua.desc.includes('吉') ? '有较好的机会，可以适当投资' : '需要保守，不宜冒险') : ''}
+                            ${!question.includes('事业') && !question.includes('感情') && !question.includes('财') ? '这件事' + gua.desc : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('gua-result').innerHTML = html;
+        }
+        
+        // ==================== 号码吉凶 ====================
+        
+        function analyzeNumber() {
+            const number = document.getElementById('phone-number').value;
+            if (!number || number.length !== 11) {
+                alert('请输入11位手机号码');
+                return;
+            }
+            
+            // 计算数字和
+            let sum = 0;
+            for (let digit of number) {
+                sum += parseInt(digit);
+            }
+            
+            // 81数理计算
+            let shuli = sum % 81;
+            if (shuli === 0) shuli = 81;
+            
+            const shuliData = {
+                1: { name: '太极之数', jx: '吉', desc: '万物开泰，生发无穷，利禄亨通。' },
+                3: { name: '三才之数', jx: '吉', desc: '天地人和，大事大业，繁荣昌隆。' },
+                5: { name: '五行之数', jx: '吉', desc: '循环相生，圆通畅达，福祉无穷。' },
+                6: { name: '六爻之数', jx: '吉', desc: '天德地祥，福德兼备，安富尊荣。' },
+                7: { name: '七政之数', jx: '吉', desc: '精悍严谨，天赋之力，吉星照耀。' },
+                8: { name: '八卦之数', jx: '吉', desc: '乾坎艮震，巽离坤兑，无穷无尽。' },
+                11: { name: '旱苗逢雨', jx: '吉', desc: '万物更新，调顺发达，恢弘泽世。' },
+                13: { name: '春日牡丹', jx: '吉', desc: '才艺多能，智谋奇略，忍柔当事。' },
+                15: { name: '福寿圆满', jx: '吉', desc: '富贵荣誉，涵养雅量，德高望重。' },
+                16: { name: '厚重之数', jx: '吉', desc: '贵人得助，兴家兴业，名利双收。' },
+                21: { name: '明月中天', jx: '吉', desc: '光风霁月，万物确立，官运亨通。' },
+                23: { name: '旭日东升', jx: '吉', desc: '壮丽壮观，权威旺盛，功名荣达。' },
+                24: { name: '掘藏得金', jx: '吉', desc: '家门余庆，金钱丰盈，白手成家。' },
+                25: { name: '英俊刚毅', jx: '吉', desc: '资性英敏，才能奇特，克服傲慢。' },
+                31: { name: '春日花开', jx: '吉', desc: '智勇得志，博得名利，统领众人。' },
+                32: { name: '宝马金鞍', jx: '吉', desc: '侥幸多能，意外惠泽，侥幸成功。' },
+                33: { name: '旭日升天', jx: '吉', desc: '鸾凤相会，名闻天下，隆昌至极。' },
+                35: { name: '高楼望月', jx: '吉', desc: '温和平静，优雅发展，妇德之美。' },
+                37: { name: '猛虎出林', jx: '吉', desc: '权威显达，热诚忠信，宜着雅量。' },
+                39: { name: '富贵荣华', jx: '吉', desc: '德泽四方，财富丰盈，白手起家。' },
+                41: { name: '有德之数', jx: '吉', desc: '纯阳独秀，德高望重，和顺畅达。' },
+                45: { name: '顺风扬帆', jx: '吉', desc: '新生泰和，顺风扬帆，富贵繁荣。' },
+                47: { name: '点石成金', jx: '吉', desc: '天赋幸运，四通八达，家道昌盛。' },
+                48: { name: '青松立鹤', jx: '吉', desc: '德智兼备，出身清贵，名利双收。' },
+                52: { name: '达眼之数', jx: '吉', desc: '卓识达眼，先见之明，理想实现。' },
+                57: { name: '日照春松', jx: '吉', desc: '寒雪青松，夜莺吟春，必遭一过。' },
+                61: { name: '牡丹芙蓉', jx: '吉', desc: '名利双收，繁荣富贵，荣华之极。' },
+                63: { name: '舟归平浦', jx: '吉', desc: '万物顺利，财官双美，富贵繁荣。' },
+                65: { name: '巨流归海', jx: '吉', desc: '天长地久，家运隆昌，福寿绵长。' },
+                67: { name: '顺风通达', jx: '吉', desc: '利路亨通，进退两难，独营事业。' },
+                68: { name: '顺风扬帆', jx: '吉', desc: '智虑周密，集众信星，发明能智。' },
+                73: { name: '无苦之数', jx: '吉', desc: '志高力微，努力奋斗，可望成功。' },
+                81: { name: '万物回春', jx: '吉', desc: '还元归根，繁荣发达，最吉之数。' }
+            };
+            
+            const defaultData = { name: '普通之数', jx: shuli % 2 === 0 ? '平' : '吉', desc: '运势平稳，吉凶参半，需谨慎行事。' };
+            const result = shuliData[shuli] || defaultData;
+            
+            // 数字能量分析
+            const digitEnergy = {
+                '0': '圆满、包容，但容易空虚',
+                '1': '独立、领导，开创力强',
+                '2': '合作、协调，人际关系好',
+                '3': '创意、表达，社交能力强',
+                '4': '稳定、务实，做事踏实',
+                '5': '变化、自由，适应力强',
+                '6': '家庭、责任，有爱心',
+                '7': '智慧、研究，善于思考',
+                '8': '财富、权力，事业心强',
+                '9': '圆满、博爱，理想主义'
+            };
+            
+            let digitAnalysis = '';
+            for (let i = 0; i < Math.min(number.length, 5); i++) {
+                digitAnalysis += `<p>第${i + 1}位数字${number[i]}：${digitEnergy[number[i]]}</p>`;
+            }
+            
+            let html = `
+                <div class="card">
+                    <div class="card-title">📱 号码分析结果</div>
+                    <div class="result-content">
+                        <p><strong>号码：</strong>${number}</p>
+                        <p><strong>数字和：</strong>${sum}</p>
+                        <p><strong>81数理：</strong>${shuli} - ${result.name}</p>
+                        <p><strong>吉凶：</strong><span class="${result.jx === '吉' ? 'good' : result.jx === '凶' ? 'bad' : ''}">${result.jx}</span></p>
+                        <p><strong>数理含义：</strong>${result.desc}</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🔢 数字能量分析</div>
+                    <div class="result-content">
+                        ${digitAnalysis}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💡 综合建议</div>
+                    <div class="result-content">
+                        <p>这个号码${result.jx === '吉' ? '整体运势较好，适合长期使用' : result.jx === '凶' ? '运势一般，建议谨慎使用' : '运势平稳，没有明显吉凶'}。</p>
+                        <p><strong>事业运：</strong>${sum % 10 > 5 ? '★★★★☆ 事业发展较顺利' : '★★★☆☆ 事业需要努力经营'}</p>
+                        <p><strong>财运：</strong>${number.includes('8') || number.includes('6') ? '★★★★☆ 财运较好' : '★★★☆☆ 财运平稳'}</p>
+                        <p><strong>感情运：</strong>${number.includes('2') || number.includes('6') ? '★★★★☆ 人际关系和谐' : '★★★☆☆ 感情需要经营'}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('number-result').innerHTML = html;
+        }
+        
+        // ==================== 周公解梦 ====================
+        
+        function renderDreamList(dreams) {
+            let html = '';
+            dreams.forEach((dream, index) => {
+                html += `
+                    <div class="list-item" onclick="showDreamDetail(${index})">
+                        <div class="list-item-title">${dream.name}</div>
+                        <div class="list-item-desc">${dream.category} · ${dream.meaning.substring(0, 30)}...</div>
+                    </div>
+                `;
+            });
+            document.getElementById('dream-list').innerHTML = html;
+        }
+        
+        function searchDreams() {
+            const keyword = document.getElementById('dream-search').value.toLowerCase();
+            const filtered = DREAM_DATA.filter(d => d.name.toLowerCase().includes(keyword) || d.meaning.toLowerCase().includes(keyword));
+            renderDreamList(filtered);
+            document.getElementById('dream-detail').innerHTML = '';
+        }
+        
+        function showDreamDetail(index) {
+            const dream = DREAM_DATA[index];
+            document.getElementById('dream-detail').innerHTML = `
+                <div class="card">
+                    <div class="card-title">💭 ${dream.name}</div>
+                    <div class="result-content">
+                        <p><strong>分类：</strong>${dream.category}</p>
+                        <p><strong>简要解释：</strong>${dream.meaning}</p>
+                        <p><strong>详细解读：</strong></p>
+                        <p>${dream.detail}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== 术语解释 ====================
+        
+        function renderTerms() {
+            let html = '';
+            TERMS_DATA.forEach((term, index) => {
+                html += `
+                    <div class="list-item" onclick="showTermDetail(${index})">
+                        <div class="list-item-title">${term.name}</div>
+                        <div class="list-item-desc">${term.meaning.substring(0, 30)}...</div>
+                    </div>
+                `;
+            });
+            document.getElementById('terms-list').innerHTML = html;
+        }
+        
+        function searchTerms() {
+            const keyword = document.getElementById('term-search').value.toLowerCase();
+            const filtered = TERMS_DATA.filter(t => t.name.toLowerCase().includes(keyword) || t.meaning.toLowerCase().includes(keyword));
+            let html = '';
+            filtered.forEach((term, index) => {
+                const originalIndex = TERMS_DATA.indexOf(term);
+                html += `
+                    <div class="list-item" onclick="showTermDetail(${originalIndex})">
+                        <div class="list-item-title">${term.name}</div>
+                        <div class="list-item-desc">${term.meaning.substring(0, 30)}...</div>
+                    </div>
+                `;
+            });
+            document.getElementById('terms-list').innerHTML = html;
+        }
+        
+        function showTermDetail(index) {
+            const term = TERMS_DATA[index];
+            document.getElementById('terms-list').innerHTML = `
+                <div class="card">
+                    <div class="card-title">📚 ${term.name}</div>
+                    <div class="result-content">
+                        <p><strong>基本含义：</strong></p>
+                        <p>${term.meaning}</p>
+                        <p style="margin-top: 15px;"><strong>详细解释：</strong></p>
+                        <p>${term.detail}</p>
+                    </div>
+                </div>
+                <button class="btn" onclick="renderTerms(); document.getElementById('term-search').value = '';" style="margin-top: 15px;">返回列表</button>
+            `;
+        }
+        
+        // ==================== 页面切换 ====================
+        
+        function switchPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // 显示目标页面
+            document.getElementById('page-' + page).classList.add('active');
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelector('.nav-item[data-page="' + page + '"]').classList.add('active');
+        }
+        
+        // ==================== 初始化 ====================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化梦境列表
+            renderDreamList(DREAM_DATA);
+            // 初始化术语列表
+            renderTerms();
+            // 设置默认日期为今天
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => input.value = today);
+        });
+    </script>
+</body>
+</html>
