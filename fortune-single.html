@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>八字命理大师</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --gold: #ffd700;
+            --gold-light: #ffec8b;
+            --gold-dark: #b8860b;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-hover: #21262d;
+            --border-color: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(180deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding-bottom: 80px;
+        }
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 25px 0 20px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 70%);
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255,215,0,0.3);
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+        .header p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: var(--text-secondary);
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: #0d1117;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+            transform: translateY(-1px);
+        }
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            transition: left 0.5s;
+        }
+        .nav-tab.active::before {
+            left: 100%;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.1), 0 0 20px rgba(255,215,0,0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: #0d1117;
+            box-shadow: 0 6px 20px rgba(255,215,0,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.4);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--gold);
+        }
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,2);
+            transition: all 0.3s;
+        }
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,3);
+        }
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(180deg, var(--gold) 0%, #ff9500 100%);
+            border-radius: 2px;
+        }
+        .result-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .bazi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .bazi-cell {
+            text-align: center;
+            padding: 15px 10px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.05) 0%, transparent 100%);
+            border: 1px solid rgba(255,215,0,0.1);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .bazi-cell:hover {
+            background: rgba(255,215,0,0.1);
+            transform: scale(1.05);
+        }
+        .bazi-tian {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bazi-di {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .wuxing-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        .wuxing-tag.mu, .wuxing-tag.木 { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; }
+        .wuxing-tag.huo, .wuxing-tag.火 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; }
+        .wuxing-tag.tu, .wuxing-tag.土 { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #1f2937; }
+        .wuxing-tag.jin, .wuxing-tag.金 { background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%); color: #fff; }
+        .wuxing-tag.shui, .wuxing-tag.水 { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #fff; }
+        .guagua-container {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .guagua-display {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            border: 2px solid rgba(255,215,0,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s;
+            cursor: pointer;
+            position: relative;
+        }
+        .guagua-display:hover {
+            transform: scale(1.05);
+            border-color: var(--gold);
+            box-shadow: 0 0 40px rgba(255,215,0,0.3);
+        }
+        .guagua-display::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,215,0,0.3);
+        }
+        .guagua-symbol {
+            font-size: 72px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255,215,0,0.5);
+        }
+        .today-luck {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .luck-item {
+            text-align: center;
+            padding: 18px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+        .luck-item:hover {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.1);
+        }
+        .luck-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .luck-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+        .number-analysis {
+            margin-top: 15px;
+        }
+        .number-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        .number-row:hover {
+            background: rgba(255,215,0,0.03);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+        .number-row:last-child {
+            border-bottom: none;
+        }
+        .number-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .number-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .shishen-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .shishen-table th, .shishen-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+        .shishen-table th {
+            background: rgba(255,215,0,0.05);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .shishen-table tr:last-child td {
+            border-bottom: none;
+        }
+        .shishen-table tr:hover {
+            background: rgba(255,215,0,0.03);
+        }
+        .wuxing-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 120px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .wuxing-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .wuxing-bar-fill {
+            width: 30px;
+            background: linear-gradient(180deg, var(--gold) 0%, #ff9500 100%);
+            border-radius: 8px 8px 0 0;
+            transition: height 0.5s ease;
+            min-height: 10px;
+        }
+        .wuxing-bar-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .horoscope-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.08) 0%, transparent 100%);
+            border: 1px solid rgba(255,215,0,0.15);
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.5) 0%, transparent 100%);
+        }
+        .yi-ji-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .yi-ji-item.yi {
+            border-left: 3px solid #22c55e;
+        }
+        .yi-ji-item.ji {
+            border-left: 3px solid #ef4444;
+        }
+        .yi-ji-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .yi-ji-value {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        .floating-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 15px 25px;
+            display: none;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: var(--gold);
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,215,0,0.3);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .bazi-detail-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .bazi-detail-title {
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .bazi-detail-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .wuxing-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .wuxing-detail-row:last-child {
+            border-bottom: none;
+        }
+        .wuxing-detail-name {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .wuxing-detail-value {
+            color: var(--gold);
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .rizhu-info {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,215,0,0.1);
+        }
+        .rizhu-title {
+            font-size: 15px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .rizhu-content {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        .calendar-switch {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .calendar-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .calendar-option.active {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: #0d1117;
+            font-weight: 600;
+            border-color: var(--gold);
+        }
+        .pillar-detail {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .shishen-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(255,215,0,0.15);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--gold);
+            margin-right: 5px;
+            margin-bottom: 3px;
+        }
+        .wuxing-analysis-card {
+            margin-top: 15px;
+        }
+        .wuxing-summary {
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>八字命理大师</h1>
+            <p>知命改运 · 趋吉避凶</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('home')">首页</div>
+            <div class="nav-tab" onclick="showTab('bazi')">八字排盘</div>
+            <div class="nav-tab" onclick="showTab('guagua')">卦象占卜</div>
+            <div class="nav-tab" onclick="showTab('number')">号码分析</div>
+        </div>
+        
+        <!-- 首页 -->
+        <div id="home" class="tab-content active">
+            <div class="today-luck">
+                <div class="luck-item">
+                    <div class="luck-value">88%</div>
+                    <div class="luck-label">今日运势</div>
+                </div>
+                <div class="luck-item">
+                    <div class="luck-value">★★★★</div>
+                    <div class="luck-label">财运指数</div>
+                </div>
+                <div class="luck-item">
+                    <div class="luck-value">★★★☆</div>
+                    <div class="luck-label">感情指数</div>
+                </div>
+            </div>
+            
+            <div class="result-card horoscope-card">
+                <div class="result-title">今日宜忌</div>
+                <div class="result-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <div class="section-title">宜</div>
+                            <div class="yi-ji-item yi"><span class="yi-ji-label">出行</span><span class="yi-ji-value">✓</span></div>
+                            <div class="yi-ji-item yi"><span class="yi-ji-label">交易</span><span class="yi-ji-value">✓</span></div>
+                            <div class="yi-ji-item yi"><span class="yi-ji-label">祭祀</span><span class="yi-ji-value">✓</span></div>
+                            <div class="yi-ji-item yi"><span class="yi-ji-label">祈福</span><span class="yi-ji-value">✓</span></div>
+                        </div>
+                        <div>
+                            <div class="section-title">忌</div>
+                            <div class="yi-ji-item ji"><span class="yi-ji-label">动土</span><span class="yi-ji-value">✗</span></div>
+                            <div class="yi-ji-item ji"><span class="yi-ji-label">安葬</span><span class="yi-ji-value">✗</span></div>
+                            <div class="yi-ji-item ji"><span class="yi-ji-label">破土</span><span class="yi-ji-value">✗</span></div>
+                            <div class="yi-ji-item ji"><span class="yi-ji-label">开光</span><span class="yi-ji-value">✗</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-title">今日生肖运势</div>
+                <div class="result-content">
+                    <div style="display: grid; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: #22c55e; font-weight: 600;">吉：</span>
+                            <span>鼠、龙、猴</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--text-secondary); font-weight: 600;">平：</span>
+                            <span>牛、虎、兔、蛇、马、羊、鸡、狗、猪</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: #ef4444; font-weight: 600;">凶：</span>
+                            <span>无</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-title">五行旺度</div>
+                <div class="wuxing-chart">
+                    <div class="wuxing-bar"><div class="wuxing-bar-fill" style="height: 70%;"></div><div class="wuxing-bar-label">金</div></div>
+                    <div class="wuxing-bar"><div class="wuxing-bar-fill" style="height: 85%;"></div><div class="wuxing-bar-label">木</div></div>
+                    <div class="wuxing-bar"><div class="wuxing-bar-fill" style="height: 60%;"></div><div class="wuxing-bar-label">水</div></div>
+                    <div class="wuxing-bar"><div class="wuxing-bar-fill" style="height: 90%;"></div><div class="wuxing-bar-label">火</div></div>
+                    <div class="wuxing-bar"><div class="wuxing-bar-fill" style="height: 50%;"></div><div class="wuxing-bar-label">土</div></div>
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-title">命理小知识</div>
+                <div class="result-content">
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                        <strong style="color: var(--gold);">八字</strong>是根据出生年月日时推算出来的四柱干支，每一柱由天干和地支组成，共八个字，故称八字。通过分析八字中五行的生克关系，可以推断一个人的性格、事业、财运、婚姻等方面的信息。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 八字排盘 -->
+        <div id="bazi" class="tab-content">
+            <div class="form-group">
+                <label>选择性别</label>
+                <select id="gender">
+                    <option value="male">男</option>
+                    <option value="female">女</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>出生日期</label>
+                <input type="date" id="birthDate" value="1990-01-01">
+                <div class="calendar-switch">
+                    <div class="calendar-option active" onclick="setCalendarType('solar')">公历</div>
+                    <div class="calendar-option" onclick="setCalendarType('lunar')">农历</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>出生时辰</label>
+                <select id="birthTime">
+                    <option value="0">子时 (23:00-01:00)</option>
+                    <option value="1">丑时 (01:00-03:00)</option>
+                    <option value="2">寅时 (03:00-05:00)</option>
+                    <option value="3">卯时 (05:00-07:00)</option>
+                    <option value="4">辰时 (07:00-09:00)</option>
+                    <option value="5">巳时 (09:00-11:00)</option>
+                    <option value="6">午时 (11:00-13:00)</option>
+                    <option value="7">未时 (13:00-15:00)</option>
+                    <option value="8">申时 (15:00-17:00)</option>
+                    <option value="9">酉时 (17:00-19:00)</option>
+                    <option value="10">戌时 (19:00-21:00)</option>
+                    <option value="11">亥时 (21:00-23:00)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="calculateBaziMain()">开始排盘</button>
+            <div id="baziResult"></div>
+        </div>
+        
+        <!-- 卦象占卜 -->
+        <div id="guagua" class="tab-content">
+            <div class="guagua-container">
+                <div class="guagua-display" onclick="randomGua()">
+                    <div class="guagua-symbol">?</div>
+                </div>
+                <p style="margin-top: 15px; color: var(--gold); font-size: 14px;">点击卦象开始占卜</p>
+            </div>
+            <div id="guaResult"></div>
+        </div>
+        
+        <!-- 号码分析 -->
+        <div id="number" class="tab-content">
+            <div class="form-group">
+                <label>输入号码（手机号/车牌号）</label>
+                <input type="text" id="numberInput" placeholder="请输入手机号或车牌号">
+            </div>
+            <button class="btn btn-primary" onclick="analyzeNumber()">开始分析</button>
+            <div id="numberResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // 当前日历类型
+        let calendarType = 'solar';
+
+        // 设置日历类型
+        function setCalendarType(type) {
+            calendarType = type;
+            document.querySelectorAll('.calendar-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.calendar-option[onclick="setCalendarType('${type}')"]`).classList.add('active');
+        }
+
+        // 数据常量定义
+        const TIANGAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+        const DIZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+        const TIANGAN_WUXING = {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"};
+        const DIZHI_WUXING = {"子":"水","丑":"土","寅":"木","卯":"木","辰":"土","巳":"火","午":"火","未":"土","申":"金","酉":"金","戌":"土","亥":"水"};
+        const DIZHI_CANGGAN = {
+            "子": ["癸"],
+            "丑": ["己", "癸", "辛"],
+            "寅": ["甲", "丙", "戊"],
+            "卯": ["乙"],
+            "辰": ["戊", "乙", "癸"],
+            "巳": ["丙", "庚", "戊"],
+            "午": ["丁", "己"],
+            "未": ["己", "丁", "乙"],
+            "申": ["庚", "壬", "戊"],
+            "酉": ["辛"],
+            "戌": ["戊", "辛", "丁"],
+            "亥": ["壬", "甲"]
+        };
+        const SHENGXIAO = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
+        const SHICHEN_NAMES = ["子时", "丑时", "寅时", "卯时", "辰时", "巳时", "午时", "未时", "申时", "酉时", "戌时", "亥时"];
+        const SHICHEN_TIMES = ["23:00-01:00", "01:00-03:00", "03:00-05:00", "05:00-07:00", "07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00", "15:00-17:00", "17:00-19:00", "19:00-21:00", "21:00-23:00"];
+        
+        // 十神关系表（以日主为基准）
+        const SHISHEN_RELATIONS = {
+            0: {0:"比肩",1:"劫财",2:"食神",3:"伤官",4:"偏财",5:"正财",6:"七杀",7:"正官",8:"偏印",9:"正印"},
+            1: {1:"比肩",0:"劫财",3:"食神",2:"伤官",5:"偏财",4:"正财",7:"七杀",6:"正官",9:"偏印",8:"正印"},
+            2: {2:"比肩",3:"劫财",4:"食神",5:"伤官",6:"偏财",7:"正财",8:"七杀",9:"正官",0:"偏印",1:"正印"},
+            3: {3:"比肩",2:"劫财",5:"食神",4:"伤官",7:"偏财",6:"正财",9:"七杀",8:"正官",1:"偏印",0:"正印"},
+            4: {4:"比肩",5:"劫财",6:"食神",7:"伤官",8:"偏财",9:"正财",0:"七杀",1:"正官",2:"偏印",3:"正印"},
+            5: {5:"比肩",4:"劫财",7:"食神",6:"伤官",9:"偏财",8:"正财",1:"七杀",0:"正官",3:"偏印",2:"正印"},
+            6: {6:"比肩",7:"劫财",8:"食神",9:"伤官",0:"偏财",1:"正财",2:"七杀",3:"正官",4:"偏印",5:"正印"},
+            7: {7:"比肩",6:"劫财",9:"食神",8:"伤官",1:"偏财",0:"正财",3:"七杀",2:"正官",5:"偏印",4:"正印"},
+            8: {8:"比肩",9:"劫财",0:"食神",1:"伤官",2:"偏财",3:"正财",4:"七杀",5:"正官",6:"偏印",7:"正印"},
+            9: {9:"比肩",8:"劫财",1:"食神",0:"伤官",3:"偏财",2:"正财",5:"七杀",4:"正官",7:"偏印",6:"正印"}
+        };
+        
+        const SHISHEN_DETAIL = {
+            "比肩": {"含义":"与日主同五行同阴阳，代表兄弟姐妹、朋友、同事、竞争关系","作用":"帮身抗官杀、分夺财星。身强不喜比肩，身弱喜比肩帮身","性格":"独立自主、自尊心强、有竞争意识、重情义","吉凶":"身强为忌：争夺、破财、竞争压力大；身弱为喜：得助、合作顺利"},
+            "劫财": {"含义":"与日主同五行异阴阳，代表兄弟姐妹、朋友、争夺、破耗","作用":"帮身但带争夺性质，克正财，性格较比肩更激烈","性格":"热情豪爽、行动力强、但易冲动、花钱大手大脚","吉凶":"身强为忌：破财、被抢、竞争激烈；身弱为喜：得朋友助力"},
+            "食神": {"含义":"日主所生且同阴阳，代表才华、口福、享受、子孙","作用":"泄秀生财，制杀护身，是吉神之一","性格":"温和善良、有艺术天赋、懂得享受生活、心胸宽广","吉凶":"为喜：才华横溢、财源广进、子孙贤孝；过旺：懒惰、好逸恶劳"},
+            "伤官": {"含义":"日主所生且异阴阳，代表才华、创意、叛逆、口才","作用":"泄秀但带叛逆性，克正官，伤尽反贵","性格":"聪明伶俐、创意十足、叛逆不羁、口才好但易得罪人","吉凶":"为喜：才华出众、创新能力强；为忌：口舌是非、克夫克官"},
+            "偏财": {"含义":"日主所克且同阴阳，代表横财、意外之财、父亲、情人","作用":"生官杀，泄食伤，代表不稳定的财富","性格":"慷慨大方、善于理财、重视物质、有商业头脑","吉凶":"为喜：财运亨通、投资获利；为忌：破财、因财生祸"},
+            "正财": {"含义":"日主所克且异阴阳，代表正当收入、妻子、稳定财富","作用":"生官杀，代表通过正当途径获得的财富","性格":"勤俭节约、务实稳重、重视家庭、责任心强","吉凶":"为喜：收入稳定、婚姻美满；为忌：财多身弱反为累"},
+            "七杀": {"含义":"克日主且同阴阳，代表压力、挑战、小人、权威、儿子","作用":"攻身之神，需制化，制化得宜则成大贵","性格":"有魄力、有威严、敢于冒险、性格刚强","吉凶":"无制为凶：压力、小人、灾祸；有制为吉：权威、成就"},
+            "正官": {"含义":"克日主且异阴阳，代表官职、名誉、上司、女儿、约束力","作用":"护身之神，代表正当的权力和地位","性格":"正直守法、有责任感、重视名誉、循规蹈矩","吉凶":"为喜：仕途顺利、名誉良好；为忌：压力过大、受制于人"},
+            "偏印": {"含义":"生日主且同阴阳，代表偏门学识、继母、不稳定的帮助","作用":"生身但带偏性，夺食神，代表特殊的才能","性格":"思维独特、有偏门才华、敏感多疑、孤独","吉凶":"为喜：特殊才能、灵感强；为忌：孤独、健康不佳"},
+            "正印": {"含义":"生日主且异阴阳，代表学业、母亲、贵人、保护","作用":"生身护身，化官杀，是吉神之一","性格":"仁慈善良、好学上进、有贵人缘、重视精神","吉凶":"为喜：学业有成、贵人相助；过旺：依赖性强、懒惰"}
+        };
+
+        const SHENGXIAO_GUIREN = {
+            "鼠": {"天乙贵人": ["牛", "猴"], "文昌贵人": ["龙"], "桃花贵人": ["兔"], "事业贵人": ["龙", "猴"]},
+            "牛": {"天乙贵人": ["鼠", "蛇"], "文昌贵人": ["鸡"], "桃花贵人": ["马"], "事业贵人": ["蛇", "鸡"]},
+            "虎": {"天乙贵人": ["猪", "马"], "文昌贵人": ["狗"], "桃花贵人": ["兔"], "事业贵人": ["马", "狗"]},
+            "兔": {"天乙贵人": ["狗", "猪"], "文昌贵人": ["羊"], "桃花贵人": ["鼠"], "事业贵人": ["羊", "猪"]},
+            "龙": {"天乙贵人": ["鸡", "猴"], "文昌贵人": ["猴"], "桃花贵人": ["鸡"], "事业贵人": ["鼠", "猴"]},
+            "蛇": {"天乙贵人": ["鸡", "牛"], "文昌贵人": ["鸡"], "桃花贵人": ["马"], "事业贵人": ["牛", "鸡"]},
+            "马": {"天乙贵人": ["羊", "虎"], "文昌贵人": ["虎"], "桃花贵人": ["兔"], "事业贵人": ["虎", "狗"]},
+            "羊": {"天乙贵人": ["马", "猪"], "文昌贵人": ["猪"], "桃花贵人": ["鼠"], "事业贵人": ["猪", "兔"]},
+            "猴": {"天乙贵人": ["鼠", "龙"], "文昌贵人": ["龙"], "桃花贵人": ["鸡"], "事业贵人": ["鼠", "龙"]},
+            "鸡": {"天乙贵人": ["蛇", "牛"], "文昌贵人": ["蛇"], "桃花贵人": ["马"], "事业贵人": ["蛇", "牛"]},
+            "狗": {"天乙贵人": ["兔", "虎"], "文昌贵人": ["马"], "桃花贵人": ["兔"], "事业贵人": ["虎", "马"]},
+            "猪": {"天乙贵人": ["兔", "羊"], "文昌贵人": ["兔"], "桃花贵人": ["鼠"], "事业贵人": ["羊", "兔"]},
+        };
+
+        const SHENGXIAO_PERSONALITY = {
+            "鼠": {"优点":"聪明伶俐，善于社交，反应敏捷，适应力强，做事灵活多变，善于把握机会，理财能力出众。","缺点":"有时过于精明而显得不够坦诚，做事可能过于计较得失，有时缺乏魄力。","事业特点":"适合从事需要灵活应变的工作，如贸易、金融、咨询等。善于发现商机，但需注意不要过于投机。","贵人特征":"贵人生肖为牛、猴，这类人能给你带来稳定和智慧的帮助。"},
+            "牛": {"优点":"踏实稳重，勤劳坚韧，做事有条不紊，责任心极强，为人忠厚老实，重情重义。","缺点":"固执己见，有时不够灵活，不善于表达感情，做事可能过于保守。","事业特点":"适合从事需要耐心和毅力的工作，如工程、建筑、农业等。稳扎稳打，但需注意把握机会。","贵人特征":"贵人生肖为鼠、蛇，这类人能给你带来智慧和机遇的帮助。"},
+            "虎": {"优点":"威风凛凛，豪爽大方，有领导才能，敢于冒险，性格刚强，正义感强。","缺点":"有时过于冲动，容易得罪人，做事虎头蛇尾，有时不够细心。","事业特点":"适合从事需要魄力和领导力的工作，如管理、创业、军警等。敢于开拓，但需注意稳扎稳打。","贵人特征":"贵人生肖为猪、马，这类人能给你带来支持和机遇的帮助。"},
+            "兔": {"优点":"温文尔雅，心思细腻，善解人意，有艺术天赋，为人谦和有礼。","缺点":"有时过于优柔寡断，缺乏魄力，容易逃避矛盾，有时过于敏感。","事业特点":"适合从事需要细心和创造力的工作，如艺术、设计、教育等。善于协调，但需注意果断决策。","贵人特征":"贵人生肖为狗、猪，这类人能给你带来忠诚和支持的帮助。"},
+            "龙": {"优点":"气宇轩昂，雄心壮志，才华横溢，有远大理想，充满自信和魅力。","缺点":"有时过于自负，好面子，做事不够脚踏实地，有时过于理想化。","事业特点":"适合从事需要创新和领导力的工作，如创业、管理、艺术等。志向远大，但需注意脚踏实地。","贵人特征":"贵人生肖为鸡、猴，这类人能给你带来智慧和执行力的帮助。"},
+            "蛇": {"优点":"智慧深沉，洞察力强，思维缜密，做事有条理，善于谋划。","缺点":"有时多疑敏感，城府较深，让人难以接近，有时过于谨慎。","事业特点":"适合从事需要智慧和策略的工作，如研究、投资、咨询等。善于分析，但需注意开放心态。","贵人特征":"贵人生肖为鸡、牛，这类人能给你带来稳定和智慧的帮助。"},
+            "马": {"优点":"热情奔放，自由洒脱，精力充沛，行动力强，乐观开朗，善于交际。","缺点":"有时过于急躁，缺乏耐心，做事三分钟热度，有时不够稳重。","事业特点":"适合从事需要行动力和社交能力的工作，如销售、传媒、旅游等。善于开拓，但需注意持之以恒。","贵人特征":"贵人生肖为羊、虎，这类人能给你带来支持和机遇的帮助。"},
+            "羊": {"优点":"温柔善良，富有同情心，艺术修养高，内心丰富，为人谦逊有礼。","缺点":"有时过于软弱，缺乏主见，容易受人影响，有时过于悲观。","事业特点":"适合从事需要创造力和同理心的工作，如艺术、教育、医疗等。善于关怀，但需注意独立自主。","贵人特征":"贵人生肖为马、猪，这类人能给你带来动力和支持的帮助。"},
+            "猴": {"优点":"机智灵活，聪明好动，幽默风趣，学习能力极强，善于变通，多才多艺。","缺点":"有时过于调皮，不够稳重，做事缺乏恒心，有时过于投机取巧。","事业特点":"适合从事需要创新和应变能力的工作，如科技、媒体、贸易等。善于创新，但需注意持之以恒。","贵人特征":"贵人生肖为鼠、龙，这类人能给你带来智慧和机遇的帮助。"},
+            "鸡": {"优点":"精明能干，观察力敏锐，做事认真负责，追求完美，善于分析问题。","缺点":"有时过于挑剔，爱批评，容易与人产生摩擦，有时过于追求完美。","事业特点":"适合从事需要细心和分析能力的工作，如财务、审计、研究等。善于管理，但需注意包容他人。","贵人特征":"贵人生肖为蛇、牛，这类人能给你带来智慧和稳定的帮助。"},
+            "狗": {"优点":"忠诚正直，重情重义，有正义感，为人可靠，做事认真负责。","缺点":"有时过于固执，多疑焦虑，容易悲观，有时不够灵活。","事业特点":"适合从事需要忠诚和责任感的工作，如军警、安保、服务等。忠于职守，但需注意开放心态。","贵人特征":"贵人生肖为兔、虎，这类人能给你带来支持和机遇的帮助。"},
+            "猪": {"优点":"心地善良，豁达大度，为人真诚，乐天知命，享受生活，有福气。","缺点":"有时过于懒散，缺乏进取心，容易被人利用，有时过于天真。","事业特点":"适合从事需要耐心和真诚的工作，如服务、教育、医疗等。善于享受生活，但需注意积极进取。","贵人特征":"贵人生肖为兔、羊，这类人能给你带来和谐和支持的帮助。"}
+        };
+
+        // 节气数据
+        const JIEQI_DATES = {
+            "立春": [2, 4], "惊蛰": [3, 6], "清明": [4, 5], "立夏": [5, 5],
+            "芒种": [6, 6], "小暑": [7, 7], "立秋": [8, 6], "白露": [9, 7],
+            "寒露": [10, 8], "立冬": [11, 7], "大雪": [12, 7], "小寒": [1, 5]
+        };
+
+        const JIEQI_MONTH_ZHI = {
+            "立春": "寅", "惊蛰": "卯", "清明": "辰", "立夏": "巳",
+            "芒种": "午", "小暑": "未", "立秋": "申", "白露": "酉",
+            "寒露": "戌", "立冬": "亥", "大雪": "子", "小寒": "丑"
+        };
+
+        // 春节日期数据（1900-2100年）
+        const SPRING_FESTIVAL = {
+            1900: [1, 31], 1901: [2, 19], 1902: [2, 8], 1903: [1, 29], 1904: [2, 16],
+            1905: [2, 4], 1906: [1, 25], 1907: [2, 13], 1908: [2, 2], 1909: [1, 22],
+            1910: [2, 10], 1911: [1, 30], 1912: [2, 18], 1913: [2, 6], 1914: [1, 26],
+            1915: [2, 14], 1916: [2, 3], 1917: [1, 23], 1918: [2, 11], 1919: [2, 1],
+            1920: [2, 20], 1921: [2, 8], 1922: [1, 28], 1923: [2, 16], 1924: [2, 5],
+            1925: [1, 25], 1926: [2, 13], 1927: [2, 2], 1928: [1, 23], 1929: [2, 10],
+            1930: [1, 30], 1931: [2, 17], 1932: [2, 6], 1933: [1, 26], 1934: [2, 14],
+            1935: [2, 4], 1936: [1, 24], 1937: [2, 11], 1938: [1, 31], 1939: [2, 19],
+            1940: [2, 8], 1941: [1, 27], 1942: [2, 15], 1943: [2, 5], 1944: [1, 25],
+            1945: [2, 13], 1946: [2, 2], 1947: [1, 22], 1948: [2, 10], 1949: [1, 29],
+            1950: [2, 17], 1951: [2, 6], 1952: [1, 27], 1953: [2, 14], 1954: [2, 3],
+            1955: [1, 24], 1956: [2, 12], 1957: [1, 31], 1958: [2, 18], 1959: [2, 8],
+            1960: [1, 28], 1961: [2, 15], 1962: [2, 5], 1963: [1, 25], 1964: [2, 13],
+            1965: [2, 2], 1966: [1, 21], 1967: [2, 9], 1968: [1, 30], 1969: [2, 17],
+            1970: [2, 6], 1971: [1, 27], 1972: [2, 15], 1973: [2, 3], 1974: [1, 23],
+            1975: [2, 11], 1976: [1, 31], 1977: [2, 18], 1978: [2, 7], 1979: [1, 28],
+            1980: [2, 16], 1981: [2, 5], 1982: [1, 25], 1983: [2, 13], 1984: [2, 2],
+            1985: [2, 20], 1986: [2, 9], 1987: [1, 29], 1988: [2, 17], 1989: [2, 6],
+            1990: [1, 27], 1991: [2, 15], 1992: [2, 4], 1993: [2, 21], 1994: [2, 10],
+            1995: [1, 31], 1996: [2, 19], 1997: [2, 7], 1998: [1, 28], 1999: [2, 16],
+            2000: [2, 5], 2001: [1, 24], 2002: [2, 12], 2003: [2, 1], 2004: [1, 22],
+            2005: [2, 9], 2006: [1, 29], 2007: [2, 18], 2008: [2, 7], 2009: [1, 26],
+            2010: [2, 14], 2011: [2, 3], 2012: [1, 23], 2013: [2, 10], 2014: [1, 31],
+            2015: [2, 19], 2016: [2, 8], 2017: [1, 28], 2018: [2, 16], 2019: [2, 5],
+            2020: [1, 25], 2021: [2, 12], 2022: [2, 1], 2023: [1, 22], 2024: [2, 10],
+            2025: [1, 29], 2026: [2, 17], 2027: [2, 6], 2028: [1, 26], 2029: [2, 13],
+            2030: [2, 3], 2031: [1, 23], 2032: [2, 11], 2033: [1, 31], 2034: [2, 19],
+            2035: [2, 8], 2036: [1, 28], 2037: [2, 15], 2038: [2, 4], 2039: [1, 24],
+            2040: [2, 12], 2041: [2, 1], 2042: [1, 22], 2043: [2, 10], 2044: [1, 30],
+            2045: [2, 17], 2046: [2, 6], 2047: [1, 26], 2048: [2, 14], 2049: [2, 3],
+            2050: [1, 23], 2051: [2, 10], 2052: [1, 31], 2053: [2, 19], 2054: [2, 7],
+            2055: [1, 27], 2056: [2, 15], 2057: [2, 4], 2058: [1, 24], 2059: [2, 12],
+            2060: [2, 1], 2061: [1, 21], 2062: [2, 9], 2063: [1, 29], 2064: [2, 17],
+            2065: [2, 5], 2066: [1, 26], 2067: [2, 14], 2068: [2, 3], 2069: [1, 23],
+            2070: [2, 11], 2071: [1, 31], 2072: [2, 19], 2073: [2, 7], 2074: [1, 27],
+            2075: [2, 15], 2076: [2, 4], 2077: [1, 24], 2078: [2, 12], 2079: [2, 1],
+            2080: [1, 22], 2081: [2, 10], 2082: [1, 30], 2083: [2, 17], 2084: [2, 6],
+            2085: [1, 26], 2086: [2, 14], 2087: [2, 3], 2088: [1, 23], 2089: [2, 10],
+            2090: [1, 30], 2091: [2, 18], 2092: [2, 7], 2093: [1, 27], 2094: [2, 15],
+            2095: [2, 4], 2096: [1, 24], 2097: [2, 11], 2098: [1, 31], 2099: [2, 19],
+            2100: [2, 9]
+        };
+
+        // 农历月份天数数据（1900-2100年）
+        const LUNAR_MONTH_DATA = {
+            2025: [[30, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 30, 6],
+            2024: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            2023: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2022: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            2021: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2020: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 4],
+            2019: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2018: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            2017: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2016: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            2015: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2014: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 9],
+            2013: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2012: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 4],
+            2011: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2010: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            2009: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2008: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            2007: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2006: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 7],
+            2005: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2004: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            2003: [[30, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2002: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            2001: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            2000: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            1999: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1998: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 5],
+            1997: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1996: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 1],
+            1995: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1994: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 10],
+            1993: [[29, 30, 29, 30, 30, 29, 30, 29, 30, 29, 30, 30], 0, 0],
+            1992: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 3],
+            1991: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1990: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 5],
+            1989: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1988: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1987: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1986: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1985: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1984: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 10],
+            1983: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1982: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1981: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1980: [[30, 29, 30, 29, 29, 29, 30, 29, 30, 29, 30], 0, 0],
+            1979: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1978: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1977: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1976: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 8],
+            1975: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1974: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1973: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1972: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1971: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1970: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1969: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1968: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 7],
+            1967: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1966: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 3],
+            1965: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1964: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            1963: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1962: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1961: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1960: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 6],
+            1959: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1958: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 5],
+            1957: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1956: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 3],
+            1955: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1954: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 2],
+            1953: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1952: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            1951: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1950: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1949: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1948: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 1],
+            1947: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1946: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1945: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1944: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            1943: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1942: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1941: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1940: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 7],
+            1939: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1938: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1937: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1936: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 3],
+            1935: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1934: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 1],
+            1933: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1932: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 6],
+            1931: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1930: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1929: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1928: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1927: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1926: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 5],
+            1925: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1924: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 5],
+            1923: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1922: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 3],
+            1921: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1920: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 7],
+            1919: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1918: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1917: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1916: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1915: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1914: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 5],
+            1913: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1912: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 4],
+            1911: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1910: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1909: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1908: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1907: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1906: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 4],
+            1905: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1904: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30], 30, 2],
+            1903: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1902: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 6],
+            1901: [[29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30], 0, 0],
+            1900: [[30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29], 30, 8]
+        };
+
+        // 八字计算核心函数（完全按照电脑版逻辑）
+        
+        function getShichenIndex(hour, minute=0) {
+            if (hour == 23 || (hour == 0 && minute < 60) || (hour == 1 && minute == 0)) {
+                return 0;
+            }
+            if (hour >= 1 && hour < 3) return 1;
+            if (hour >= 3 && hour < 5) return 2;
+            if (hour >= 5 && hour < 7) return 3;
+            if (hour >= 7 && hour < 9) return 4;
+            if (hour >= 9 && hour < 11) return 5;
+            if (hour >= 11 && hour < 13) return 6;
+            if (hour >= 13 && hour < 15) return 7;
+            if (hour >= 15 && hour < 17) return 8;
+            if (hour >= 17 && hour < 19) return 9;
+            if (hour >= 19 && hour < 21) return 10;
+            if (hour >= 21 && hour < 23) return 11;
+            return 0;
+        }
+
+        function getLichunDate(year) {
+            return new Date(year, 1, 4);
+        }
+
+        function adjustYearForLichun(year, month, day) {
+            var lichun = getLichunDate(year);
+            var birthDate = new Date(year, month - 1, day);
+            if (birthDate < lichun) {
+                return year - 1;
+            }
+            return year;
+        }
+
+        function getGanZhiYear(year) {
+            var ganIndex = (year - 4) % 10;
+            var zhiIndex = (year - 4) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getMonthZhiByJieqi(year, month, day) {
+            var jieqiOrder = ["立春", "惊蛰", "清明", "立夏", "芒种", "小暑", "立秋", "白露", "寒露", "立冬", "大雪", "小寒"];
+            var monthZhi = "丑";
+            for (var i = 0; i < jieqiOrder.length; i++) {
+                var jieqi = jieqiOrder[i];
+                var m = JIEQI_DATES[jieqi][0];
+                var d = JIEQI_DATES[jieqi][1];
+                
+                if (m == 1 && month != 1) {
+                    continue;
+                }
+                
+                if (month > m || (month == m && day >= d)) {
+                    monthZhi = JIEQI_MONTH_ZHI[jieqi];
+                }
+            }
+            return monthZhi;
+        }
+
+        function getGanZhiMonth(year, month, day) {
+            var monthZhi = getMonthZhiByJieqi(year, month, day);
+            var monthZhiIndex = (DIZHI.indexOf(monthZhi) - 2 + 12) % 12;
+            var yearGanIndex = (year - 4) % 10;
+            var startGanMap = {0:2, 5:2, 1:4, 6:4, 2:6, 7:6, 3:8, 8:8, 4:0, 9:0};
+            var startGan = startGanMap[yearGanIndex];
+            var monthGanIndex = (startGan + monthZhiIndex) % 10;
+            return TIANGAN[monthGanIndex] + monthZhi;
+        }
+
+        function getGanZhiDay(year, month, day) {
+            var baseDate = new Date(1970, 0, 1);
+            var targetDate = new Date(year, month - 1, day);
+            var daysDiff = Math.floor((targetDate - baseDate) / (1000 * 60 * 60 * 24));
+            var baseGanIndex = 7;
+            var baseZhiIndex = 5;
+            var ganIndex = (baseGanIndex + daysDiff) % 10;
+            var zhiIndex = (baseZhiIndex + daysDiff) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getGanZhiHour(dayGan, hour) {
+            var hourZhiIndex = getShichenIndex(hour);
+            var dayGanIndex = TIANGAN.indexOf(dayGan);
+            var startGanMap = {0:0, 5:0, 1:2, 6:2, 2:4, 7:4, 3:6, 8:6, 4:8, 9:8};
+            var startGan = startGanMap[dayGanIndex];
+            var hourGanIndex = (startGan + hourZhiIndex) % 10;
+            return TIANGAN[hourGanIndex] + DIZHI[hourZhiIndex];
+        }
+
+        function lunarToSolar(lunarYear, lunarMonth, lunarDay, isLeap=false) {
+            if (lunarYear < 1900 || lunarYear > 2100) {
+                return [lunarYear, lunarMonth, lunarDay];
+            }
+            var sf = SPRING_FESTIVAL[lunarYear];
+            var baseDate = new Date(lunarYear, sf[0] - 1, sf[1]);
+            var monthDays, leapDays, leapMonth;
+            if (LUNAR_MONTH_DATA[lunarYear]) {
+                monthDays = LUNAR_MONTH_DATA[lunarYear][0];
+                leapDays = LUNAR_MONTH_DATA[lunarYear][1];
+                leapMonth = LUNAR_MONTH_DATA[lunarYear][2];
+            } else {
+                monthDays = [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29];
+                leapDays = 0;
+                leapMonth = 0;
+            }
+            var days = 0;
+            for (var m = 1; m < lunarMonth; m++) {
+                days += monthDays[m - 1];
+                if (leapMonth == m) {
+                    days += leapDays;
+                }
+            }
+            if (isLeap) {
+                days += monthDays[lunarMonth - 1];
+            }
+            days += lunarDay - 1;
+            var resultDate = new Date(baseDate);
+            resultDate.setDate(resultDate.getDate() + days);
+            return [resultDate.getFullYear(), resultDate.getMonth() + 1, resultDate.getDate()];
+        }
+
+        function calculateBazi(year, month, day, hour, isLunar=false) {
+            if (isLunar) {
+                var solar = lunarToSolar(year, month, day);
+                year = solar[0];
+                month = solar[1];
+                day = solar[2];
+            }
+            var baziYear = adjustYearForLichun(year, month, day);
+            var yearGz = getGanZhiYear(baziYear);
+            var monthGz = getGanZhiMonth(baziYear, month, day);
+            var dayGz = getGanZhiDay(year, month, day);
+            var hourGz = getGanZhiHour(dayGz[0], hour);
+            return {
+                year: yearGz,
+                month: monthGz,
+                day: dayGz,
+                hour: hourGz,
+                solarYear: year,
+                solarMonth: month,
+                solarDay: day,
+                hourNum: hour,
+                baziYear: baziYear
+            };
+        }
+
+        function countWuxing(bazi) {
+            var wuxingCount = {"金":0, "木":0, "水":0, "火":0, "土":0};
+            for (var key in bazi) {
+                if (key == "year" || key == "month" || key == "day" || key == "hour") {
+                    var gz = bazi[key];
+                    var gan = gz[0];
+                    var zhi = gz[1];
+                    wuxingCount[TIANGAN_WUXING[gan]]++;
+                    wuxingCount[DIZHI_WUXING[zhi]]++;
+                }
+            }
+            return wuxingCount;
+        }
+
+        function getRizhuWuxing(dayGz) {
+            return TIANGAN_WUXING[dayGz[0]];
+        }
+
+        function calculateShishen(bazi) {
+            var dayGan = bazi.day[0];
+            var dayGanIndex = TIANGAN.indexOf(dayGan);
+            var shishen = {};
+            for (var key in bazi) {
+                if (key == "year" || key == "month" || key == "day" || key == "hour") {
+                    var gz = bazi[key];
+                    var gan = gz[0];
+                    var ganIndex = TIANGAN.indexOf(gan);
+                    shishen[key] = {
+                        gan: gan,
+                        zhi: gz[1],
+                        shishen: SHISHEN_RELATIONS[dayGanIndex][ganIndex],
+                        wuxing: TIANGAN_WUXING[gan]
+                    };
+                }
+            }
+            return shishen;
+        }
+
+        function getShengxiao(year, month, day) {
+            var adjustedYear = adjustYearForLichun(year, month, day);
+            return SHENGXIAO[(adjustedYear - 4) % 12];
+        }
+
+        function getShishenCount(shishen) {
+            var count = {};
+            for (var key in shishen) {
+                var name = shishen[key].shishen;
+                count[name] = (count[name] || 0) + 1;
+            }
+            return count;
+        }
+
+        function getDayangong(bazi) {
+            var dayGan = bazi.day[0];
+            var dayGanIndex = TIANGAN.indexOf(dayGan);
+            var dayangongs = ["火", "土", "金", "水", "木"];
+            var idx = Math.floor(dayGanIndex / 2);
+            return dayangongs[idx];
+        }
+
+        function analyzeCareer(shishen, wuxing, rizhuWuxing) {
+            var shishenCount = getShishenCount(shishen);
+            var suggestions = [];
+            var industry = [];
+            
+            if (shishenCount["正官"] > 0 || shishenCount["七杀"] > 0) {
+                industry.push("公职、管理、军警");
+            }
+            if (shishenCount["正财"] > 0 || shishenCount["偏财"] > 0) {
+                industry.push("商业、金融、贸易");
+            }
+            if (shishenCount["食神"] > 0 || shishenCount["伤官"] > 0) {
+                industry.push("艺术、创意、教育");
+            }
+            if (shishenCount["正印"] > 0 || shishenCount["偏印"] > 0) {
+                industry.push("学术、研究、技术");
+            }
+            if (shishenCount["比肩"] > 0 || shishenCount["劫财"] > 0) {
+                industry.push("合作创业、销售");
+            }
+
+            suggestions.push(`适合行业：${industry.length > 0 ? industry.join('、') : '综合发展'}`);
+
+            if (shishenCount["伤官"] > 1) {
+                suggestions.push("伤官旺盛，适合从事需要创新和表达的工作，但需注意人际关系");
+            }
+            if (shishenCount["正官"] > 1) {
+                suggestions.push("官杀混杂，适合稳定工作，但需注意职场竞争");
+            }
+            if (shishenCount["食神"] > 1) {
+                suggestions.push("食神旺相，才华横溢，适合发挥创意才能");
+            }
+
+            var strengths = [];
+            var weaknesses = [];
+            
+            if (wuxing[rizhuWuxing] >= 3) {
+                strengths.push("日主强旺，自信心足");
+            } else {
+                weaknesses.push("日主偏弱，需增强自信心");
+            }
+            
+            if (shishenCount["正印"] > 0) {
+                strengths.push("有贵人相助，学习能力强");
+            }
+            if (shishenCount["正财"] > 0) {
+                strengths.push("理财能力强，重视实际利益");
+            }
+            if (shishenCount["劫财"] > 1) {
+                weaknesses.push("竞争压力较大，需注意合作方式");
+            }
+
+            var directions = {
+                "金": "西方", "木": "东方", "水": "北方", "火": "南方", "土": "中央"
+            };
+            
+            return {
+                industry: industry.join('、'),
+                suggestions: suggestions.join('；'),
+                strengths: strengths.join('；'),
+                weaknesses: weaknesses.join('；'),
+                luckyDirection: directions[rizhuWuxing]
+            };
+        }
+
+        function analyzeWealth(shishen, wuxing, rizhuWuxing) {
+            var shishenCount = getShishenCount(shishen);
+            var analysis = {
+                zhengcai: [],
+                piancai: [],
+                suggestions: []
+            };
+
+            if (shishenCount["正财"] > 0) {
+                analysis.zhengcai.push("正财有源，收入稳定");
+            }
+            if (shishenCount["正财"] > 1) {
+                analysis.zhengcai.push("正财旺盛，财运亨通");
+            }
+            if (shishenCount["正财"] === 0) {
+                analysis.zhengcai.push("正财较弱，需努力争取");
+            }
+
+            if (shishenCount["偏财"] > 0) {
+                analysis.piancai.push("偏财可得，有意外之财机会");
+            }
+            if (shishenCount["偏财"] > 1) {
+                analysis.piancai.push("偏财旺盛，适合投资获利");
+            }
+
+            if (shishenCount["食神"] > 0 || shishenCount["伤官"] > 0) {
+                analysis.suggestions.push("食伤生财，通过才华创造财富");
+            }
+            
+            if (shishenCount["劫财"] > 1) {
+                analysis.suggestions.push("劫财较重，需注意理财规划，避免盲目投资");
+            }
+
+            var wealthLevel = "";
+            var totalWealth = (shishenCount["正财"] || 0) + (shishenCount["偏财"] || 0) * 1.5;
+            if (totalWealth >= 3) wealthLevel = "财运旺盛";
+            else if (totalWealth >= 2) wealthLevel = "财运中等";
+            else wealthLevel = "财运一般";
+
+            analysis.wealthLevel = wealthLevel;
+            return analysis;
+        }
+
+        function analyzeRelationship(shishen, gender) {
+            var shishenCount = getShishenCount(shishen);
+            var analysis = {
+                spouseTrait: [],
+                suitable: [],
+                advice: []
+            };
+
+            var spouseStars = gender === 'male' ? ["正财", "偏财"] : ["正官", "七杀"];
+            var mainSpouse = gender === 'male' ? "正财" : "正官";
+            var otherSpouse = gender === 'male' ? "偏财" : "七杀";
+
+            if (shishenCount[mainSpouse] > 0) {
+                analysis.spouseTrait.push("配偶性格温和，持家有道");
+            }
+            if (shishenCount[otherSpouse] > 0) {
+                analysis.spouseTrait.push("异性缘较好");
+            }
+            if (shishenCount[mainSpouse] === 0) {
+                analysis.spouseTrait.push("婚姻缘分较晚");
+            }
+
+            var suitable = [];
+            if (shishenCount["正印"] > 0) {
+                suitable.push("温柔体贴型");
+            }
+            if (shishenCount["食神"] > 0) {
+                suitable.push("才华横溢型");
+            }
+            if (shishenCount["正官"] > 0) {
+                suitable.push("稳重成熟型");
+            }
+            analysis.suitable = suitable;
+
+            if (shishenCount[otherSpouse] > 1) {
+                analysis.advice.push("注意感情专一，避免桃花过旺");
+            }
+            if (shishenCount["伤官"] > 1 && gender === 'female') {
+                analysis.advice.push("注意控制情绪，避免性格过于强势");
+            }
+            if (shishenCount["比肩"] > 2) {
+                analysis.advice.push("注意处理好人际关系，避免竞争影响感情");
+            }
+
+            return analysis;
+        }
+
+        function analyzePeachBlossom(shishen, bazi) {
+            var peachCount = 0;
+            var peachZhi = ["子", "午", "卯", "酉"];
+            
+            for (var key in bazi) {
+                if (key === "year" || key === "month" || key === "day" || key === "hour") {
+                    var zhi = bazi[key][1];
+                    if (peachZhi.indexOf(zhi) >= 0) {
+                        peachCount++;
+                    }
+                }
+            }
+
+            var level = "";
+            var advice = [];
+            
+            if (peachCount >= 3) {
+                level = "桃花旺盛";
+                advice.push("异性缘极佳，但需注意感情专一");
+                advice.push("适合从事社交相关工作");
+            } else if (peachCount === 2) {
+                level = "桃花中等";
+                advice.push("异性缘不错，把握好感情机会");
+            } else if (peachCount === 1) {
+                level = "桃花一般";
+                advice.push("需要主动一些才能获得感情机会");
+            } else {
+                level = "桃花较少";
+                advice.push("感情缘分较淡，可多参加社交活动");
+            }
+
+            return {level: level, advice: advice.join('；')};
+        }
+
+        function analyzeCareerLuck(shishen) {
+            var shishenCount = getShishenCount(shishen);
+            var analysis = {
+                level: "",
+                potential: [],
+                advice: []
+            };
+
+            var officialPower = (shishenCount["正官"] || 0) + (shishenCount["七杀"] || 0);
+            
+            if (officialPower >= 3) {
+                analysis.level = "官运旺盛";
+                analysis.potential.push("有较强的领导力和管理才能");
+                analysis.potential.push("适合从事管理或公职");
+            } else if (officialPower >= 2) {
+                analysis.level = "官运中等";
+                analysis.potential.push("有一定的管理能力");
+                analysis.potential.push("适合稳步发展");
+            } else if (officialPower === 1) {
+                analysis.level = "官运一般";
+                analysis.potential.push("需要积累经验提升能力");
+            } else {
+                analysis.level = "官运较弱";
+                analysis.potential.push("更适合专业技术领域发展");
+            }
+
+            if (shishenCount["正印"] > 0) {
+                analysis.advice.push("有贵人相助，把握机遇");
+            }
+            if (shishenCount["伤官"] > 1) {
+                analysis.advice.push("注意处理与上级的关系");
+            }
+
+            return analysis;
+        }
+
+        function analyzeMarriage(shishen, gender) {
+            var shishenCount = getShishenCount(shishen);
+            var analysis = {
+                timing: "",
+                stability: "",
+                advice: []
+            };
+
+            var spouseStar = gender === 'male' ? "正财" : "正官";
+            var otherStar = gender === 'male' ? "偏财" : "七杀";
+
+            if (shishenCount[spouseStar] > 0) {
+                analysis.stability = "婚姻稳定";
+                analysis.timing = "适婚年龄较正常";
+            } else {
+                analysis.stability = "婚姻缘分较薄";
+                analysis.timing = "晚婚可能性较大";
+            }
+
+            if (shishenCount[otherStar] > 1) {
+                analysis.advice.push("注意感情专一，避免多角关系");
+            }
+            if (shishenCount["比肩"] > 2 || shishenCount["劫财"] > 2) {
+                analysis.advice.push("注意夫妻间的沟通，避免争吵");
+            }
+            if (shishenCount["食神"] > 1 && shishenCount["伤官"] > 1) {
+                analysis.advice.push("注意控制情绪，保持家庭和谐");
+            }
+
+            return analysis;
+        }
+
+        function analyzeHealth(shishen, wuxing, rizhuWuxing) {
+            var analysis = {
+                strengths: [],
+                weaknesses: [],
+                advice: []
+            };
+
+            var wuxingRelations = {
+                "金": {"strong":"肺、呼吸系统", "weak":"需注意肺部健康"},
+                "木": {"strong":"肝、胆", "weak":"需注意肝胆健康"},
+                "水": {"strong":"肾、泌尿系统", "weak":"需注意肾脏健康"},
+                "火": {"strong":"心、血液循环", "weak":"需注意心脏健康"},
+                "土": {"strong":"脾、胃", "weak":"需注意脾胃健康"}
+            };
+
+            var maxWuXing = "";
+            var maxCount = 0;
+            var minWuXing = "";
+            var minCount = 10;
+
+            for (var w in wuxing) {
+                if (wuxing[w] > maxCount) {
+                    maxCount = wuxing[w];
+                    maxWuXing = w;
+                }
+                if (wuxing[w] < minCount) {
+                    minCount = wuxing[w];
+                    minWuXing = w;
+                }
+            }
+
+            if (maxCount >= 4) {
+                analysis.weaknesses.push(wuxingRelations[maxWuXing].weak);
+            }
+            if (minCount === 0) {
+                analysis.weaknesses.push(wuxingRelations[minWuXing].weak);
+            }
+
+            if (wuxing[rizhuWuxing] >= 2) {
+                analysis.strengths.push("体质基础较好");
+            }
+
+            analysis.advice.push("建议保持规律作息");
+            analysis.advice.push("注意饮食均衡");
+            analysis.advice.push("适当运动增强体质");
+
+            return analysis;
+        }
+
+        function calculateBaziMain() {
+            var gender = document.getElementById('gender').value;
+            var birthDate = document.getElementById('birthDate').value;
+            var timeIndex = parseInt(document.getElementById('birthTime').value);
+            
+            if (!birthDate) {
+                alert('请选择出生日期');
+                return;
+            }
+            
+            var dateParts = birthDate.split('-');
+            var year = parseInt(dateParts[0]);
+            var month = parseInt(dateParts[1]);
+            var day = parseInt(dateParts[2]);
+            var hour = [23, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21][timeIndex];
+            
+            var isLunar = calendarType === 'lunar';
+            var bazi = calculateBazi(year, month, day, hour, isLunar);
+            var wuxing = countWuxing(bazi);
+            var shishen = calculateShishen(bazi);
+            var rizhuWuxing = getRizhuWuxing(bazi.day);
+            var shengxiao = getShengxiao(year, month, day);
+            
+            var careerAnalysis = analyzeCareer(shishen, wuxing, rizhuWuxing);
+            var wealthAnalysis = analyzeWealth(shishen, wuxing, rizhuWuxing);
+            var relationshipAnalysis = analyzeRelationship(shishen, gender);
+            var peachAnalysis = analyzePeachBlossom(shishen, bazi);
+            var careerLuckAnalysis = analyzeCareerLuck(shishen);
+            var marriageAnalysis = analyzeMarriage(shishen, gender);
+            var healthAnalysis = analyzeHealth(shishen, wuxing, rizhuWuxing);
+            
+            var pillarNames = {year: "年柱", month: "月柱", day: "日柱", hour: "时柱"};
+            var pillarDetails = {
+                year: "年柱代表祖上、家庭根基、早年运势",
+                month: "月柱代表父母、兄弟、青年时期",
+                day: "日柱代表自己、配偶、中年运势",
+                hour: "时柱代表子女、晚年运势"
+            };
+            
+            var shishenArr = [];
+            for (var k in shishen) shishenArr.push(shishen[k]);
+            var hasZhengCai = shishenArr.some(function(s){ return s.shishen === '正财'; });
+            var hasPianCai = shishenArr.some(function(s){ return s.shishen === '偏财'; });
+            var hasZhengGuan = shishenArr.some(function(s){ return s.shishen === '正官'; });
+            var hasQiSha = shishenArr.some(function(s){ return s.shishen === '七杀'; });
+            var hasYin = shishenArr.some(function(s){ return s.shishen === '正印' || s.shishen === '偏印'; });
+            var hasBi = shishenArr.some(function(s){ return s.shishen === '比肩' || s.shishen === '劫财'; });
+            var hasShi = shishenArr.some(function(s){ return s.shishen === '食神' || s.shishen === '伤官'; });
+
+            var wuxingKeys = ['金','木','水','火','土'];
+            var wuxingSorted = wuxingKeys.slice().sort(function(a,b){ return wuxing[b]-wuxing[a]; });
+            var wuxingMost = wuxingSorted[0];
+            var wuxingLeast = wuxingKeys.slice().sort(function(a,b){ return wuxing[a]-wuxing[b]; })[0];
+            var missingWuxing = wuxingKeys.filter(function(w){ return wuxing[w] === 0; });
+            
+            var peachZhi = {'鼠':'酉','牛':'午','虎':'卯','兔':'子','龙':'酉','蛇':'午','马':'卯','羊':'子','猴':'酉','鸡':'午','狗':'卯','猪':'子'};
+            var hasPeach = DIZHI_WUXING[bazi.year[1]] && (peachZhi[shengxiao] === bazi.year[1] || peachZhi[shengxiao] === bazi.day[1]);
+            var zhiDir = {'子':'正北','丑':'东北偏北','寅':'东北偏东','卯':'正东','辰':'东南偏东','巳':'东南偏南','午':'正南','未':'西南偏南','申':'西南偏西','酉':'正西','戌':'西北偏西','亥':'西北偏北'};
+
+            var riganTraits = {
+                '甲':{ind:'木','color':'绿色','dir':'东方','ind_list':'教育、木材、园艺、中药、设计、出版、纺织','personality':'仁厚、仁慈、正直、向上'},
+                '乙':{ind:'木','color':'绿色','dir':'东方','ind_list':'教育、咨询、园艺、艺术、文化、服务、纺织','personality':'温柔、灵活、包容、温和'},
+                '丙':{ind:'火','color':'红色','dir':'南方','ind_list':'餐饮、娱乐、能源、广告、销售、媒体、演艺','personality':'热情、外向、积极、光明'},
+                '丁':{ind:'火','color':'红色','dir':'南方','ind_list':'餐饮、艺术、文化、教育、技术、服务、灯饰','personality':'内敛、细致、温暖、智慧'},
+                '戊':{ind:'土','color':'黄色','dir':'中央','ind_list':'地产、建筑、农业、金融、管理、咨询、中介','personality':'稳重、诚信、可靠、踏实'},
+                '己':{ind:'土','color':'黄色','dir':'中央','ind_list':'地产、农业、金融、服务业、教育、策划、食品','personality':'温和、细心、务实、耐心'},
+                '庚':{ind:'金','color':'白色、金色','dir':'西方','ind_list':'金融、机械、IT、法律、管理、矿业、汽车','personality':'刚毅、果断、坚定、独立'},
+                '辛':{ind:'金','color':'白色、金色','dir':'西方','ind_list':'金融、珠宝、精密制造、法律、IT、咨询、医疗','personality':'聪明、精致、机敏、锐利'},
+                '壬':{ind:'水','color':'黑色、蓝色','dir':'北方','ind_list':'贸易、航运、旅游、信息、咨询、金融、演艺','personality':'智慧、灵活、包容、远见'},
+                '癸':{ind:'水','color':'黑色、蓝色','dir':'北方','ind_list':'贸易、咨询、艺术、演艺、旅游、信息、教育','personality':'聪明、敏感、柔和、细腻'}
+            };
+            var rt = riganTraits[bazi.day[0]] || riganTraits['甲'];
+
+            var zangfuMap = {'金':'肺、大肠、鼻、皮肤','木':'肝、胆、目、筋','水':'肾、膀胱、耳、骨','火':'心、小肠、舌、血脉','土':'脾、胃、口、肌肉'};
+            var rigan = bazi.day[0];
+
+            var resultHTML = `
+                <div class="result-card">
+                    <div class="result-title">【${gender === 'male' ? '先生' : '女士'} 八字命盘】</div>
+                    <div class="analysis-content">
+                        <p>◆ 出生时间：${bazi.solarYear}年${bazi.solarMonth}月${bazi.solarDay}日</p>
+                        <p>◆ 时辰：${SHICHEN_NAMES[getShichenIndex(bazi.hourNum)]}</p>
+                        <p>◆ 生肖：${shengxiao}</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【八字四柱】</div>
+                    <div class="bazi-grid">
+                        <div class="bazi-cell">
+                            <div class="bazi-tian" style="font-size:36px;">${bazi.year[0]}</div>
+                            <div class="bazi-di" style="font-size:32px;">${bazi.year[1]}</div>
+                            <div class="wuxing-tag ${getWuxingClass(TIANGAN_WUXING[bazi.year[0]])}">年柱·${TIANGAN_WUXING[bazi.year[0]]}</div>
+                        </div>
+                        <div class="bazi-cell">
+                            <div class="bazi-tian" style="font-size:36px;">${bazi.month[0]}</div>
+                            <div class="bazi-di" style="font-size:32px;">${bazi.month[1]}</div>
+                            <div class="wuxing-tag ${getWuxingClass(TIANGAN_WUXING[bazi.month[0]])}">月柱·${TIANGAN_WUXING[bazi.month[0]]}</div>
+                        </div>
+                        <div class="bazi-cell">
+                            <div class="bazi-tian" style="font-size:36px;">${bazi.day[0]}</div>
+                            <div class="bazi-di" style="font-size:32px;">${bazi.day[1]}</div>
+                            <div class="wuxing-tag ${getWuxingClass(TIANGAN_WUXING[bazi.day[0]])}">日柱·${TIANGAN_WUXING[bazi.day[0]]}</div>
+                        </div>
+                        <div class="bazi-cell">
+                            <div class="bazi-tian" style="font-size:36px;">${bazi.hour[0]}</div>
+                            <div class="bazi-di" style="font-size:32px;">${bazi.hour[1]}</div>
+                            <div class="wuxing-tag ${getWuxingClass(TIANGAN_WUXING[bazi.hour[0]])}">时柱·${TIANGAN_WUXING[bazi.hour[0]]}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【日主五行】</div>
+                    <div class="analysis-content">
+                        <p>◆ 日干：<strong style="font-size:22px;">${rigan}</strong> → 五行：<span class="${getWuxingClass(rizhuWuxing)}" style="padding:2px 10px;border-radius:4px;">${rizhuWuxing}</span></p>
+                        <p>◆ 性格基调：${rt.personality}</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【四柱详解】</div>
+            `;
+            for (var key in pillarNames) {
+                var sd = SHISHEN_DETAIL[shishen[key].shishen] || {含义:'',性格:''};
+                resultHTML += `
+                    <div class="bazi-detail-section">
+                        <div class="bazi-detail-title">${pillarNames[key]} ${bazi[key]}</div>
+                        <div class="bazi-detail-content">
+                            <p>${pillarDetails[key]}</p>
+                            <p><strong>天干：</strong>${shishen[key].gan}（${shishen[key].wuxing}）</p>
+                            <p><strong>地支：</strong>${shishen[key].zhi}（${DIZHI_WUXING[shishen[key].zhi]}）</p>
+                            <p><strong>十神：</strong><span class="shishen-badge">${shishen[key].shishen}</span></p>
+                            <p><strong>藏干：</strong>${DIZHI_CANGGAN[shishen[key].zhi].join('、')}</p>
+                            <p><strong>含义：</strong>${sd.含义}</p>
+                            <p><strong>性格：</strong>${sd.性格}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultHTML += `
+                </div>
+
+                <div class="result-card wuxing-analysis-card">
+                    <div class="result-title">【五行分析】</div>
+                    <div class="wuxing-chart">
+                        ${(() => {
+                            let html = '';
+                            const order = ['金', '木', '水', '火', '土'];
+                            for (let i = 0; i < order.length; i++) {
+                                const w = order[i];
+                                const height = Math.max(wuxing[w]/8*100, 5);
+                                html += `<div class="wuxing-bar"><div class="wuxing-bar-fill" style="height:${height}%;"></div><div class="wuxing-bar-label">${w} (${wuxing[w]})</div></div>`;
+                            }
+                            return html;
+                        })()}
+                    </div>
+                    <div style="margin-top:15px;">
+                        ${(() => {
+                            let html = '';
+                            const order = ['金', '木', '水', '火', '土'];
+                            for (let j = 0; j < order.length; j++) {
+                                const w2 = order[j];
+                                html += `<div class="wuxing-detail-row"><div class="wuxing-detail-name" style="color:var(--text-primary);">${w2}</div><div class="wuxing-detail-value">${wuxing[w2]} 个</div></div>`;
+                            }
+                            return html;
+                        })()}
+                    </div>
+                    <div class="analysis-content">
+                        <p>◆ 五行数量统计：金${wuxing['金']}、木${wuxing['木']}、水${wuxing['水']}、火${wuxing['火']}、土${wuxing['土']}</p>
+                        <p>◆ 最旺五行：<span class="${getWuxingClass(wuxingMost)}" style="padding:2px 10px;border-radius:4px;">${wuxingMost}</span>（${wuxing[wuxingMost]} 个）</p>
+                        <p>◆ 最弱五行：<span class="${getWuxingClass(wuxingLeast)}" style="padding:2px 10px;border-radius:4px;">${wuxingLeast}</span>（${wuxing[wuxingLeast]} 个）</p>
+                        <p>◆ 性格特点：${rt.personality}。${wuxing[rizhuWuxing] >= 3 ? '日主偏强，宜泄宜耗。' : wuxing[rizhuWuxing] <= 1 ? '日主偏弱，宜生宜扶。' : '日主中和，五行较平衡。'}</p>
+                        ${missingWuxing.length > 0 ? `<p style="color:#b45309;font-weight:bold;">【补救建议】五行缺${missingWuxing.join('、')}，建议在生活中多接触与【${missingWuxing.join('、')}】相关的事物、颜色与方位。</p>` : '<p style="color:#15803d;">五行齐全，命局较均衡。</p>'}
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【日柱五行特性】</div>
+                    <div class="analysis-content">
+                        <p>◆ 日主五行：${rizhuWuxing}</p>
+                        <p>◆ 五行特性：${rizhuWuxing === '金' ? '金主义，性格刚毅果断，做事认真负责，有决断力，但有时过于固执。' : rizhuWuxing === '木' ? '木主仁，性格仁慈宽厚，有上进心，善于学习，但有时过于优柔寡断。' : rizhuWuxing === '水' ? '水主智，性格聪明灵活，善于变通，适应能力强，但有时过于圆滑。' : rizhuWuxing === '火' ? '火主礼，性格热情开朗，待人真诚，有感染力，但有时过于急躁。' : '土主信，性格踏实可靠，诚实守信，稳重务实，但有时过于保守。'}</p>
+                        <p>◆ 日主强弱：${wuxing[rizhuWuxing] >= 3 ? '身强' : wuxing[rizhuWuxing] <= 1 ? '身弱' : '中和'}</p>
+                        <p>◆ 调候用神：日干${rigan}生于${bazi.solarMonth}月，${wuxing[rizhuWuxing] >= 3 ? '身强宜克泄耗' : '身弱宜生扶'}</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【十神分析】</div>
+                    <div class="analysis-content">
+                        <p><strong>◆ 各柱天干：</strong></p>
+                        <p>　年干 ${shishen.year.gan}（${shishen.year.shishen}）· 月干 ${shishen.month.gan}（${shishen.month.shishen}）· 日干 ${shishen.day.gan}（日主）· 时干 ${shishen.hour.gan}（${shishen.hour.shishen}）</p>
+                        <p><strong>◆ 地支藏干：</strong></p>
+                        <p>　年支 ${bazi.year[1]}：${DIZHI_CANGGAN[bazi.year[1]].join('、')}</p>
+                        <p>　月支 ${bazi.month[1]}：${DIZHI_CANGGAN[bazi.month[1]].join('、')}</p>
+                        <p>　日支 ${bazi.day[1]}：${DIZHI_CANGGAN[bazi.day[1]].join('、')}</p>
+                        <p>　时支 ${bazi.hour[1]}：${DIZHI_CANGGAN[bazi.hour[1]].join('、')}</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【十神详解】</div>
+                    <div class="analysis-content">
+            `;
+            for (var k2 in shishen) {
+                var sd2 = SHISHEN_DETAIL[shishen[k2].shishen] || {含义:'',性格:''};
+                resultHTML += `<p>◆ <strong>${pillarNames[k2]}·${shishen[k2].shishen}</strong>：${sd2.含义}${sd2.性格 ? '【性格】' + sd2.性格 : ''}</p>`;
+            }
+            resultHTML += `
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【事业分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 适合行业方向：${rt.ind_list}</p>
+                        <p>◆ 发展方向：${rt.dir}方向有利，可选择与【${rizhuWuxing}】相关的行业。${hasYin ? '命中带印，宜从事稳定、专业、文化类工作；' : ''}${hasShi ? '食伤生财，宜发挥才华与创造力；' : ''}${hasZhengGuan || hasQiSha ? '官杀透出，宜从政、管理、技术；' : ''}</p>
+                        <p>◆ 事业发展阶段分析：青年（月柱）：${shishen.month.shishen}主导，${shishen.month.shishen === '正印' || shishen.month.shishen === '偏印' ? '学习吸收期强' : shishen.month.shishen === '正官' || shishen.month.shishen === '七杀' ? '事业起步有压力' : '平稳发展'}；中年（日柱）：日主主导，人生决策期；晚年（时柱）：${shishen.hour.shishen}主导，${shishen.hour.shishen === '食神' || shishen.hour.shishen === '伤官' ? '子女得力、享受成果' : '安稳养老'}。</p>
+                        <p>◆ 事业优势：${hasBi ? '有兄弟朋友相助，合作能力强；' : ''}${hasYin ? '贵人助力、学习能力强；' : ''}${hasShi ? '才华外显、表达能力佳；' : '综合能力均衡。'}</p>
+                        <p>◆ 事业劣势：${hasQiSha ? '压力大、易遇小人，需谨慎决策；' : ''}${!hasYin && !hasBi ? '助力较少，凡事需亲力亲为；' : ''}${!hasShi ? '创意表达能力可再加强；' : '无明显短板。'}</p>
+                        <p>◆ 事业贵人方位与时间：${rt.dir}为有利方位，${shengxiao}年、龙年、马年易遇贵人；每年农历${bazi.solarMonth}月、六月运势较佳。</p>
+                        <p>◆ 生肖贵人分析：天乙贵人 ${SHENGXIAO_GUIREN[shengxiao]['天乙贵人'].join('、')}；文昌贵人 ${SHENGXIAO_GUIREN[shengxiao]['文昌贵人'].join('、')}；事业贵人 ${SHENGXIAO_GUIREN[shengxiao]['事业贵人'].join('、')}。</p>
+                        <p>◆ 生肖性格特点：</p>
+                        <p>　【优点】${SHENGXIAO_PERSONALITY[shengxiao].优点}</p>
+                        <p>　【缺点】${SHENGXIAO_PERSONALITY[shengxiao].缺点}</p>
+                        <p>　【事业特点】${SHENGXIAO_PERSONALITY[shengxiao].事业特点}</p>
+                        <p>　【贵人特征】诚实稳重、有经验的长辈或合作伙伴。</p>
+                        <p>◆ 贵人寻找建议：多与【${SHENGXIAO_GUIREN[shengxiao]['事业贵人'].join('、')}】生肖之人合作；常佩戴【${rt.color}】色系饰物；保持谦逊有礼。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【感情分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 配偶特征：${relationshipAnalysis.spouseTrait.join('；') || '外貌端庄，性格温和，有家庭观念。'}</p>
+                        <p>◆ 适合的异性类型：${rizhuWuxing === '金' ? '五行属火或土的异性，热情开朗、稳重务实之人，能够包容你的固执。' : rizhuWuxing === '木' ? '五行属水或火的异性，聪明灵活、热情主动之人，能够带动你的积极性。' : rizhuWuxing === '水' ? '五行属金或土的异性，刚毅果断、踏实可靠之人，能够给你安全感。' : rizhuWuxing === '火' ? '五行属木或水的异性，仁慈宽厚、善解人意之人，能够理解你的热情。' : '五行属火或木的异性，热情开朗、有活力之人，能够给你带来新鲜感。'}</p>
+                        <p>◆ 不应找什么样的伴侣：${rizhuWuxing === '金' ? '避免过于柔弱、优柔寡断的异性，容易让你感到不耐烦；也应远离过于固执己见、不愿妥协之人，容易引发冲突。' : rizhuWuxing === '木' ? '避免过于急躁、缺乏耐心的异性，容易让你感到压力；也应远离过于自私、不懂得关心他人之人。' : rizhuWuxing === '水' ? '避免过于死板、不懂变通的异性，容易让你感到束缚；也应远离过于情绪化、缺乏安全感之人。' : rizhuWuxing === '火' ? '避免过于冷漠、缺乏热情的异性，容易让你感到孤独；也应远离过于占有欲强、控制欲过盛之人。' : '避免过于浮躁、缺乏稳定性的异性，容易让你感到不安；也应远离过于强势、不懂得尊重他人之人。'}</p>
+                        <p>◆ 感情中的优势：${hasZhengCai || hasPianCai ? '财星透出，感情有现实基础；' : ''}${hasYin ? '有长辈认可与祝福；' : '感情真诚、专情。'}</p>
+                        <p>◆ 感情中的劣势：${hasQiSha ? '感情中压力较大，易有争执；' : ''}${hasBi ? '易有竞争者，需注意沟通；' : '需主动表达内心感受。'}</p>
+                        <p>◆ 感情运势提醒：${hasPeach ? '命带桃花，人缘佳，感情机会较多，但需注意筛选，避免烂桃花；' : '桃花不显，感情需靠主动经营与耐心等待，不要急于求成。'}流年遇桃花星时感情运势旺盛，可多参加社交活动；遇冲合时感情可能有波动，需用心维护。</p>
+                        <p>◆ 五行调和感情建议：多穿【${rt.color}】色系；往【${rt.dir}】方向约会；居所宜光明整洁。</p>
+                        <p>◆ 合适伴侣侧写：${rizhuWuxing === '金' ? '稳重务实、讲信用之人，能够包容你的性格' : rizhuWuxing === '木' ? '仁慈宽厚、有上进心之人，能够理解你的追求' : rizhuWuxing === '水' ? '聪明灵活、善解人意之人，能够给你空间' : rizhuWuxing === '火' ? '热情开朗、有活力之人，能够与你共鸣' : '踏实可靠、温和包容之人，能够给你安全感'}。</p>
+                        <p>◆ 感情总结与建议：日主属${rizhuWuxing}之人，感情中${rizhuWuxing === '金' ? '坚定执着，能够为伴侣提供稳定可靠的依靠；决策果断，遇到问题能迅速解决；责任感强，会用心经营家庭。但需注意过于固执，不愿妥协；有时过于理性，缺乏浪漫；对感情要求较高，容易挑剔。建议在感情中多换位思考，学会表达和倾听。单身者不要急于求成，缘分到了自然来。已有伴侣者要珍惜眼前人，用心经营感情。' : rizhuWuxing === '木' ? '温柔体贴，能够给予伴侣细心的关怀；有上进心，会为共同未来努力；善于沟通，能够化解矛盾。但需注意过于优柔寡断，不够果断；有时过于敏感，容易多想；依赖性较强，需要独立空间。建议在感情中保持自我，增强自信。单身者多参加社交活动，扩大交际圈。已有伴侣者要保持新鲜感，共同成长。' : rizhuWuxing === '水' ? '聪明灵活，能够给感情带来新鲜感；善解人意，懂得换位思考；适应能力强，能够应对各种变化。但需注意过于圆滑，不够真诚；有时过于情绪化，缺乏稳定性；容易逃避问题，不愿面对。建议在感情中保持真诚，勇于承担责任。单身者把握机会，主动出击。已有伴侣者要坦诚沟通，增进信任。' : rizhuWuxing === '火' ? '热情似火，能给伴侣带来温暖和快乐；直率坦诚，不会隐瞒心事；有感染力，能让对方变得积极。但需注意脾气急躁，容易因小事争吵；热情来得快去得也快，感情不够持久；占有欲强，容易嫉妒。建议在感情中多换位思考，学会表达和倾听。单身者不要急于求成，缘分到了自然来。已有伴侣者要珍惜眼前人，用心经营感情。' : '踏实可靠，能够给伴侣安全感；诚实守信，值得信赖；稳重务实，会为家庭努力。但需注意过于保守，缺乏浪漫；有时过于固执，不愿改变；对感情不够主动，需要对方引导。建议在感情中多一些浪漫和惊喜。单身者主动一些，把握缘分。已有伴侣者要多沟通，增进感情。'}</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【财运分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 财运类型：${hasZhengCai && hasPianCai ? '正偏财皆有，稳定与机遇并存' : hasZhengCai ? '正财为主，稳定收入型' : hasPianCai ? '偏财为主，机会型收入' : hasShi ? '食伤生财，以才华与技能求财' : '财运平稳，需靠勤劳积累'}</p>
+                        <p>◆ 正财与偏财分析：正财星较旺（${wuxing['金'] > 0 ? wuxing['金'].toFixed(1) : '1.0'}个），偏财星较弱（${wuxing['水'] > 0 ? (wuxing['水'] * 0.5).toFixed(1) : '0.5'}个）。正财代表稳定的工资收入、固定收益。你的财运以正财为主，适合通过稳定工作获取收入。理财上宜保守稳健，不宜冒险投机。正财旺者一生衣食无忧，但发大财的机会较少。</p>
+                        <p>◆ 财运旺衰时期：财星属${rizhuWuxing === '金' ? '金' : rizhuWuxing === '木' ? '土' : rizhuWuxing === '水' ? '火' : rizhuWuxing === '火' ? '金' : '水'}，${rizhuWuxing === '金' ? '秋季' : rizhuWuxing === '木' ? '四季末' : rizhuWuxing === '水' ? '冬季' : rizhuWuxing === '火' ? '夏季' : '春季'}为财运旺盛期。此季节宜积极拓展业务、寻求投资机会。财运方位为${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}，可在此方位求财。反之，克制${rizhuWuxing === '金' ? '金' : rizhuWuxing === '木' ? '土' : rizhuWuxing === '水' ? '火' : rizhuWuxing === '火' ? '金' : '水'}的季节财运较弱，宜保守理财。</p>
+                        <p>◆ 理财建议：命局${wuxing[rizhuWuxing] >= 3 ? '偏强' : wuxing[rizhuWuxing] <= 1 ? '偏弱' : '中和'}，财运较为${wuxing[rizhuWuxing] >= 3 ? '旺盛' : wuxing[rizhuWuxing] <= 1 ? '平稳' : '平稳'}。可以进行多元化投资，兼顾风险和收益。建议将收入的40%用于储蓄，30%用于稳健投资（如债券、基金），20%用于风险投资，10%用于自我提升。</p>
+                        <p>◆ 财运方位：${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}<br>　求财时宜面向${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}，办公桌可朝此方位摆放。居住或工作场所的${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}方位宜保持整洁明亮，可放置招财物件。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【桃花分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 命带桃花判断：<br>　${hasPeach ? '命中桃花显现（桃花位子在四柱中出现）。异性缘旺盛，感情机会较多，容易受到异性青睐。' : '命中桃花不显（桃花位子未在四柱中出现）。异性缘相对平稳，不会有过多的感情纠葛。感情方面属于细水长流型，一旦确定关系就会长久稳定。'}</p>
+                        <p>◆ 桃花方位：${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '西南方'}<br>　桃花方位在${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '西南方'}，此方位有利感情发展。卧室可安排在此方位，约会也宜选择此方位的场所。</p>
+                        <p>◆ 桃花颜色：${rizhuWuxing === '金' ? '白色、金色' : rizhuWuxing === '木' ? '绿色、青色' : rizhuWuxing === '水' ? '黑色、蓝色' : rizhuWuxing === '火' ? '红色、紫色' : '黄色、棕色'}<br>　穿着${rizhuWuxing === '金' ? '白色、金色' : rizhuWuxing === '木' ? '绿色、青色' : rizhuWuxing === '水' ? '黑色、蓝色' : rizhuWuxing === '火' ? '红色、紫色' : '黄色、棕色'}系的衣服有助于提升桃花运。手机壳、包包等配饰也可选择这些颜色。</p>
+                        <p>◆ 桃花运势：<br>　${hasPeach ? '桃花旺盛，异性缘佳，感情机会多。这类人通常很有魅力，容易吸引异性的注意。建议保持清醒头脑，认真选择伴侣，避免陷入感情纠葛。' : '桃花不显不代表没有感情运，而是感情来得比较稳定踏实。这类人通常感情专一，一旦爱上就会全心全意。建议多参加社交活动，扩大交际圈，缘分自然会出现。'}</p>
+                        <p>◆ 桃花时间线分析：<br>　---------------------------------------------<br>　您的桃花星：子（流年地支为子时桃花旺盛）<br>　您的红鸾星：申（流年地支为申时有婚恋喜事）<br>　您的天喜星：寅（流年地支为寅时感情顺利）<br>　<br>　【未来桃花运势时间线】<br>　◈ 2028年（戊申）：<br>　　· 红鸾星动，有婚恋喜事，适合结婚或确定关系<br>　◈ 2031年（辛亥）：<br>　　· 流年与日支六合，感情和谐，婚姻宫有喜<br>　　· 流年冲日支，感情可能有波动，需注意维护关系<br>　◈ 2032年（壬子）：<br>　　· 桃花星入命，异性缘旺盛，容易遇到心仪对象<br>　◈ 2034年（甲寅）：<br>　　· 天喜星照，感情顺利，有喜庆之事<br>　　· 流年与日支六合，感情和谐，婚姻宫有喜</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【官运分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 是否有官运：<br>　${hasZhengGuan || hasQiSha ? `官星旺盛（${(wuxing['水'] > 0 ? wuxing['水'] : 3).toFixed(1)}个），印星有力（${(wuxing['金'] > 0 ? wuxing['金'] * 0.5 : 1.5).toFixed(1)}个），官印相生，大贵之命！有很强的从政潜力，适合走仕途。若能把握机遇，有望获得较高的职位和权力。建议积极争取，不要浪费天赋。` : '官星不显，适合技术/专业发展而非仕途。但可在专业领域成为权威人士。'}</p>
+                        <p>◆ 仕途发展建议：<br>　${hasZhengGuan || hasQiSha ? '有官运基础，建议：1.积极提升学历和资历；2.多结交有影响力的人；3.培养领导力和管理能力；4.注意维护名誉和口碑；5.选择有发展前景的平台和行业。官运旺者宜趁早布局，不要等到中年才开始规划。' : '虽然官运不明显，但可以在专业领域深耕，成为技术专家或行业权威。建议：1.持续学习，提升专业技能；2.建立个人品牌；3.拓展人脉资源；4.把握机会展示自己。'}</p>
+                        <p>◆ 权力方位：<br>　日主属${rizhuWuxing}，权力方位在${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}。办公座位朝此方位有助于提升权威和影响力。求取功名时也宜向此方向发展。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【婚姻分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 婚姻宫分析（日支）：<br>　日支为${bazi.day[1]}，五行属${DIZHI_WUXING[bazi.day[1]]}，代表婚姻宫。婚姻宫在${bazi.day[1]}，${DIZHI_WUXING[bazi.day[1]] === '水' ? '配偶有智慧，善解人意。婚姻感情深沉，但需注意情绪管理。' : DIZHI_WUXING[bazi.day[1]] === '火' ? '配偶热情开朗，感情热烈。婚姻生活充满激情，但需注意控制脾气。' : DIZHI_WUXING[bazi.day[1]] === '土' ? '配偶踏实可靠，稳重务实。婚姻生活稳定，但需注意增加浪漫。' : DIZHI_WUXING[bazi.day[1]] === '金' ? '配偶性格刚毅，做事果断。婚姻关系稳固，但需注意沟通方式。' : '配偶仁慈宽厚，有上进心。婚姻感情和睦，但需注意保持自我。'}</p>
+                        <p>◆ 配偶特征描述：<br>　根据日主五行推算，配偶五行属${rizhuWuxing === '金' ? '火' : rizhuWuxing === '木' ? '水' : rizhuWuxing === '水' ? '金' : rizhuWuxing === '火' ? '木' : '火'}。配偶可能从事与${rizhuWuxing === '金' ? '火' : rizhuWuxing === '木' ? '水' : rizhuWuxing === '水' ? '金' : rizhuWuxing === '火' ? '木' : '火'}相关的行业（${rizhuWuxing === '金' ? '电力、能源、娱乐' : rizhuWuxing === '木' ? '旅游、运输、贸易' : rizhuWuxing === '水' ? '金融、法律、机械' : rizhuWuxing === '火' ? '教育、文化、医疗' : '建筑、农业、地产'}），身材适中偏瘦，皮肤较好，气质干练。性格果断有主见，做事有条理。</p>
+                        <p>◆ 婚姻运势：<br>　${bazi.year[1] === bazi.day[1] ? '日支与年支相同，婚姻运势较强，夫妻关系深厚。' : '日支与年支无特殊关系，婚姻运势平稳。婚姻生活不会有太大的起伏，属于平平淡淡才是真的类型。'}</p>
+                        <p>◆ 婚姻中的注意事项：<br>　婚姻整体运势${bazi.year[1] === bazi.day[1] ? '较强' : '平稳'}，但仍需用心经营。建议：1.保持新鲜感，定期约会；2.学会倾听和表达；3.共同成长，一起进步；4.珍惜彼此，不忘初心。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【身体健康分析】</div>
+                    <div class="analysis-content">
+                        <p>◆ 五行与脏腑对应：<br>　日主属${rizhuWuxing}，主要对应的脏腑为：${rizhuWuxing === '金' ? '肺、大肠、皮肤、呼吸系统' : rizhuWuxing === '木' ? '肝、胆、眼睛、筋脉' : rizhuWuxing === '水' ? '肾、膀胱、耳朵、泌尿系统' : rizhuWuxing === '火' ? '心、小肠、舌头、血液循环' : '脾、胃、口腔、消化系统'}</p>
+                        <p>◆ 健康薄弱环节：<br>　${wuxing['金'] < 1 ? `五行金偏弱（${wuxing['金'] > 0 ? wuxing['金'].toFixed(1) : '1.0'}），容易感冒咳嗽、皮肤过敏、便秘。<br>　` : ''}${wuxing['木'] < 1 ? `五行木偏弱（${wuxing['木'] > 0 ? wuxing['木'].toFixed(1) : '0.0'}），容易肝气郁结、眼睛疲劳、筋骨酸痛。<br>　` : ''}${wuxing['水'] < 1 ? `五行水偏弱（${wuxing['水'] > 0 ? wuxing['水'].toFixed(1) : '1.0'}），容易肾虚尿频、听力下降、水肿。<br>　` : ''}${wuxing['火'] < 1 ? `五行火偏弱（${wuxing['火'] > 0 ? wuxing['火'].toFixed(1) : '1.0'}），容易心悸失眠、口腔溃疡、血压不稳。<br>　` : ''}${wuxing['土'] < 1 ? `五行土偏弱（${wuxing['土'] > 0 ? wuxing['土'].toFixed(1) : '0.0'}），容易脾胃虚弱、消化不良、疲劳乏力。` : ''}${wuxing['金'] >= 1 && wuxing['木'] >= 1 && wuxing['水'] >= 1 && wuxing['火'] >= 1 && wuxing['土'] >= 1 ? '五行较为均衡，无明显薄弱环节，但仍需注意日常养生。' : ''}</p>
+                        <p>◆ 养生建议：<br>　日主属${rizhuWuxing}，${rizhuWuxing === '金' ? '保持呼吸道湿润，秋季注意养肺。饮食方面：宜食白色食物（百合、银耳、白萝卜、梨等），少食辛辣。' : rizhuWuxing === '木' ? '保持心情舒畅，春季注意养肝。饮食方面：宜食绿色食物（菠菜、芹菜、绿豆、绿茶等），少食油腻。' : rizhuWuxing === '水' ? '保持充足睡眠，冬季注意养肾。饮食方面：宜食黑色食物（黑豆、黑芝麻、黑木耳、海带等），少食生冷。' : rizhuWuxing === '火' ? '保持心态平和，避免过度兴奋，夏季注意养心。饮食方面：宜食红色食物（红枣、西红柿、胡萝卜、红豆等），少食油腻，保持清淡。' : '保持饮食规律，四季注意养胃。饮食方面：宜食黄色食物（小米、南瓜、玉米、红薯等），少食生冷。'}</p>
+                        <p>◆ 健康注意事项：<br>　2026年流年五行属火，与日主${wuxing['火'] > 0 ? '同类' : '不同类'}，${wuxing['火'] > 0 ? '火气过旺' : '火元素较弱'}可能导致相关脏腑问题。今年要特别注意${rizhuWuxing === '金' ? '肺、大肠、皮肤、呼吸系统' : rizhuWuxing === '木' ? '肝、胆、眼睛、筋脉' : rizhuWuxing === '水' ? '肾、膀胱、耳朵、泌尿系统' : rizhuWuxing === '火' ? '心、小肠、舌头、血液循环' : '脾、胃、口腔、消化系统'}方面的健康。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【综合解读】</div>
+                    <div class="analysis-content">
+                        <p>◆ 《穷通宝鉴》调候用神分析：<br>　---------------------------------------------<br>　日主${rigan}生于${bazi.solarMonth}月：${rizhuWuxing === '金' ? '调候用丁火炼金，丙火为辅' : rizhuWuxing === '木' ? '调候用丙火暖身，癸水为辅' : rizhuWuxing === '水' ? '调候用火暖身，木为辅' : rizhuWuxing === '火' ? '调候用甲木生火，乙木为辅' : '调候用金泄土，水为辅'}<br>　此为《穷通宝鉴》调候用神要旨，揭示您命局所需的最佳五行配置。</p>
+                        <p>◆ 《子平真诠》用神格局分析：<br>　---------------------------------------------<br>　命局强弱：${wuxing[rizhuWuxing] >= 3 ? '身强' : wuxing[rizhuWuxing] <= 1 ? '身弱' : '中和'}（日主五行${rizhuWuxing}得气${wuxing[rizhuWuxing] > 0 ? wuxing[rizhuWuxing].toFixed(1) : '1.0'}分，总分8.0分）<br>　选取用神：${wuxing[rizhuWuxing] >= 3 ? '财星、官杀（克泄耗为用）' : wuxing[rizhuWuxing] <= 1 ? '印星、比劫（生扶为用）' : '根据具体组合而定'}<br>　用神分析：命局${wuxing[rizhuWuxing] >= 3 ? '身强' : wuxing[rizhuWuxing] <= 1 ? '身弱' : '中和'}，${wuxing[rizhuWuxing] >= 3 ? '宜用财星耗身、官杀克身或食伤泄身' : wuxing[rizhuWuxing] <= 1 ? '宜用印星生身或比劫助身。忌官杀克身、财星耗身' : '五行较平衡，需结合大运流年分析'}。</p>
+                        <p>◆ 《渊海子平》格局论断：<br>　---------------------------------------------<br>　月令为${bazi.month[1]}，若天干不透印星，可取印星格。<br>　月支为${bazi.month[1]}，若天干不透印星，可取印星格。<br>　命局以${bazi.month[1]}为主，需配合大运流年综合分析。</p>
+                        <p>◆ 去年运势总结：<br>　2025年为乙巳年，流年天干属木，地支属火。<br>　去年流年与日主关系：相生（生扶）。<br>　【运势回顾】<br>　· 事业方面：去年流年生扶日主，事业运势强劲。可能有重要的晋升机会，或者得到贵人的赏识与支持。工作上能够发挥所长，有突出的表现，获得领导的认可和同事的尊重。如果有创业或换工作的想法，去年也是一个不错的时机。<br>　· 财运方面：财运亨通，收入稳定增长。可能有额外的奖金、分红或投资收益。正财偏财都有不错的表现，可以适当进行一些稳健的投资。财务状况良好，有一定的积蓄。<br>　· 感情方面：感情生活和谐美满。单身者桃花运旺盛，有机会遇到心仪的对象，展开新的恋情。有伴侣者与另一半感情升温，相互理解支持，甚至可能有结婚或添丁的喜事。<br>　· 健康方面：身体状况良好，精力充沛。心态积极乐观，没有太大的压力。可以适当进行运动锻炼，增强体质。<br>　· 人际关系：人缘极佳，人际关系融洽。结交到很多新朋友，拓展了人脉资源。与家人、朋友、同事的关系都很好，遇到困难时有人相助。<br>　【经验总结】<br>　· 把握贵人运：去年有贵人相助的经历，要记住那些在关键时刻帮助过你的人，保持联系，未来可能还会有合作的机会。<br>　· 保持积极心态：去年的成功很大程度上得益于积极乐观的心态，要继续保持这种心态，面对困难时不要轻易放弃。<br>　· 持续学习提升：去年有机会学习新知识、新技能，提升了自己的能力。要保持学习的习惯，不断充实自己。<br>　· 积累财务资源：去年财运不错，有了一定的积蓄。要学会理财，合理规划财务，为未来做好准备。<br>　· 珍惜人际关系：去年积累了很好的人脉，要珍惜这些人际关系，这是未来发展的重要资源。<br>　· 延续成功经验：去年的成功经验值得总结和延续，今年可以继续按照去年的成功模式前进，把握机遇，再创佳绩。<br>　【去年与今年对比】<br>　去年2025年：乙巳年，相生（生扶）<br>　今年2026年：丙午年，比助</p>
+                        <p>◆ 流年分析：<br>　---------------------------------------------<br>　2026年为丙午年，流年天干属火，地支属火。<br>　流年与日主关系：比助。流年生扶日主，2026年整体运势较好，事业、财运、感情都有进步。适合积极进取，把握机会。<br>　【《三命通会》流年论断】<br>　流年见午火，有桃花运。午为帝旺，感情运势旺盛。<br>　【六亲流年分析】<br>　根据流年与命局关系：<br>　· 父亲方面：流年木水弱，父亲运势平稳。<br>　· 母亲方面：流年火土旺，可能对母亲有利，需注意母亲健康。<br>　· 配偶方面：流年金水弱，感情运势平稳。<br>　· 子女方面：流年木火旺，子女运势较好，有添丁或子女出息之喜。<br>　【逐月运势分析】<br>　----------------------------------------<br>　正月（寅月）：事业起步月。宜制定计划，稳扎稳打<br>　二月（卯月）：人际关系月。利社交结缘，感情发展<br>　三月（辰月）：财运积累月。利储蓄投资，稳中求进<br>　四月（巳月）：驿马变动月。利外出远行，工作调动<br>　五月（午月）：桃花感情月。感情运势旺盛，注意口舌<br>　六月（未月）：学习提升月。利学业考试，技艺进修<br>　七月（申月）：事业财运月。事业财运双丰收<br>　八月（酉月）：财运收获月。财运最佳，利于求财<br>　九月（戌月）：变动调整月。注意健康，防脾胃问题<br>　十月（亥月）：学业考试月。利文书考试，智慧提升<br>　十一月（子月）：事业拓展月。利创业开拓，人脉拓展<br>　十二月（丑月）：总结收官月。总结一年，计划来年<br>　2027年为丁未年，流年天干属火。与日主关系平和，运势平稳过渡。</p>
+                        <p>◆ 神煞判断：<br>　天乙贵人${SHENGXIAO_GUIREN[shengxiao]['天乙贵人'].length > 0 ? '显现（日干' + rigan + '，贵人位' + SHENGXIAO_GUIREN[shengxiao]['天乙贵人'].join('、') + '在四柱中出现）' : '不显（日干' + rigan + '，贵人位' + SHENGXIAO_GUIREN[shengxiao]['天乙贵人'].join('、') + '未在四柱中出现）'}。${SHENGXIAO_GUIREN[shengxiao]['天乙贵人'].length > 0 ? '命中有贵人相助，关键时刻会有人伸出援手。' : '虽然没有天乙贵人，但可以通过后天努力和行善积德来增加贵人运。'}<br>　文昌贵人${SHENGXIAO_GUIREN[shengxiao]['文昌贵人'].length > 0 ? '显现（文昌位' + SHENGXIAO_GUIREN[shengxiao]['文昌贵人'].join('、') + '在四柱中出现）' : '不显（文昌位' + SHENGXIAO_GUIREN[shengxiao]['文昌贵人'].join('、') + '未在四柱中出现）'}。${SHENGXIAO_GUIREN[shengxiao]['文昌贵人'].length > 0 ? '利于学业考试，学习能力强。' : '但文昌可以通过后天布局来增强，如书房设在文昌位等。'}</p>
+                        <p>◆ 贵人出现时间推断：<br>　根据日主五行${rizhuWuxing}推算，贵人多出现在${rizhuWuxing === '金' ? '秋季（农历七、八月）' : rizhuWuxing === '木' ? '春季（农历一、二月）' : rizhuWuxing === '水' ? '冬季（农历十一、十二月）' : rizhuWuxing === '火' ? '夏季（农历四、五月）' : '四季末（农历三、六、九、十二月）'}。此时间段内更容易遇到对自己有帮助的人。此外，流年遇到与日主相生的年份也是贵人年。</p>
+                        <p>◆ 命格利弊分析：<br>　【利】日主属${rizhuWuxing}，${rizhuWuxing === '金' ? '刚毅果断，做事认真负责，有决断力，适合领导管理；' : rizhuWuxing === '木' ? '仁慈宽厚，有上进心，善于学习，适合教育文化；' : rizhuWuxing === '水' ? '聪明灵活，善于变通，适应能力强，适合商业贸易；' : rizhuWuxing === '火' ? '热情积极，感染力强，适合演讲培训；' : '踏实可靠，诚实守信，稳重务实，适合金融投资；'}行动力强，敢于冒险创业；有艺术天赋，适合文艺行业。${rizhuWuxing === '火' ? '热情似火，能给伴侣带来温暖和快乐；直率坦诚，不会隐瞒心事；有感染力，能让对方变得积极。' : rizhuWuxing === '金' ? '坚定执着，能给伴侣安全感；做事果断，值得信赖。' : rizhuWuxing === '木' ? '温柔体贴，善于沟通，能化解矛盾。' : rizhuWuxing === '水' ? '善解人意，懂得换位思考，能带来新鲜感。' : '稳重务实，能经营好家庭，值得依靠。'}<br>　【弊】${rizhuWuxing === '金' ? '可能过于固执，不愿妥协；有时过于理性，缺乏浪漫；对感情要求较高，容易挑剔。' : rizhuWuxing === '木' ? '可能过于优柔寡断，不够果断；有时过于敏感，容易多想；依赖性较强，需要独立空间。' : rizhuWuxing === '水' ? '可能过于圆滑，不够真诚；有时过于情绪化，缺乏稳定性；容易逃避问题，不愿面对。' : rizhuWuxing === '火' ? '可能过于急躁，缺乏耐心；容易冲动行事，事后后悔；热情来得快去得也快，缺乏持久力。脾气急躁，容易因小事争吵；热情来得快去得也快，感情不够持久；占有欲强，容易嫉妒。' : '可能过于保守，缺乏浪漫；有时过于固执，不愿改变；对感情不够主动，需要对方引导。'}${missingWuxing.length > 0 ? '五行缺' + missingWuxing.join('、') + '，需注意补' + missingWuxing.join('、') + '。' : ''}</p>
+                        <p><strong>【总结】</strong><br>　==================================================<br>　◆ 总体运势评级：${wuxing[rizhuWuxing] >= 3 ? '中上（72分）' : wuxing[rizhuWuxing] <= 1 ? '中等（60分）' : '中上（72分）'}<br>　　命格不错，通过努力可获得成功。<br>　◆ 流年运势总结：<br>　　2026年（丙午年）：比助，运势较好，适合大展拳脚。<br>　　2027年（丁未年）：流年天干属火，需根据具体运势调整策略。<br>　◆ 特别提醒：<br>　　1. ${missingWuxing.length > 0 ? '五行缺' + missingWuxing.join('、') + '，生活中要注意补' + missingWuxing.join('、') + '，可通过颜色、方位、饮食等方式调理。' : '五行齐全，命局较均衡，注意保持即可。'}<br>　　2. 命由天定，运由己造。八字只是参考，真正的命运掌握在自己手中。积极向上、行善积德，才是改变命运的最好方法。</p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">【综合建议和开运转运】</div>
+                    <div class="analysis-content">
+                        <p>◆ 五行开运（根据喜用神）：<br>　喜用神五行：${rizhuWuxing}<br>　${rizhuWuxing === '金' ? '金：多接触金属物品，保持环境整洁。可选择在秋季开展重要活动，下午为吉时。' : rizhuWuxing === '木' ? '木：多接触绿色植物，保持室内通风。可选择在春季开展重要活动，早晨为吉时。' : rizhuWuxing === '水' ? '水：多接触水元素，保持心情平静。可选择在冬季开展重要活动，夜晚为吉时。' : rizhuWuxing === '火' ? '火：多晒太阳，保持环境明亮温暖。可选择在夏季开展重要活动，中午为吉时。' : '土：多接触大地自然，保持心态稳定。可选择在四季末开展重要活动，傍晚为吉时。'}</p>
+                        <p>◆ 穿衣颜色建议：<br>　幸运颜色：${rizhuWuxing === '金' ? '白色、金色、银色' : rizhuWuxing === '木' ? '绿色、青色、翠色' : rizhuWuxing === '水' ? '黑色、蓝色、灰色' : rizhuWuxing === '火' ? '红色、紫色、粉色、橙色' : '黄色、棕色、咖啡色'}<br>　不宜颜色：${rizhuWuxing === '金' ? '红色、紫色（火克金）' : rizhuWuxing === '木' ? '白色、金色（金克木）' : rizhuWuxing === '水' ? '黄色、棕色（土克水）' : rizhuWuxing === '火' ? '黑色、蓝色（水克火）' : '绿色、青色（木克土）'}<br>　建议：日常穿着以幸运颜色为主色调，重要场合（面试、签约、约会等）尤其要注意穿着幸运颜色的衣物。</p>
+                        <p>◆ 五行属性分析：<br>　日主五行：${rizhuWuxing}<br>　五行分布：金${wuxing['金'] > 0 ? wuxing['金'].toFixed(1) : '1.0'} 木${wuxing['木'] > 0 ? wuxing['木'].toFixed(1) : '0.0'} 水${wuxing['水'] > 0 ? wuxing['水'].toFixed(1) : '4.0'} 火${wuxing['火'] > 0 ? wuxing['火'].toFixed(1) : '1.0'} 土${wuxing['土'] > 0 ? wuxing['土'].toFixed(1) : '2.0'}<br>　命局${wuxing[rizhuWuxing] >= 3 ? '偏强' : wuxing[rizhuWuxing] <= 1 ? '偏弱' : '中和'}，喜用神为${rizhuWuxing}。<br>　五行${rizhuWuxing}代表${rizhuWuxing === '金' ? '义、刚毅、果断' : rizhuWuxing === '木' ? '仁、仁慈、成长' : rizhuWuxing === '水' ? '智、智慧、灵活' : rizhuWuxing === '火' ? '礼、热情、礼仪' : '信、信用、稳重'}，是命主的核心能量所在。增强喜用神的能量，可以让人生更加顺遂。</p>
+                        <p>◆ 行为建议：<br>　${rizhuWuxing === '金' ? '1.学会变通，不要过于固执；2.培养浪漫情怀，增加生活情趣；3.多听取他人意见，不要独断专行；4.保持适度运动，增强体质；5.学会放松，不要给自己太大压力。' : rizhuWuxing === '木' ? '1.增强自信，果断决策；2.保持独立，不要过于依赖他人；3.学会表达自己的想法；4.多参加户外活动，接触大自然；5.注意眼部保健，保护视力。' : rizhuWuxing === '水' ? '1.保持真诚，不要过于圆滑；2.学会面对问题，不要逃避；3.增强稳定性，培养耐心；4.注意肾脏保养，避免熬夜；5.学会理财，合理规划财务。' : rizhuWuxing === '火' ? '1.学会控制脾气，遇事冷静思考；2.培养耐心，做事有始有终；3.多参加团队活动，学会合作；4.保持适度运动，不要过度消耗；5.学会倾听他人意见。' : '1.增加浪漫，丰富生活；2.学会变通，不要过于保守；3.主动表达感情，增进人际关系；4.注意脾胃保养，饮食规律；5.多参加社交活动，拓展人脉。'}</p>
+                        <p>◆ 方位建议：<br>　${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中央'}为大吉方位，${rizhuWuxing === '金' ? '西北方' : rizhuWuxing === '木' ? '东南方' : rizhuWuxing === '水' ? '东北方' : rizhuWuxing === '火' ? '东南方' : '四方'}次之。办公、居住宜选择朝${rizhuWuxing === '金' ? '西' : rizhuWuxing === '木' ? '东' : rizhuWuxing === '水' ? '北' : rizhuWuxing === '火' ? '南' : '中'}的房屋。旅行、出差首选${rizhuWuxing === '金' ? '西方' : rizhuWuxing === '木' ? '东方' : rizhuWuxing === '水' ? '北方' : rizhuWuxing === '火' ? '南方' : '中部'}城市。</p>
+                        <p>◆ 心态调整：<br>　${rizhuWuxing}命人${rizhuWuxing === '金' ? '刚毅果断' : rizhuWuxing === '木' ? '仁慈宽厚' : rizhuWuxing === '水' ? '聪明灵活' : rizhuWuxing === '火' ? '热情积极' : '踏实可靠'}，但${rizhuWuxing === '金' ? '过于固执易出错' : rizhuWuxing === '木' ? '过于优柔寡断易错失机会' : rizhuWuxing === '水' ? '过于圆滑易失去信任' : rizhuWuxing === '火' ? '过于急躁易出错' : '过于保守易错过机遇'}。建议：${rizhuWuxing === '金' ? '学会变通，三思而后行；培养耐心，好事不怕晚；保持开放心态，接受不同意见。' : rizhuWuxing === '木' ? '增强自信，相信自己的判断；学会果断，抓住机遇；保持积极心态，不要过于敏感。' : rizhuWuxing === '水' ? '保持真诚，赢得他人信任；学会担当，勇于面对问题；增强定力，保持稳定。' : rizhuWuxing === '火' ? '学会冷静，三思而后行；培养耐心，好事不怕晚；控制情绪，不要让怒火伤害身边的人。' : '增加创新，勇于尝试新事物；学会表达，增进人际关系；保持开放，接受新观念。'}</p>
+                        <p>◆ 风水调整：<br>　${rizhuWuxing === '金' ? '1.家中西方可摆放金属装饰品；2.保持家居整洁有序；3.可使用白色、金色系装饰；4.书房宜设在西方；5.门前可放置金属摆件。' : rizhuWuxing === '木' ? '1.家中东方可摆放绿植；2.保持室内通风明亮；3.可使用绿色、青色系装饰；4.书房宜设在东方；5.门前可放置盆栽植物。' : rizhuWuxing === '水' ? '1.家中北方可摆放水景；2.保持室内湿度适中；3.可使用黑色、蓝色系装饰；4.书房宜设在北方；5.门前可放置鱼缸或流水摆件。' : rizhuWuxing === '火' ? '1.家中南方可保持明亮温暖；2.客厅宜灯光充足；3.可使用红色装饰品点缀；4.厨房保持整洁；5.门前可放置红灯笼或红色地毯。' : '1.家中中央保持整洁宽敞；2.客厅宜摆放圆形装饰品；3.可使用黄色、棕色系装饰；4.书房宜设在中央；5.门前可放置方形摆件。'}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('baziResult').innerHTML = resultHTML;
+        }
+
+        function getWuxingClass(wuxing) {
+            var map = {"金":"jin", "木":"mu", "水":"shui", "火":"huo", "土":"tu"};
+            return map[wuxing] || '';
+        }
+
+        function getWuxingAnalysis(wuxing, rizhu) {
+            var total = wuxing['金'] + wuxing['木'] + wuxing['水'] + wuxing['火'] + wuxing['土'];
+            var avg = total / 5;
+            var analysis = [];
+            
+            for (var w in wuxing) {
+                if (wuxing[w] > avg + 1) analysis.push(w + '旺');
+                else if (wuxing[w] < avg - 1) analysis.push(w + '弱');
+            }
+            
+            if (analysis.length === 0) analysis.push('五行均衡');
+            
+            var relations = {
+                "金": {"生":"水", "克":"木"},
+                "木": {"生":"火", "克":"土"},
+                "水": {"生":"木", "克":"火"},
+                "火": {"生":"土", "克":"金"},
+                "土": {"生":"金", "克":"水"}
+            };
+            
+            analysis.push(`日主为${rizhu}，${rizhu}${relations[rizhu].生}为食神伤官，${rizhu}${relations[rizhu].克}为财星`);
+            
+            return analysis.join('，');
+        }
+
+        // 其他页面功能
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function randomGua() {
+            var guaList = ["乾", "坤", "屯", "蒙", "需", "讼", "师", "比", "小畜", "履", "泰", "否", "同人", "大有", "谦", "豫", "随", "蛊", "临", "观", "噬嗑", "贲", "剥", "复", "无妄", "大畜", "颐", "大过", "坎", "离", "咸", "恒", "遁", "大壮", "晋", "明夷", "家人", "睽", "蹇", "解", "损", "益", "夬", "姤", "萃", "升", "困", "井", "革", "鼎", "震", "艮", "渐", "归妹", "丰", "旅", "巽", "兑", "涣", "节", "中孚", "小过", "既济", "未济"];
+            var gua = guaList[Math.floor(Math.random() * guaList.length)];
+            var guaDetail = getGuaDetail(gua);
+            var bianYao = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('guaResult').innerHTML = `
+                <div class="result-card">
+                    <div class="result-title">卦象占卜结果</div>
+                    <div class="guagua-container">
+                        <div class="guagua-symbol">${gua}</div>
+                    </div>
+                    <p style="text-align:center;color:var(--gold);margin-top:10px;font-size:18px;font-weight:bold;">${guaDetail.name}</p>
+                    <p style="text-align:center;color:var(--text-secondary);font-size:14px;margin-top:5px;">${guaDetail.guaCi}</p>
+                    <div style="margin-top:15px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;">
+                        <p style="text-align:center;color:var(--text-primary);font-size:13px;line-height:1.8;">
+                            <span style="color:var(--gold);">上卦：</span>${guaDetail.shangGua}（${guaDetail.shangGuaName}）<br>
+                            <span style="color:var(--gold);">下卦：</span>${guaDetail.xiaGua}（${guaDetail.xiaGuaName}）<br>
+                            <span style="color:var(--gold);">变爻：</span>第${bianYao}爻 ${bianYao === 1 ? '初' : bianYao === 2 ? '二' : bianYao === 3 ? '三' : bianYao === 4 ? '四' : bianYao === 5 ? '五' : '六'}
+                        </p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 卦象解读</div>
+                    <div class="analysis-content">
+                        <p style="margin-bottom:8px;"><strong style="color:var(--gold);">【专业解释】</strong>${guaDetail.professional}</p>
+                        <p><strong style="color:var(--gold);">【通俗解释】</strong>${guaDetail.popular}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 卦辞</div>
+                    <div class="analysis-content">
+                        <p style="text-align:center;font-size:15px;color:var(--text-primary);padding:10px;background:rgba(255,255,255,0.03);border-radius:6px;">${guaDetail.guaCi}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 爻辞详解</div>
+                    <div class="analysis-content">
+                        ${getYaoDetail(guaDetail, bianYao)}
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 吉凶判断</div>
+                    <div class="analysis-content">
+                        <p style="font-size:16px;color:${guaDetail.jiXiong === '吉' ? '#15803d' : guaDetail.jiXiong === '凶' ? '#dc2626' : '#b45309'};font-weight:bold;">【${guaDetail.jiXiong}】</p>
+                        <p style="margin-top:10px;">${guaDetail.jiXiongReason}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 事业运势</div>
+                    <div class="analysis-content">
+                        <p>${guaDetail.career}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 财运分析</div>
+                    <div class="analysis-content">
+                        <p>${guaDetail.wealth}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 感情姻缘</div>
+                    <div class="analysis-content">
+                        <p>${guaDetail.love}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 健康提醒</div>
+                    <div class="analysis-content">
+                        <p>${guaDetail.health}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 趋吉避凶建议</div>
+                    <div class="analysis-content">
+                        <p><strong>宜：</strong>${guaDetail.yi}</p>
+                        <p style="margin-top:10px;"><strong>忌：</strong>${guaDetail.ji}</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-title">◆ 占卜提示</div>
+                    <div class="analysis-content">
+                        <p style="color:var(--text-secondary);font-size:13px;text-align:center;">周易占卜仅供参考，人生吉凶祸福，终究取决于自身的努力和选择。</p>
+                        <p style="color:var(--gold);font-size:14px;text-align:center;margin-top:10px;">建议：顺应卦象指引，但更要相信自己的判断和努力。</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getYaoDetail(guaDetail, bianYao) {
+            var yaoList = guaDetail.yaoList;
+            var html = '';
+            for (var i = 0; i < yaoList.length; i++) {
+                var isBian = (i + 1) === bianYao;
+                var yaoNum = i + 1;
+                var yaoName = yaoNum === 1 ? '初' : yaoNum === 2 ? '二' : yaoNum === 3 ? '三' : yaoNum === 4 ? '四' : yaoNum === 5 ? '五' : '六';
+                html += `<div style="padding:10px;margin-bottom:8px;background:${isBian ? 'rgba(255,215,0,0.1)' : 'rgba(255,255,255,0.02)'};border-radius:6px;border-left:3px solid ${isBian ? 'var(--gold)' : 'transparent'};">
+                    <p style="font-size:14px;color:${isBian ? 'var(--gold)' : 'var(--text-primary)'};font-weight:bold;margin-bottom:5px;">▸ 第${yaoNum}爻${isBian ? ' ★ 变爻' : ''}</p>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:5px;">爻辞：${yaoList[i].yaoCi}</p>
+                    <p style="font-size:12px;color:var(--text-secondary);">解释：${yaoList[i].explanation}</p>
+                    <p style="font-size:12px;color:var(--gold);margin-top:5px;">推断：${yaoList[i].tuīduàn}</p>
+                </div>`;
+            }
+            return html;
+        }
+
+        function getGuaName(gua) {
+            var names = {"乾":"乾为天", "坤":"坤为地", "屯":"水雷屯", "蒙":"山水蒙", "需":"水天需", "讼":"天水讼", "师":"地水师", "比":"水地比", "小畜":"风天小畜", "履":"天泽履", "泰":"地天泰", "否":"天地否", "同人":"天火同人", "大有":"火天大有", "谦":"地山谦", "豫":"雷地豫", "随":"泽雷随", "蛊":"山风蛊", "临":"地泽临", "观":"风地观", "噬嗑":"火雷噬嗑", "贲":"山火贲", "剥":"山地剥", "复":"地雷复", "无妄":"天雷无妄", "大畜":"山天大畜", "颐":"山雷颐", "大过":"泽风大过", "坎":"坎为水", "离":"离为火", "咸":"泽山咸", "恒":"雷风恒", "遁":"天山遁", "大壮":"雷天大壮", "晋":"火地晋", "明夷":"地火明夷", "家人":"风火家人", "睽":"火泽睽", "蹇":"水山蹇", "解":"雷水解", "损":"山泽损", "益":"风雷益", "夬":"泽天夬", "姤":"天风姤", "萃":"泽地萃", "升":"地风升", "困":"泽水困", "井":"水风井", "革":"泽火革", "鼎":"火风鼎", "震":"震为雷", "艮":"艮为山", "渐":"风山渐", "归妹":"雷泽归妹", "丰":"雷火丰", "旅":"火山旅", "巽":"巽为风", "兑":"兑为泽", "涣":"风水涣", "节":"水泽节", "中孚":"风泽中孚", "小过":"雷山小过", "既济":"水火既济", "未济":"火水未济"};
+            return names[gua] || gua;
+        }
+
+        function getGuaInterpret(gua) {
+            var interpretations = {"乾":"刚健有力，事业大吉", "坤":"柔顺包容，以柔克刚", "屯":"初生艰难，宜守不宜进", "蒙":"启蒙学习，虚心受教", "需":"等待时机，耐心待机", "讼":"争讼不和，宜和解", "师":"用兵之道，纪律严明", "比":"亲比团结，诚信待人", "小畜":"小有积蓄，蓄力待发", "履":"谨慎行事，如履薄冰", "泰":"通泰顺利，万事如意", "否":"闭塞不通，宜守待时", "同人":"团结同心，广结善缘", "大有":"大有收获，财运亨通", "谦":"谦虚受益，满招损", "豫":"愉悦安乐，防乐极生悲", "随":"随从顺应，择善而从", "蛊":"腐败革新，除旧布新", "临":"临视督导，亲临现场", "观":"观察学习，洞察先机", "噬嗑":"咬合制裁，明断是非", "贲":"文饰美化，注重外表", "剥":"剥落衰败，防小人", "复":"反复归来，重新开始", "无妄":"无妄之灾，防意外", "大畜":"大蓄积德，厚积薄发", "颐":"颐养之道，养生修身", "大过":"大过之时，防极端", "坎":"坎险重重，需谨慎", "离":"光明美丽，依附贵人", "咸":"感应相亲，情感沟通", "恒":"恒常持久，坚守正道", "遁":"退避隐藏，避祸保身", "大壮":"大壮之时，刚健奋进", "晋":"晋升发展，光明上进", "明夷":"光明受损，韬光养晦", "家人":"家庭和睦，内外有别", "睽":"乖异不和，求同存异", "蹇":"行走艰难，等待时机", "解":"解除困难，缓解压力", "损":"损失减少，舍小取大", "益":"增益发展，互利共赢", "夬":"决断果断，清除小人", "姤":"相遇之时，男女相会", "萃":"聚集荟萃，人才汇聚", "升":"上升发展，步步高升", "困":"困境之中，坚守正道", "井":"井养不穷，修身养性", "革":"变革创新，破旧立新", "鼎":"鼎新之时，显贵之象", "震":"震动警戒，惊醒觉悟", "艮":"静止不动，守静守时", "渐":"渐进发展，循序渐进", "归妹":"少女出嫁，婚嫁之象", "丰":"丰盛光明，事业兴盛", "旅":"旅行在外，谨慎行事", "巽":"顺从而入，谦逊行事", "兑":"喜悦和合，沟通交流", "涣":"涣散离散，团结人心", "节":"节制有度，适可而止", "中孚":"诚信立身，孚信于人", "小过":"小有过越，适度调整", "既济":"事已完成，功成身退", "未济":"未完成，继续努力"};
+            return interpretations[gua] || "此卦象征" + gua;
+        }
+
+        function getGuaDetail(gua) {
+            var defaults = {
+                shangGua: "乾",
+                shangGuaName: "天",
+                xiaGua: "乾",
+                xiaGuaName: "天",
+                professional: "此卦象征天地自然之道。",
+                popular: "这是一个关于自然规律的卦象。",
+                yaoList: [
+                    {yaoCi:"初九", explanation:"事情的开始阶段。", tuīduàn:"起步阶段，需打好基础。"},
+                    {yaoCi:"九二", explanation:"事物的发展阶段。", tuīduàn:"稳步发展，循序渐进。"},
+                    {yaoCi:"九三", explanation:"事物的成熟阶段。", tuīduàn:"成熟时期，需保持警惕。"},
+                    {yaoCi:"九四", explanation:"事物的转变阶段。", tuīduàn:"面临转变，审时度势。"},
+                    {yaoCi:"九五", explanation:"事物的鼎盛阶段。", tuīduàn:"鼎盛时期，把握机遇。"},
+                    {yaoCi:"上九", explanation:"事物的终结阶段。", tuīduàn:"功成身退，保持谦逊。"}
+                ],
+                name: getGuaName(gua),
+                guaCi: "卦辞",
+                jiXiong:"平",
+                jiXiongReason:"此卦暂无详细解读。",
+                overview: getGuaInterpret(gua),
+                career:"事业运势一般。",
+                wealth:"财运平稳。",
+                love:"感情运势一般。",
+                health:"健康良好。",
+                yi:"谨慎行事",
+                ji:"盲目冒进"
+            };
+            
+            var details = {
+                "乾": {name:"乾为天", guaCi:"元亨利贞", jiXiong:"吉", jiXiongReason:"乾为六十四卦之首，代表天道运行，刚健有力。此卦诸事大吉，但需注意过刚易折。", overview:"乾为天，象征天道刚健运行不息。此卦代表积极进取、刚强劲健、目标明确。有龙腾九天之象，利于创业发展、考试升迁。", career:"事业运势极佳，有龙跃深渊、飞龙在天之势。利于创业开拓、求职应聘、争取升职。工作上要积极主动，敢于表现，但注意不要过于刚强傲慢。与上司同事相处要谦和有礼。", wealth:"财运亨通，正财偏财皆旺。有乾金之气，利于投资理财、创业发展。但要注意理财风险，不要过于冒险激进。宜把握机遇，果断行动。", love:"感情运势良好，单身者有机会遇到心仪对象。但此卦阳气较盛，感情上可能过于主动强势，要注意给对方空间。有伴侣者关系稳定发展。", health:"身体健康，精力充沛。但要注意头部、心脑血管方面的保养，避免过度劳累。", yi:"积极进取、果断行动、创业开拓、学习考试", ji:"刚愎自用、冒险激进、骄傲自满", shangGua:"乾", shangGuaName:"天", xiaGua:"乾", xiaGuaName:"天", professional:"乾卦，乾上乾下，纯阳之卦。象征天、刚健、主动。", popular:"天卦代表刚健有力，事业蒸蒸日上。"},
+                "坤": {name:"坤为地", guaCi:"元亨利牝马之贞", jiXiong:"吉", jiXiongReason:"坤代表地道柔顺，承载万物。此卦诸事大吉，但需注意厚德载物，不可急躁冒进。", overview:"坤为地，象征地道柔顺广博。此卦代表包容宽厚、稳步发展。有母马之德，利于守成、积累、婚嫁。", career:"事业运势平稳，利于守成不宜冒进。要善于借助他人之力，积少成多。工作上要低调行事，不要锋芒太露。宜与他人合作，借力发展。", wealth:"财运平稳，积少成多。有坤土之德，宜稳扎稳打，不宜投机取巧。宜储蓄积累，量入为出。", love:"感情运势良好，有母仪天下之德。单身者有机会遇到成熟稳重之人。有伴侣者关系和谐稳定。", health:"身体健康，脾胃消化系统需注意。宜饮食规律，适量运动。", yi:"稳扎稳打、积累沉淀、包容宽厚、合作共赢", ji:"急躁冒进、锋芒毕露、独断专行", shangGua:"坤", shangGuaName:"地", xiaGua:"坤", xiaGuaName:"地", professional:"坤卦，坤上坤下，纯阴之卦。象征地、柔顺、承载。", popular:"地卦代表包容宽厚，做事稳重踏实。"},
+                "屯": {name:"水雷屯", guaCi:"元亨利贞，勿用有攸往", jiXiong:"平", jiXiongReason:"屯为难之始，表示万事开头难。此卦诸事开头较难，不宜冒进。", overview:"屯为难始，象征事物初生、困难重重。此卦代表创业艰难、时机未到、需耐心等待。有幼苗破土之象。", career:"事业运势初起较难，如草木初生需要时间。要耐心积累，不可急于求成。利于学习准备、积累经验，不宜大规模行动。", wealth:"财运初起较难，正财尚可，偏财不宜。宜稳扎稳打，不可贪多冒进。", love:"感情运势一般，单身者需耐心等待良缘。有伴侣者关系需要耐心经营。", health:"身体健康，但要注意泌尿系统、肾部保养。", yi:"学习准备、积累经验、稳扎稳打、耐心等待", ji:"冒然行动、投机取巧、急于求成"},
+                "蒙": {name:"山水蒙", guaCi:"亨，匪我求童蒙，童蒙求我", jiXiong:"平", jiXiongReason:"蒙为蒙昧，象征需要启发教育。此卦表示需要学习成长，不可固步自封。", overview:"蒙为蒙昧，象征启蒙教育、智慧初开。此卦代表学习、请教、成长。有山水蒙昧之象。", career:"事业上需要学习提升，不可自以为是。要善于请教他人，接受指导。利于学习进修、考试考证。", wealth:"财运一般，需要先投入学习。不宜大额投资，稳扎稳打。", love:"感情运势平稳，单身者需提升自我。有伴侣者需加强沟通交流。", health:"身体健康，但要注意脾胃保养，学习工作不宜过度劳累。", yi:"学习请教、提升自我、谦虚谨慎、接受指导", ji:"自以为是、固执己见、不思进取"},
+                "需": {name:"水天需", guaCi:"有孚，光亨贞吉，利涉大川", jiXiong:"吉", jiXiongReason:"需为等待，象征时机未到需要等待。此卦诸事需耐心等待，不可冒进。", overview:"需为等待，象征耐心等待、时机未到。此卦代表耐心守候、伺机而动。有云上于天、等待雨来之象。", career:"事业上需要耐心等待时机，不可冒然行动。利于蓄势待发、暗中准备。一旦时机成熟，当果断行动。", wealth:"财运平稳，需要耐心等待时机。不宜急躁，伺机而动。", love:"感情上需要耐心等待，不可急于求成。缘分到了自然会有结果。", health:"身体健康，但要注意泌尿系统保养。宜静养等待。", yi:"耐心等待、蓄势待发、暗中准备、伺机而动", ji:"急躁冒进、轻举妄动、半途而废"},
+                "讼": {name:"天水讼", guaCi:"有孚窒惕，中吉终凶", jiXiong:"凶", jiXiongReason:"讼为争讼，象征是非争执。此卦诸事易起纠纷，宜和为贵。", overview:"讼为争讼，象征是非争执、诉讼纠纷。此卦代表容易卷入是非、产生矛盾。有天水相违之象。", career:"事业上容易与人产生纠纷，要注意处理好职场关系。遇事要以和为贵，避免诉讼争执。", wealth:"财运有损，不宜与人有财务纠葛。合作投资需谨慎。", love:"感情上容易有口舌之争，要注意沟通方式。有伴侣者要避免冷战争吵。", health:"身体健康，但要注意头部、心脑血管保养。忌情绪激动。", yi:"以和为贵、忍让包容、谨言慎行、化解矛盾", ji:"争强好胜、诉讼纠缠、情绪激动、斤斤计较"},
+                "师": {name:"地水师", guaCi:"贞丈人吉，无咎", jiXiong:"平", jiXiongReason:"师为众也，象征统众征伐。此卦诸事需要有人带领，团队合作有利。", overview:"师为众也，象征统率大众、纪律严明。此卦代表团队合作、领导统御。有地将水之象。", career:"事业上要善于带领团队，服从领导安排。利于团队协作、服从指挥。", wealth:"财运平稳，正财稳定。不宜投机，稳扎稳打。", love:"感情运势一般，单身者可能在团队中遇到缘分。有伴侣者关系稳定。", health:"身体健康，但要注意肾脏保养。宜规律作息。", yi:"团队合作、服从领导、严守纪律、众志成城", ji:"独断专行、抗命不从、投机取巧、孤军奋战"},
+                "比": {name:"水地比", guaCi:"吉，原筮元永贞，不咎", jiXiong:"吉", jiXiongReason:"比为亲比，象征亲近依附、团结协作。此卦诸事大吉，亲近贵人有助。", overview:"比为亲比，象征亲近依附、团结协作。此卦代表有人相助、贵人扶持。有水在地上交融之象。", career:"事业上有贵人相助，要善于借力。与人合作大吉，利于拓展人脉、争取支持。", wealth:"财运良好，有贵人相助。利于合作投资，但需选择可靠之人。", love:"感情运势极佳，单身者易遇到心仪之人，有伴侣者关系更加亲密。", health:"身体健康，运势顺畅。", yi:"亲近贵人、团队合作、真诚待人、广结善缘", ji:"孤僻不合、刚愎自用、排斥他人、结交小人"},
+                "小畜": {name:"风天小畜", guaCi:"亨，密云不雨，自我西郊", jiXiong:"平", jiXiongReason:"小畜为小有积蓄，象征量变积累。此卦诸事小有成就，但大事难成。", overview:"小畜为小有积蓄，象征小有成就、积累阶段。此卦代表积少成多、蓄势待发。有密云不雨之象。", career:"事业上处于积累阶段，不可急躁。做好眼前事，积少成多。", wealth:"财运一般，有小财进账，大财难求。宜储蓄积累。", love:"感情运势平稳，单身者可能有暧昧，但进展缓慢。", health:"身体健康，但要注意脾胃保养。", yi:"积累沉淀、稳扎稳打、积少成多、蓄势待发", ji:"急功近利、好高骛远、贪多求快、半途而废"},
+                "履": {name:"天泽履", guaCi:"履虎尾，不咥人，亨", jiXiong:"平", jiXiongReason:"履为履行，象征谨慎行事、踩虎尾而不被咬。此卦诸事需谨慎，小心行事则亨通。", overview:"履为履行，象征谨慎行事、有惊无险。此卦代表如履薄冰、有惊无险。有踩虎尾之象。", career:"事业上要谨慎行事，不可大意。虽可能有惊险，但只要谨慎则可化解。", wealth:"财运平稳，但要注意防骗防盗。投资需谨慎。", love:"感情上要谨慎对待，不可轻率行事。", health:"身体健康，但要注意意外伤害。", yi:"谨慎行事、步步为营、遵纪守法、低调做人", ji:"鲁莽行事、冒然冒进、过于自信、轻举妄动"},
+                "泰": {name:"地天泰", guaCi:"小往大来，吉亨", jiXiong:"吉", jiXiongReason:"泰为通泰，象征阴阳交泰、万物通达。此卦诸事大吉，万事顺遂。", overview:"泰为通泰，象征阴阳交泰、万物通达。此卦代表诸事顺遂、否极泰来。有天地交泰之象。", career:"事业运势极佳，诸事顺遂。利于创新发展、求职创业。抓住良机，大展宏图。", wealth:"财运亨通，正财偏财皆旺。利于投资理财。", love:"感情运势极佳，单身者易遇到良缘，有伴侣者更加甜蜜。", health:"身体健康，精力充沛。", yi:"把握良机、积极进取、创新发展、乘胜追击", ji:"骄傲自满、错失良机、固步自封、麻痹大意"},
+                "否": {name:"天地否", guaCi:"否之匪人，不利君子贞，大往小来", jiXiong:"凶", jiXiongReason:"否为闭塞，象征阴阳不交、万物不生。此卦诸事不利，宜守不宜进。", overview:"否为闭塞，象征阴阳不交、时运不济。此卦代表诸事不顺、宜守待时。有天地不交之象。", career:"事业运势不佳，不宜冒进。宜静心守候，等待时机。做好本职工作，不可轻举妄动。", wealth:"财运不利，开支较大。宜守不宜投资。", love:"感情运势一般，单身者难遇到合适之人，有伴侣者需注意沟通。", health:"健康运势较弱，注意调理身体。", yi:"静心守候、低调行事、韬光养晦、等待时机", ji:"盲目冒进、投资投机、怨天尤人、自暴自弃"},
+                "同人": {name:"天火同人", guaCi:"同人于野，亨，利涉大川，利君子贞", jiXiong:"吉", jiXiongReason:"同人为与人同心，象征志同道合、团结协作。此卦诸事大吉，同心协力可成大事。", overview:"同人于野，象征与人同心、志同道合。此卦代表广结善缘、得道多助。有天火同明之象。", career:"事业上有志同道合之人相助，利于团队合作。广结善缘，得道多助。", wealth:"财运平稳，合作有利。宜与人合伙经营。", love:"感情运势极佳，单身者易遇到志同道合之人，有伴侣者更加和睦。", health:"身体健康，人际关系和谐。", yi:"广结善缘、团队合作、真诚待人、得道多助", ji:"孤僻不合、自私自利、排斥异己、小肚鸡肠"},
+                "大有": {name:"火天大有", guaCi:"元亨", jiXiong:"吉", jiXiongReason:"大有为丰盛，象征收获丰富、诸事大吉。此卦诸事大吉，丰收在望。", overview:"大有为丰盛，象征收获丰富、诸事大吉。此卦代表事业丰收、财运亨通。有火在天上普照之象。", career:"事业运势极佳，收获丰厚。宜把握良机，积极进取。", wealth:"财运亨通，正财偏财皆旺。宜投资理财，收获丰厚。", love:"感情运势极佳，单身者易遇到优秀对象，有伴侣者关系甜蜜。", health:"身体健康，精力充沛。", yi:"把握良机、积极进取、投资理财、收获丰厚", ji:"骄傲自满、错失良机、守株待兔、不思进取"},
+                "谦": {name:"地山谦", guaCi:"亨，君子有终", jiXiong:"吉", jiXiongReason:"谦为谦逊，象征谦虚低调、德才兼备。此卦诸事大吉，谦受益满招损。", overview:"谦为谦逊，象征谦虚低调、德才兼备。此卦代表谦受益满招损，君子有终。有地中有山之象。", career:"事业上要谦虚低调，不可骄傲自满。谦逊待人，必得善报。", wealth:"财运平稳，积少成多。宜稳扎稳打。", love:"感情运势良好，单身者可能遇到低调务实之人。", health:"身体健康，谦受益满招损。", yi:"谦虚低调、积少成多、稳扎稳打、君子有终", ji:"骄傲自满、锋芒毕露、狂妄自大、目中无人"},
+                "豫": {name:"雷地豫", guaCi:"利建侯行师", jiXiong:"平", jiXiongReason:"豫为愉悦，象征安乐和顺、众心归一。此卦诸事安乐，但需防乐极生悲。", overview:"豫为愉悦，象征安乐和顺、众心归一。此卦代表安乐祥和，但需防乐极生悲。有雷出地奋之象。", career:"事业上处于上升期，要把握良机。但要防微杜渐，不可过度安乐。", wealth:"财运良好，但要注意守成。不可过于挥霍。", love:"感情运势良好，单身者易遇到志同道合之人。", health:"健康良好，但要注意休息，不可过度劳累。", yi:"把握良机、乘胜追击、稳扎稳打、防微杜渐", ji:"过度安乐、麻痹大意、挥霍无度、不思进取", shangGua:"震", shangGuaName:"雷", xiaGua:"坤", xiaGuaName:"地", professional:"豫卦，坤下震上，雷出地奋。象征欢乐、预备、积极。", popular:"春雷唤醒大地，代表喜悦和行动，时机已到。", yaoList: [{yaoCi:"鸣豫，凶。", explanation:"自鸣得意于豫乐，凶险。程颐传：鸣豫，志穷凶也。", tuīduàn:"骄傲自满必招祸，得意时更需谦虚谨慎。"}, {yaoCi:"介于石，不终日，贞吉。", explanation:"坚如磐石，不待终日即能悟道，守正则吉。朱熹本义：介于石，不终日贞吉，以中正也。", tuīduàn:"果断坚定，迅速决策，不拖延犹豫，效率高。"}, {yaoCi:"盱豫，悔。迟有悔。", explanation:"仰视豫乐，谄媚讨好，有悔。迟缓亦有悔。王弼注：盱豫有悔，位不当也。", tuīduàn:"不要依附他人享乐，独立自主，否则后悔莫及。"}, {yaoCi:"由豫，大有得。勿疑，朋盍簪。", explanation:"从豫乐中大有收获，勿疑，朋友聚集如簪。程颐传：由豫大有得，刚得志也。", tuīduàn:"顺势而为大有收获，信任朋友，团结合作。"}, {yaoCi:"贞疾，恒不死。", explanation:"守正处疾，恒久不死，虽危犹存。朱熹本义：贞疾恒不死，中未亡也。", tuīduàn:"身体有恙不必过于忧虑，积极治疗可保长寿。"}, {yaoCi:"冥豫，成有渝，无咎。", explanation:"沉溺于豫乐，若能改正则无咎。王弼注：冥豫在上，何可长也。", tuīduàn:"沉迷享乐需及时醒悟，改变尚可挽回损失。"}]},
+                "随": {name:"泽雷随", guaCi:"元亨利贞，无咎", jiXiong:"平", jiXiongReason:"随为随从，象征随遇而安、顺从时势。此卦诸事随缘，不可固执己见。", overview:"随为随从，象征随遇而安、顺从时势。此卦代表随机应变、顺应潮流。有泽中有雷之象。", career:"事业上要随机应变，不可固执己见。顺应潮流，与时俱进。", wealth:"财运平稳，随缘得财。", love:"感情运势一般，单身者可能遇到缘分，有伴侣者需注意沟通。", health:"身体健康，但要注意肝胆保养。", yi:"随机应变、顺势而为、随缘乐活、灵活变通", ji:"固执己见、冥顽不灵、固步自封、不识时务"},
+                "蛊": {name:"山风蛊", guaCi:"元亨，利涉大川，先甲三日，后甲三日", jiXiong:"平", jiXiongReason:"蛊为有事，象征拨乱反正、改革革新。此卦诸事需要变革创新。", overview:"蛊为有事，象征拨乱反正、改革革新。此卦代表除旧布新、整顿改革。有山下有风之象。", career:"事业上需要进行改革整顿，除去弊端。利于创新变革。", wealth:"财运一般，需要改变才能突破。", love:"感情上可能有旧情复燃或需要解决历史问题。", health:"健康一般，注意调理肝胆。", yi:"除旧布新、改革创新、整顿改革、破旧立新", ji:"因循守旧、得过且过、讳疾忌医、不思进取"},
+                "临": {name:"地泽临", guaCi:"元亨利贞，至于八月有凶", jiXiong:"平", jiXiongReason:"临为临下，象征居高临下、监管督导。此卦诸事需亲力亲为。", overview:"临为临下，象征居高临下、监管督导。此卦代表亲力亲为、深入一线。有地下有泽之象。", career:"事业上要亲力亲为，深入一线。利于督导管理，亲临现场。", wealth:"财运平稳，辛勤得财。", love:"感情运势一般，需要用心经营。", health:"身体健康，但要注意脾胃保养。", yi:"亲力亲为、深入一线、督导管理、事必躬亲", ji:"高高在上、脱离群众、遥控指挥、敷衍了事"},
+                "观": {name:"风地观", guaCi:"盥而不荐，有孚颙若", jiXiong:"平", jiXiongReason:"观为观察，象征观察学习、洞察先机。此卦诸事需先观察后行动。", overview:"观为观察，象征观察学习、洞察先机。此卦代表先观察后行动，不可轻举妄动。有风行地上之象。", career:"事业上要先观察再行动，不可轻率决定。多调查研究，三思后行。", wealth:"财运一般，需要观察市场动态。", love:"感情上需要多观察了解对方，不可急于求成。", health:"健康一般，注意脾胃保养。", yi:"观察学习、调查研究、三思后行、洞察先机", ji:"轻举妄动、急于求成、草率决定、盲目跟风"},
+                "噬嗑": {name:"火雷噬嗑", guaCi:"亨，利用狱", jiXiong:"平", jiXiongReason:"噬嗑为咬合，象征明断是非、执法严明。此卦诸事需要公正处理。", overview:"噬嗑为咬合，象征明断是非、执法严明。此卦代表依法办事、公正处理。有雷电交加之象。", career:"事业上要依法办事，不可徇私情。利于诉讼、执法、调解。", wealth:"财运一般，正财稳定。", love:"感情上可能有是非口舌，需要公正处理。", health:"健康一般，注意口腔、牙齿保养。", yi:"依法办事、公正处理、明辨是非、秉公执法", ji:"徇私舞弊、执法犯法、包庇纵容、颠倒黑白"},
+                "贲": {name:"山火贲", guaCi:"亨，小利有攸往", jiXiong:"平", jiXiongReason:"贲为文饰，象征美化装饰、文采飞扬。此卦诸事小有收获，不宜大动。", overview:"贲为文饰，象征美化装饰、文采飞扬。此卦代表文饰美化、小有收获。有山下有火之象。", career:"事业上要注重形象包装，利于文化创意行业。", wealth:"财运一般，小财进账。", love:"感情上可能更注重外表打扮。", health:"健康一般，注意心脏保养。", yi:"注重形象、文化创意、文采飞扬、小步快跑", ji:"华而不实、只重外表、舍本逐末、弄虚作假"},
+                "剥": {name:"山地剥", guaCi:"不利有攸往", jiXiong:"凶", jiXiongReason:"剥为剥落，象征衰落败落、诸事不利。此卦诸事大凶，不宜妄动。", overview:"剥为剥落，象征衰落败落、诸事不利。此卦代表时运不济，宜守不宜动。有山附于地之象。", career:"事业运势极差，不宜冒进。宜静心守候，不可轻举妄动。", wealth:"财运大损，开支较大。", love:"感情运势不佳，单身者难遇良缘，有伴侣者需注意维护。", health:"健康较差，注意身体调理。", yi:"静心守候、韬光养晦、保存实力、等待时机", ji:"盲目冒进、孤注一掷、消极颓废、自暴自弃"},
+                "复": {name:"地雷复", guaCi:"亨，出入无疾，朋来无咎", jiXiong:"吉", jiXiongReason:"复为复归，象征否极泰来、重新开始。此卦诸事大吉，利于重新出发。", overview:"复为复归，象征否极泰来、重新开始。此卦代表重新振作、前景光明。有雷在地中之象。", career:"事业运势回升，利于重新开始。走出低谷，前景光明。", wealth:"财运渐好，正财回升。", love:"感情运势回升，单身者可能遇到新缘分。", health:"健康渐好，注意休息调养。", yi:"重新开始、把握机遇、走出低谷、乘胜追击", ji:"因循守旧、固步自封、消极悲观、错失良机"},
+                "无妄": {name:"天雷无妄", guaCi:"元亨利贞，其匪正有眚，不利有攸往", jiXiong:"凶", jiXiongReason:"无妄为无妄，象征天灾人祸、意外变故。此卦诸事需谨慎，防意外。", overview:"无妄为无妄，象征天灾人祸、意外变故。此卦代表意外频发、诸事需谨慎。有天下雷行之意。", career:"事业上要谨慎行事，防小人作祟。不可投机取巧。", wealth:"财运不稳，防破财。", love:"感情上可能有意外变故，需谨慎处理。", health:"健康较差，防意外伤害。", yi:"谨慎行事、遵纪守法、谨言慎行、脚踏实地", ji:"投机取巧、冒险激进、轻举妄动、铤而走险"},
+                "大畜": {name:"山天大畜", guaCi:"利贞，不家食吉，利涉大川", jiXiong:"吉", jiXiongReason:"大畜为大的积蓄，象征积累丰厚、潜力巨大。此卦诸事大吉，厚积薄发。", overview:"大畜为大的积蓄，象征积累丰厚、潜力巨大。此卦代表积蓄能量、厚积薄发。有天在山中之象。", career:"事业上要继续积累，不可急于求成。潜力巨大，前景光明。", wealth:"财运良好，积累丰厚。", love:"感情运势良好，单身者可能遇到合适之人。", health:"健康良好，精力充沛。", yi:"积累沉淀、厚积薄发、稳扎稳打、持之以恒", ji:"急功近利、好高骛远、半途而废、不思进取"},
+                "颐": {name:"山雷颐", guaCi:"贞吉，观颐，自求口实", jiXiong:"平", jiXiongReason:"颐为颐养，象征休养身息、养育他人。此卦诸事需注重养生养性。", overview:"颐为颐养，象征休养身息、养育他人。此卦代表注重健康、自我修养。有山下有雷之象。", career:"事业上要注重积累，不可过度消耗。注意休息养身。", wealth:"财运平稳，量入为出。", love:"感情运势一般，注重沟通交流。", health:"健康一般，需要休养。注意脾胃保养。", yi:"注重健康、休养身息、量入为出、修身养性", ji:"过度劳累、透支身体、暴饮暴食、不顾身体"},
+                "大过": {name:"泽风大过", guaCi:"栋桡，利有攸往，亨", jiXiong:"凶", jiXiongReason:"大过为大的过失，象征压力过大、难以支撑。此卦诸事压力较大，需防极端。", overview:"大过为大的过失，象征压力过大、难以支撑。此卦代表物极必反、需防极端。有泽灭木之象。", career:"事业压力过大，需要调整。不可硬撑，要注意方法。", wealth:"财运有损，开支较大。", love:"感情上可能压力较大，需要沟通化解。", health:"健康较差，注意调理。", yi:"调整心态、化解压力、寻求帮助、换个思路", ji:"硬撑到底、固执己见、不顾一切、铤而走险"},
+                "坎": {name:"坎为水", guaCi:"习坎，有孚，维心亨，行有尚", jiXiong:"凶", jiXiongReason:"坎为险陷，象征重重困难、险境重重。此卦诸事艰难，需谨慎行事。", overview:"坎为险陷，象征重重困难、险境重重。此卦代表困难重重、需谨慎行事。有水洊至之象。", career:"事业上困难重重，需要耐心应对。不可轻言放弃。", wealth:"财运不佳，慎防破财。", love:"感情上可能有阻碍，需要耐心经营。", health:"健康较弱，注意保养。", yi:"谨慎行事、耐心应对、坚定信心、步步为营", ji:"轻举妄动、贸然行动、自暴自弃、悲观失望"},
+                "离": {name:"离为火", guaCi:"利贞，亨，畜牝牛吉", jiXiong:"吉", jiXiongReason:"离为附丽，象征依附光明、诸事亨通。此卦诸事大吉，光明在前。", overview:"离为附丽，象征依附光明、诸事亨通。此卦代表依附贵人、前景光明。有明两作之象。", career:"事业运势极佳，有贵人相助。依附有德之人，大有可为。", wealth:"财运良好，光明在前。", love:"感情运势良好，单身者易遇良缘。", health:"健康良好，但要注意心脏保养。", yi:"依附贵人、光明磊落、顺势而为、前景光明", ji:"孤僻不合、脱离群众、暗室欺心、不近人情"},
+                "咸": {name:"泽山咸", guaCi:"亨利贞，取女吉", jiXiong:"吉", jiXiongReason:"咸为感应，象征情感萌动、心意相通。此卦诸事大吉，利于婚嫁。", overview:"咸为感应，象征情感萌动、心意相通。此卦代表感情丰富、人缘极佳。有山上有泽之象。", career:"事业上人缘极佳，有利于合作。", wealth:"财运平稳，人际得财。", love:"感情运势极佳，利于婚嫁。单身者易遇到心仪之人。", health:"健康良好，注意咽喉保养。", yi:"广结善缘、真诚待人、把握缘分、坦诚相待", ji:"冷漠无情、拒人千里、心口不一、表里不一"},
+                "恒": {name:"雷风恒", guaCi:"亨，无咎，利贞，利有攸往", jiXiong:"平", jiXiongReason:"恒为恒久，象征持之以恒、坚定不移。此卦诸事需坚持不懈。", overview:"恒为恒久，象征持之以恒、坚定不移。此卦代表坚持不懈、必有收获。有雷风相与之意。", career:"事业上要持之以恒，不可半途而废。坚持必有收获。", wealth:"财运平稳，积少成多。", love:"感情上需持之以恒，专一经营。", health:"健康一般，注意肝胆保养。", yi:"持之以恒、坚持不懈、专一经营、必有收获", ji:"半途而废、三心二意、朝三暮四、虎头蛇尾"},
+                "遁": {name:"天山遁", guaCi:"亨，小利贞", jiXiong:"平", jiXiongReason:"遁为退避，象征功成身退、避祸保身。此卦诸事以退为进。", overview:"遁为退避，象征功成身退、避祸保身。此卦代表以退为进、保存实力。有天下有山之意。", career:"事业上以退为进，保存实力。必要时退避等待。", wealth:"财运一般，保守为宜。", love:"感情上可能需要暂时保持距离。", health:"健康一般，注意肺呼吸系统保养。", yi:"以退为进、保存实力、伺机而动、静观其变", ji:"逞强冒进、孤军深入、不自量力、硬碰硬"},
+                "大壮": {name:"雷天大壮", guaCi:"利贞", jiXiong:"平", jiXiongReason:"大壮为强盛，象征气势磅礴、诸事大吉。此卦诸事强盛，但需守正。", overview:"大壮为强盛，象征气势磅礴、诸事大吉。此卦代表强盛时期，宜守不宜攻。有雷在天上之象。", career:"事业运势极佳，正值上升期。宜稳扎稳打，不可冒进。", wealth:"财运极佳，正财偏财皆旺。", love:"感情运势良好，单身者易遇良缘。", health:"健康良好，精力充沛。", yi:"乘胜追击、稳扎稳打、把握机遇、大展宏图", ji:"冒然冒进、骄傲自满、过度扩张、贪功冒进"},
+                "晋": {name:"火地晋", guaCi:"康侯用锡马蕃庶，昼日三接", jiXiong:"吉", jiXiongReason:"晋为前进，象征晋升发展、仕途光明。此卦诸事大吉，利于晋升。", overview:"晋为前进，象征晋升发展、仕途光明。此卦代表蒸蒸日上、前景光明。有明出地上之象。", career:"事业上处于上升期，利于晋升。宜积极进取。", wealth:"财运良好，正财增加。", love:"感情运势良好，单身者有晋升之喜。", health:"健康良好，精力充沛。", yi:"积极进取、把握机遇、乘胜追击、更上一层楼", ji:"骄傲自满、不思进取、错失良机、甘于落后"},
+                "明夷": {name:"地火明夷", guaCi:"利艰贞", jiXiong:"凶", jiXiongReason:"明夷为明伤，象征光明受损、时运不济。此卦诸事艰难，需韬光养晦。", overview:"明夷为明伤，象征光明受损、时运不济。此卦代表时运不济、需韬光养晦。有明入地中之象。", career:"事业运势不佳，需低调行事。宜守不宜攻。", wealth:"财运有损，开支较大。", love:"感情运势一般，需要耐心等待。", health:"健康较差，注意休息调养。", yi:"韬光养晦、低调行事、静待时机、保存实力", ji:"锋芒毕露、轻举妄动、铤而走险、不自量力"},
+                "家人": {name:"风火家人", guaCi:"利女贞", jiXiong:"平", jiXiongReason:"家人为一家人，象征家庭和睦、以内为吉。此卦诸事以家和为贵。", overview:"家人为一家人，象征家庭和睦、以内为吉。此卦代表家庭和睦、事业有基。有风自火出之象。", career:"事业以家庭为基础，家庭和睦有利于事业发展。", wealth:"财运平稳，以正财为主。", love:"感情运势极佳，利于婚嫁家庭。", health:"健康良好，注意心脏保养。", yi:"家庭和睦、相亲相爱、男主外女主内、家和万事兴", ji:"家庭不和、争吵不断、冷战分居、离心离德"},
+                "睽": {name:"火泽睽", guaCi:"小事吉", jiXiong:"平", jiXiongReason:"睽为乖睽，象征分离不合、小有阻碍。此卦诸事小有阻碍，需和衷共济。", overview:"睽为乖睽，象征分离不合、小有阻碍。此卦代表同中求异、和而不同。有上火下泽之象。", career:"事业上可能有意见分歧，需和衷共济。", wealth:"财运一般，小财进账。", love:"感情上可能有隔阂，需要加强沟通。", health:"健康一般，注意脾胃保养。", yi:"和衷共济、求同存异、加强沟通、化解矛盾", ji:"离心离德、固执己见、不肯妥协、针锋相对"},
+                "蹇": {name:"水山蹇", guaCi:"利西南，不利东北，利见大人，贞吉", jiXiong:"平", jiXiongReason:"蹇为难，象征行走艰难、困难重重。此卦诸事艰难，需贵人相助。", overview:"蹇为难，象征行走艰难、困难重重。此卦代表困难时期，需贵人相助。有地上有山之象。", career:"事业上困难重重，需要贵人相助。", wealth:"财运不佳，慎防破财。", love:"感情上可能有阻碍，需要耐心。", health:"健康较差，注意保养。", yi:"寻求帮助、贵人相助、耐心等待、稳扎稳打", ji:"孤军奋战、贸然行动、不肯求助、固执己见"},
+                "解": {name:"雷水解", guaCi:"利西南，无攸往，其来复吉，有攸往，夙吉", jiXiong:"吉", jiXiongReason:"解为解除，象征解除困难、舒缓压力。此卦诸事大吉，困难解除。", overview:"解为解除，象征解除困难、舒缓压力。此卦代表困难解除、前景光明。有雷雨大作之象。", career:"事业上困难解除，迎来转机。抓住良机。", wealth:"财运回升，正财增加。", love:"感情上可能有转机，单身者有望遇到缘分。", health:"健康好转，压力减轻。", yi:"把握转机、趁热打铁、解除束缚、迎接新生", ji:"错失良机、因循守旧、不思进取、坐失良机"},
+                "损": {name:"山泽损", guaCi:"有孚，元吉，无咎，可贞，利有攸往", jiXiong:"平", jiXiongReason:"损为减损，象征舍小取大、以退为进。此卦诸事需有舍才有得。", overview:"损为减损，象征舍小取大、以退为进。此卦代表有舍才有得，不可贪小失大。有山下有泽之象。", career:"事业上可能需要舍小取大，不可计较眼前得失。", wealth:"财运一般，有舍才有得。", love:"感情上可能需要付出才能收获。", health:"健康一般，注意调理。", yi:"舍小取大、以退为进、吃亏是福、大智若愚", ji:"斤斤计较、患得患失、贪小便宜、得不偿失"},
+                "益": {name:"风雷益", guaCi:"利有攸往，利涉大川", jiXiong:"吉", jiXiongReason:"益为增益，象征增益利益、锦上添花。此卦诸事大吉，有益无害。", overview:"益为增益，象征增益利益、锦上添花。此卦代表利人利己、互助共赢。有风雷相益之象。", career:"事业上互惠互利，利于合作共赢。", wealth:"财运良好，稳步增长。", love:"感情上互助互爱，关系和谐。", health:"健康良好，注意肝胆保养。", yi:"互惠互利、合作共赢、锦上添花、雪中送炭", ji:"损人利己、自私自利、斤斤计较、见利忘义"},
+                "夬": {name:"泽天夬", guaCi:"扬于王庭，孚号有厉，告自邑，不利即戎，利有攸往", jiXiong:"平", jiXiongReason:"夬为决断，象征决断果断、清除小人。此卦诸事需果断决策。", overview:"夬为决断，象征决断果断、清除小人。此卦代表果断决策、不可拖延。有泽上于天之象。", career:"事业上需要果断决策，不可犹豫不决。", wealth:"财运一般，正财稳定。", love:"感情上需要果断处理问题。", health:"健康良好，注意头部保养。", yi:"果断决策、当机立断、清除小人、雷厉风行", ji:"优柔寡断、拖泥带水、犹豫不决、错失良机"},
+                "姤": {name:"天风姤", guaCi:"女壮，勿用取女", jiXiong:"凶", jiXiongReason:"姤为邂逅，象征意外相遇、阴气渐盛。此卦诸事需防不正之人。", overview:"姤为邂逅，象征意外相遇、阴气渐盛。此卦代表需防小人、谨慎交友。有天下有风之象。", career:"事业上需防小人，谨慎交友合作。", wealth:"财运有损，慎防受骗。", love:"感情上可能有意外缘分，需谨慎。", health:"健康一般，注意调理。", yi:"谨慎交友、防微杜渐、明辨是非、洁身自好", ji:"轻信他人、不辨是非、贪图小利、交友不慎"},
+                "萃": {name:"泽地萃", guaCi:"亨，王假有庙，利见大人，亨利贞，用大牲吉，利有攸往", jiXiong:"吉", jiXiongReason:"萃为聚集，象征人才汇聚、诸事大吉。此卦诸事大吉，利于聚集。", overview:"萃为聚集，象征人才汇聚、诸事大吉。此卦代表人才汇聚、人气旺盛。有地上有泽之象。", career:"事业上人才汇聚，利于团队发展。", wealth:"财运良好，人气得财。", love:"感情运势极佳，利于婚嫁。", health:"健康良好，人际关系和谐。", yi:"广纳人才、凝聚人心、真诚待人、众志成城", ji:"排斥异己、小肚鸡肠、孤芳自赏、离心离德"},
+                "升": {name:"地风升", guaCi:"南征吉", jiXiong:"吉", jiXiongReason:"升为上升，象征步步高升、前景光明。此卦诸事大吉，利于进取。", overview:"升为上升，象征步步高升、前景光明。此卦代表芝麻开花节节高。有地中生木之象。", career:"事业运势极佳，步步高升。宜积极进取。", wealth:"财运良好，正财增加。", love:"感情运势良好，单身者有晋升之喜。", health:"健康良好，精力充沛。", yi:"积极进取、乘胜追击、步步高升、更上一层楼", ji:"不思进取、安于现状、错失良机、甘居人后"},
+                "困": {name:"泽水困", guaCi:"亨，贞大人吉，无咎，有言不信", jiXiong:"凶", jiXiongReason:"困为困境，象征困境重重、难以自拔。此卦诸事艰难，需耐心坚守。", overview:"困为困境，象征困境重重、难以自拔。此卦代表时运不济，需耐心坚守。有泽中无水之象。", career:"事业上陷入困境，需要耐心坚守。", wealth:"财运大损，开支较大。", love:"感情上可能有口舌之争。", health:"健康较差，注意调理。", yi:"耐心坚守、韬光养晦、保存实力、等待时机", ji:"自暴自弃、悲观绝望、铤而走险、孤注一掷"},
+                "井": {name:"水风井", guaCi:"改邑不改井，无丧无得，往来井井，汔至亦未繘井，羸其瓶，凶", jiXiong:"平", jiXiongReason:"井为水井，象征源源不断、养育众生。此卦诸事需持之以恒。", overview:"井为水井，象征源源不断、养育众生。此卦代表持之以恒、必有收获。有水下有风之象。", career:"事业上要持之以恒，源源不断。", wealth:"财运平稳，细水长流。", love:"感情上需要耐心经营。", health:"健康一般，注意泌尿系统保养。", yi:"持之以恒、细水长流、循序渐进、必有收获", ji:"半途而废、三心二意、急功近利、虎头蛇尾"},
+                "革": {name:"泽火革", guaCi:"己日乃孚，元亨利贞，悔亡", jiXiong:"平", jiXiongReason:"革为变革，象征破旧立新、改革创新。此卦诸事需要变革。", overview:"革为变革，象征破旧立新、改革创新。此卦代表除旧布新、与时俱进。有泽中有火之象。", career:"事业上需要改革创新，与时俱进。", wealth:"财运一般，改革才能突破。", love:"感情上可能有重大变化。", health:"健康一般，注意心脏保养。", yi:"改革创新、除旧布新、与时俱进、破旧立新", ji:"因循守旧、固步自封、得过且过、不思进取"},
+                "鼎": {name:"火风鼎", guaCi:"元吉亨", jiXiong:"吉", jiXiongReason:"鼎为宝鼎，象征稳重显贵、诸事大吉。此卦诸事大吉，有贵人之象。", overview:"鼎为宝鼎，象征稳重显贵、诸事大吉。此卦代表稳重发展、有贵人扶持。有火上木下之象。", career:"事业上有贵人扶持，稳重发展。", wealth:"财运良好，正财稳定。", love:"感情运势良好，利于婚嫁。", health:"健康良好，注意脾胃保养。", yi:"稳重发展、贵人扶持、脚踏实地、稳扎稳打", ji:"急功近利、好高骛远、轻举妄动、投机取巧"},
+                "震": {name:"震为雷", guaCi:"亨，震来虩虩，笑言哑哑，震惊百里，不丧匕鬯", jiXiong:"平", jiXiongReason:"震为震动，象征震动警戒、惊醒觉悟。此卦诸事可能有大变动。", overview:"震为震动，象征震动警戒、惊醒觉悟。此卦代表意外变动、惊醒觉悟。有洊雷相续之象。", career:"事业上可能有意外变动，需冷静应对。", wealth:"财运不稳定，防破财。", love:"感情上可能有意外惊喜或惊吓。", health:"健康一般，注意肝胆保养。", yi:"冷静应对、惊醒觉悟、防微杜渐、处变不惊", ji:"惊慌失措、手忙脚乱、麻痹大意、掉以轻心"},
+                "艮": {name:"艮为山", guaCi:"艮其背，不获其身，行其庭，不见其人，无咎", jiXiong:"平", jiXiongReason:"艮为静止，象征静止不动、守静守时。此卦诸事宜静不宜动。", overview:"艮为静止，象征静止不动、守静守时。此卦代表静待时机，不可妄动。有两山相重之象。", career:"事业上宜静不宜动，等待时机。", wealth:"财运一般，保守为宜。", love:"感情上需要保持冷静。", health:"健康一般，注意脾胃保养。", yi:"静心守候、等待时机、稳扎稳打、以静制动", ji:"轻举妄动、贸然行动、浮躁不安、不顾时机"},
+                "渐": {name:"风山渐", guaCi:"女归吉，利贞", jiXiong:"吉", jiXiongReason:"渐为渐进，象征循序渐进、稳步发展。此卦诸事大吉，利于婚嫁。", overview:"渐为渐进，象征循序渐进、稳步发展。此卦代表稳扎稳打、逐步前进。有山上有风之象。", career:"事业上循序渐进，步步高升。", wealth:"财运平稳，积少成多。", love:"感情运势极佳，利于婚嫁。", health:"健康良好，注意肝胆保养。", yi:"循序渐进、稳扎稳打、积少成多、步步高升", ji:"急功近利、好高骛远、半途而废、拔苗助长"},
+                "归妹": {name:"雷泽归妹", guaCi:"征凶，无攸利", jiXiong:"凶", jiXiongReason:"归妹为少女出嫁，象征追求不当、必有凶险。此卦诸事需谨慎，不可轻率。", overview:"归妹为少女出嫁，象征追求不当、必有凶险。此卦代表感情上需谨慎，不可轻率。有雷泽相薄之象。", career:"事业上可能有感情用事之险，需谨慎。", wealth:"财运有损，慎防破财。", love:"感情上需谨慎，不可轻率决定。", health:"健康一般，注意妇科保养。", yi:"谨慎行事、三思后行、稳扎稳打、循序渐进", ji:"感情用事、轻举妄动、贪图小利、不顾后果"},
+                "丰": {name:"雷火丰", guaCi:"亨，王假之，勿忧，宜日中", jiXiong:"吉", jiXiongReason:"丰为丰盛，象征丰收充盈、诸事大吉。此卦诸事大吉，但需防盛极必衰。", overview:"丰为丰盛，象征丰收充盈、诸事大吉。此卦代表丰收时期，但需防盛极必衰。有雷电皆至之象。", career:"事业上正处于高峰期，要把握机遇。", wealth:"财运极佳，收获丰厚。", love:"感情运势极佳，单身者易遇良缘。", health:"健康良好，但要注意休息。", yi:"把握机遇、乘胜追击、收获丰厚、再接再厉", ji:"骄傲自满、不思进取、挥霍无度、盛极必衰"},
+                "旅": {name:"火山旅", guaCi:"小亨，旅贞吉", jiXiong:"平", jiXiongReason:"旅为旅行，象征漂泊在外、诸事需谨慎。此卦诸事需小心行事。", overview:"旅为旅行，象征漂泊在外、诸事需谨慎。此卦代表出行顺利，但需小心。有山上有火之象。", career:"事业上可能有出差或变动，需谨慎。", wealth:"财运一般，小财进账。", love:"感情上可能聚少离多。", health:"健康一般，注意心脏保养。", yi:"小心行事、低调做人、谨言慎行、步步为营", ji:"高调张扬、锋芒毕露、冒险激进、不顾后果"},
+                "巽": {name:"巽为风", guaCi:"小亨，利有攸往，利见大人", jiXiong:"平", jiXiongReason:"巽为顺从，象征顺从谦逊、随风而入。此卦诸事需顺势而为。", overview:"巽为顺从，象征顺从谦逊、随风而入。此卦代表顺势而为、借力打力。有风之象。", career:"事业上要顺势而为，借力发展。", wealth:"财运平稳，正财稳定。", love:"感情运势一般，单身者可能遇到缘分。", health:"健康一般，注意肝胆保养。", yi:"顺势而为、借力打力、低调谦虚、随风而入", ji:"逆势而行、刚愎自用、固执己见、不识时务"},
+                "兑": {name:"兑为泽", guaCi:"亨，利贞", jiXiong:"吉", jiXiongReason:"兑为喜悦，象征喜悦和合、沟通顺畅。此卦诸事大吉，利于交流。", overview:"兑为喜悦，象征喜悦和合、沟通顺畅。此卦代表和颜悦色、人际和谐。有两泽相悦之象。", career:"事业上人际关系和谐，利于合作。", wealth:"财运良好，人际得财。", love:"感情运势极佳，单身者易遇良缘。", health:"健康良好，注意肺部保养。", yi:"和颜悦色、真诚待人、广结善缘、和谐共赢", ji:"冷言冷语、尖酸刻薄、口是心非、得罪小人"},
+                "涣": {name:"风水涣", guaCi:"亨，王假有庙，利涉大川，利贞", jiXiong:"平", jiXiongReason:"涣为涣散，象征人心离散、需重聚人心。此卦诸事需防涣散。", overview:"涣为涣散，象征人心离散、需重聚人心。此卦代表防微杜渐、团结人心。有风水相散之象。", career:"事业上要防人心涣散，需凝聚团队。", wealth:"财运一般，慎防破财。", love:"感情上可能有疏远之象，需加强沟通。", health:"健康一般，注意肝胆保养。", yi:"凝聚人心、团结协作、化整为零、化险为夷", ji:"人心涣散、离心离德、孤军奋战、自私自利"},
+                "节": {name:"水泽节", guaCi:"亨，苦节不可贞", jiXiong:"平", jiXiongReason:"节为节制，象征节制有度、适度为宜。此卦诸事需把握分寸。", overview:"节为节制，象征节制有度、适度为宜。此卦代表过犹不及、恰到好处。有泽上有水之象。", career:"事业上要把握分寸，不可过度。", wealth:"财运平稳，量入为出。", love:"感情上需把握分寸，不可过于极端。", health:"健康良好，注意肾脏保养。", yi:"节制有度、量入为出、恰到好处、适可而止", ji:"过度节制、挥霍无度、过犹不及、不知收敛"},
+                "中孚": {name:"风泽中孚", guaCi:"豚鱼吉，利涉大川，利贞", jiXiong:"吉", jiXiongReason:"中孚为诚信，象征诚实守信、诸事大吉。此卦诸事以诚信为本。", overview:"中孚为诚信，象征诚实守信、诸事大吉。此卦代表以诚待人、必有善报。有泽上有风之象。", career:"事业上以诚信为本，必得善报。", wealth:"财运良好，诚信得财。", love:"感情运势极佳，诚信相待。", health:"健康良好，注意脾胃保养。", yi:"诚实守信、真诚待人、以诚相待、必有善报", ji:"尔虞我诈、口是心非、背信弃义、自食其言"},
+                "小过": {name:"雷山小过", guaCi:"亨，利贞，可小事，不可大事，飞鸟遗之音，不宜上宜下，大吉", jiXiong:"平", jiXiongReason:"小过为小有过越，象征小有过失、适度调整。此卦诸事小有波折。", overview:"小过为小有过越，象征小有过失、适度调整。此卦代表小过则改、不可大动。有山上有雷之象。", career:"事业上可能有小失误，需及时调整。", wealth:"财运一般，小财进账。", love:"感情上可能有小波折，需及时沟通。", health:"健康一般，注意调理。", yi:"及时调整、小心谨慎、防微杜渐、适可而止", ji:"明知故犯、一意孤行、不思悔改、变本加厉"},
+                "既济": {name:"水火既济", guaCi:"亨小，利贞，初吉终乱", jiXiong:"平", jiXiongReason:"既济为事已成，象征功成名就、诸事顺遂。此卦诸事已成功，但需防终乱。", overview:"既济为事已成，象征功成名就、诸事顺遂。此卦代表功成名就，但需防盛极必衰。有水在火上之象。", career:"事业上已有所成，但需防松懈。", wealth:"财运良好，收获丰厚。", love:"感情上已有所成，需用心经营。", health:"健康良好，但要注意休息。", yi:"功成身退、居安思危、防微杜渐、与时俱进", ji:"骄傲自满、不思进取、坐享其成、盛极必衰"},
+                "未济": {name:"火水未济", guaCi:"亨，小汔吉，狐涉水，濡其尾，无攸利", jiXiong:"凶", jiXiongReason:"未济为事未成，象征事未完成、还需努力。此卦诸事未成，需继续努力。", overview:"未济为事未成，象征事未完成、还需努力。此卦代表尚未成功，仍需努力。有火在水上之象。", career:"事业上尚未成功，需继续努力。", wealth:"财运一般，还需积累。", love:"感情上可能还未确定，需耐心等待。", health:"健康一般，注意休息。", yi:"继续努力、积少成多、耐心等待、坚持不懈", ji:"半途而废、不思进取、自暴自弃、前功尽弃"}
+            };
+            var guaData = details[gua] || {};
+            return Object.assign({}, defaults, guaData);
+        }
+
+        function analyzeNumber() {
+            var number = document.getElementById('numberInput').value;
+            if (!number) {
+                alert('请输入号码');
+                return;
+            }
+            var sum = number.replace(/\D/g, '').split('').reduce((a,b) => a + parseInt(b), 0);
+            var luck = (sum % 100) % 10;
+            document.getElementById('numberResult').innerHTML = `<div class="result-card"><div class="result-title">号码分析</div><div class="number-analysis"><div class="number-row"><div class="number-label">号码数字和</div><div class="number-value">${sum}</div></div><div class="number-row"><div class="number-label">吉凶指数</div><div class="number-value">${getLuckLevel(luck)}</div></div><div class="number-row"><div class="number-label">数理寓意</div><div class="number-value">${getNumberMeaning(sum)}</div></div></div></div>`;
+        }
+
+        function getLuckLevel(luck) {
+            if (luck >= 8) return '吉';
+            if (luck >= 5) return '平';
+            return '凶';
+        }
+
+        function getNumberMeaning(sum) {
+            var meanings = {1:"太极之数，万物开泰", 2:"两仪之数，混沌未开", 3:"三才之数，天地人和", 4:"四象之数，待于生发", 5:"五行之数，循环相生", 6:"六爻之数，发展变化", 7:"七政之数，精悍严谨", 8:"八卦之数，乾坎艮震", 9:"大成之数，蕴涵凶险", 10:"终结之数，雪暗飘零"};
+            return meanings[sum % 10] || `数理${sum}，自有定数`;
+        }
+    </script>
+</body>
+</html>
